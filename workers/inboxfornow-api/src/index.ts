@@ -3,6 +3,8 @@ import { handleScheduled } from './cron';
 import { handleEmail } from './email';
 import type { Env } from './types';
 
+// Auto-deploy test — CI/CD verified
+
 export default {
   fetch(request, env) {
     return handleHttp(request, env);
