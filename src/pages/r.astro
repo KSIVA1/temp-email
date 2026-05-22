@@ -1,0 +1,40 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Header from '~/components/Header.astro';
+
+const rawUrl = Astro.url.searchParams.get('u') || '';
+let destination = '';
+try {
+  const parsed = new URL(rawUrl);
+  if (parsed.protocol === 'https:' || parsed.protocol === 'http:') destination = parsed.href;
+} catch {}
+---
+<Layout
+  title="External link — InboxForNow"
+  description="Review the destination before leaving InboxForNow."
+>
+  <Header />
+  <main class="redirect">
+    <section class="redirect__body">
+      <p class="label"><span class="label__dot label__dot--idle" aria-hidden="true"></span>External link</p>
+      <h1>Check this destination first</h1>
+      {destination ? (
+        <>
+          <p class="redirect__url">{destination}</p>
+          <p>Links in received emails can lead away from InboxForNow. Continue only if you trust the sender and expected this message.</p>
+          <a class="btn btn--primary" href={destination} rel="noopener noreferrer nofollow">Continue</a>
+        </>
+      ) : (
+        <p>This link is missing or invalid.</p>
+      )}
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .redirect { min-height: 60vh; display: grid; place-items: center; padding: clamp(2rem, 1.2rem + 3vw, 4rem) clamp(1rem, 0.5rem + 2vw, 2.2rem); }
+  .redirect__body { max-width: 680px; width: 100%; }
+  .redirect__body h1 { font-size: var(--fs-h1); margin: var(--sp-2) 0 var(--sp-4); }
+  .redirect__body p { color: var(--text-2); line-height: 1.6; }
+  .redirect__url { font-family: var(--ff-mono); overflow-wrap: anywhere; padding: var(--sp-4); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-2); color: var(--text); }
+</style>

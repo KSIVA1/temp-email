@@ -1,0 +1,343 @@
+---
+// Reader: clean slide-over on desktop, bottom sheet on mobile.
+// No postal motifs. Strong type hierarchy. Sanitized HTML body.
+---
+<aside id="reader" class="reader" aria-hidden="true" aria-labelledby="reader-subject">
+  <div class="reader__scrim" data-reader-close></div>
+  <article class="reader__panel" role="dialog" aria-modal="true">
+
+    <header class="reader__head">
+      <button class="reader__back" type="button" data-reader-close aria-label="Close message">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="m15 6-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Back</span>
+      </button>
+
+      <div class="reader__head-actions">
+        <button class="btn btn--tiny btn--ghost" type="button" id="reader-images-btn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <circle cx="9" cy="9" r="2"/>
+            <path d="m21 15-5-5L5 21" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Show images
+        </button>
+        <button class="btn btn--tiny btn--danger-ghost" type="button" id="reader-delete-btn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Delete
+        </button>
+      </div>
+    </header>
+
+    <div class="reader__safety">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+        <path d="M12 2 4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z" stroke-linejoin="round"/>
+        <path d="m9 12 2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Sanitized · scripts and tracking pixels removed before this page rendered</span>
+    </div>
+
+    <h2 id="reader-subject" class="reader__subject">Verify your Discord account</h2>
+
+    <div id="reader-otp" class="reader__otp" hidden></div>
+
+    <dl class="reader__meta">
+      <div class="reader__meta-row">
+        <dt>From</dt>
+        <dd>
+          <span id="reader-from-name" class="reader__from-name">Discord</span>
+          <span id="reader-from-email" class="reader__from-email">noreply@discord.com</span>
+        </dd>
+      </div>
+      <div class="reader__meta-row">
+        <dt>To</dt>
+        <dd id="reader-to" class="reader__to">fast-fox-9821@cloud-route.net</dd>
+      </div>
+      <div class="reader__meta-row">
+        <dt>Received</dt>
+        <dd id="reader-stamp-date" class="reader__date">Thu, May 21 · 11:24</dd>
+      </div>
+    </dl>
+
+    <div class="reader__body" id="reader-body">
+      {/* JS injects sanitized HTML here */}
+    </div>
+
+    <footer class="reader__foot">
+      <span class="label">End of message</span>
+      <p class="reader__foot-note">
+        This message will be deleted along with the rest of the inbox when the
+        timer runs out.
+      </p>
+    </footer>
+  </article>
+</aside>
+
+<style>
+  .reader {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    visibility: hidden;
+  }
+  .reader[aria-hidden="false"] {
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  .reader__scrim {
+    position: absolute;
+    inset: 0;
+    background: rgba(9,9,11,0);
+    backdrop-filter: blur(0px);
+    transition: background-color .25s ease, backdrop-filter .25s ease;
+  }
+  .reader[aria-hidden="false"] .reader__scrim {
+    background: rgba(9,9,11,0.42);
+    backdrop-filter: blur(4px);
+  }
+  :root[data-theme="dark"] .reader[aria-hidden="false"] .reader__scrim {
+    background: rgba(0,0,0,0.65);
+  }
+
+  .reader__panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(560px, 100%);
+    background: var(--bg);
+    border-left: 1px solid var(--border);
+    box-shadow: var(--shadow-4);
+    overflow-y: auto;
+    padding: clamp(1.1rem, 0.7rem + 1.5vw, 1.75rem);
+    transform: translateX(105%);
+    transition: transform .35s var(--ease-out);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-5);
+  }
+  .reader[aria-hidden="false"] .reader__panel {
+    transform: translateX(0);
+  }
+
+  /* Mobile: slide up from bottom */
+  @media (max-width: 720px) {
+    .reader__panel {
+      top: auto;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 92dvh;
+      max-height: 92dvh;
+      border-left: none;
+      border-top: 1px solid var(--border);
+      border-top-left-radius: var(--r-xl);
+      border-top-right-radius: var(--r-xl);
+      transform: translateY(105%);
+    }
+    .reader[aria-hidden="false"] .reader__panel {
+      transform: translateY(0);
+    }
+    .reader__panel::before {
+      content: "";
+      width: 38px;
+      height: 4px;
+      border-radius: var(--r-pill);
+      background: var(--border-strong);
+      margin: -0.4rem auto 0.4rem;
+    }
+  }
+
+  .reader__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
+    flex-wrap: wrap;
+  }
+  .reader__back {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    font-family: var(--ff-sans);
+    font-weight: 500;
+    font-size: var(--fs-small);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    cursor: pointer;
+    padding: 0.4rem 0.7rem 0.4rem 0.55rem;
+    height: 30px;
+    border-radius: var(--r-sm);
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease;
+  }
+  .reader__back:hover {
+    color: var(--text);
+    background: var(--surface-2);
+    border-color: var(--border-strong);
+  }
+
+  .reader__head-actions {
+    display: inline-flex;
+    gap: 0.4rem;
+  }
+
+  .reader__safety {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.35em 0.7em;
+    background: var(--data-soft);
+    color: var(--data-2);
+    border: 1px solid var(--data-border);
+    border-radius: var(--r-pill);
+    font-size: var(--fs-micro);
+    font-weight: 500;
+    align-self: flex-start;
+    line-height: 1.2;
+  }
+  :root[data-theme="dark"] .reader__safety {
+    color: var(--data);
+  }
+
+  .reader__subject {
+    font-size: clamp(1.4rem, 1.1rem + 1.3vw, 1.875rem);
+    line-height: 1.15;
+    letter-spacing: -0.035em;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* OTP chip — host element only. Inner styles live in global.css so they
+     apply to the JS-injected markup. */
+  .reader__otp { display: block; }
+  .reader__otp[hidden] { display: none; }
+
+  /* Meta — definition-list */
+  .reader__meta {
+    margin: 0;
+    padding: var(--sp-4) 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .reader__meta-row {
+    display: grid;
+    grid-template-columns: 86px 1fr;
+    gap: var(--sp-3);
+    align-items: baseline;
+  }
+  .reader__meta-row dt {
+    font-size: var(--fs-micro);
+    font-weight: 500;
+    color: var(--text-3);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+  .reader__meta-row dd {
+    margin: 0;
+    min-width: 0;
+    color: var(--text);
+    font-size: var(--fs-small);
+  }
+  .reader__from-name {
+    font-weight: 500;
+    color: var(--text);
+    margin-right: 0.5em;
+  }
+  .reader__from-email,
+  .reader__to {
+    font-family: var(--ff-mono);
+    font-size: 0.78rem;
+    color: var(--text-2);
+    word-break: break-all;
+  }
+  .reader__date {
+    font-family: var(--ff-mono);
+    font-size: 0.78rem;
+    color: var(--text-2);
+  }
+
+  /* Sanitized body */
+  .reader__body {
+    font-family: var(--ff-sans);
+    color: var(--text);
+    font-size: var(--fs-body);
+    line-height: 1.65;
+  }
+  .reader__body :global(p) { margin: 0 0 0.9em; color: var(--text); }
+  .reader__body :global(a) {
+    color: var(--text);
+    text-decoration-color: var(--border-strong);
+    font-weight: 500;
+  }
+  .reader__body :global(a:hover) { text-decoration-color: var(--text); }
+  .reader__body :global(.otp) {
+    display: inline-block;
+    font-family: var(--ff-mono);
+    font-size: clamp(1.4rem, 1.2rem + 0.8vw, 1.75rem);
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: 0.15em;
+    padding: 0.5em 0.75em;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    margin: 0.4em 0;
+  }
+  .reader__body :global(blockquote) {
+    margin: 1em 0;
+    padding: 0.6em 0.9em;
+    border-left: 2px solid var(--border-strong);
+    background: var(--surface-2);
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    color: var(--text-2);
+  }
+  .reader__body :global(img) {
+    display: none;
+  }
+  .reader__body.images-on :global(img) {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--border);
+  }
+  .reader__body :global(.image-placeholder) {
+    border: 1px dashed var(--border-strong);
+    background: var(--surface-2);
+    color: var(--text-3);
+    padding: 0.7em 1em;
+    text-align: center;
+    border-radius: var(--r-sm);
+    margin: 0.5em 0;
+    font-size: var(--fs-small);
+  }
+  .reader__body.images-on :global(.image-placeholder) { display: none; }
+
+  .reader__foot {
+    margin-top: auto;
+    padding-top: var(--sp-4);
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+  .reader__foot-note {
+    color: var(--text-3);
+    font-size: var(--fs-small);
+    margin: 0;
+    line-height: 1.5;
+  }
+</style>

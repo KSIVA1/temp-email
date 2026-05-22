@@ -1,0 +1,143 @@
+---
+import type { Platform } from '~/data/platforms';
+
+interface Props { platform: Platform; }
+const { platform } = Astro.props;
+
+const blockingAnswer = {
+  low:    `${platform.name} rarely blocks disposable email addresses. Most verifications complete on the first try.`,
+  medium: `${platform.name} blocks some disposable domains but not all. If your code doesn't arrive within a minute, hit "New address" to get one from a different domain in our rotation.`,
+  high:   `${platform.name} aggressively blocks known disposable mail domains. Expect to need 2–3 New Address regenerations before one is accepted. The address pool rotates regularly to stay ahead of the blocklists.`,
+}[platform.blockingLevel];
+
+const faqs = [
+  {
+    q: `Will ${platform.name} block this temporary email address?`,
+    a:  blockingAnswer,
+  },
+  {
+    q: `How long does ${platform.name} take to send the verification email?`,
+    a: `Usually ${platform.typicalWaitTime}. If nothing arrives after a minute, the receiving domain may be on ${platform.name}'s blocklist — generate a fresh address and try again.`,
+  },
+  {
+    q: `Is using a temporary email for ${platform.name} against the terms of service?`,
+    a: `${platform.name}'s terms generally don't ban disposable addresses outright, but they do prohibit creating multiple accounts to bypass bans or rate limits. Use a temporary address for legitimate privacy reasons — read their ToS for the specifics that apply to you.`,
+  },
+  {
+    q: `What if I need to log back in to ${platform.name} after the inbox expires?`,
+    a: `The inbox is hard-deleted on expiry, so you can't receive password-reset emails sent to that address afterwards. If you need long-term account access, copy the password down before the timer ends — or use a real email for accounts you care about.`,
+  },
+  {
+    q: `Does ${platform.name} send anything other than the verification email?`,
+    a: platform.verificationType === 'code'
+        ? `${platform.name} typically sends the verification code email first (subject: "${platform.expectedSubject}"). After signup, you may also receive welcome and product update emails — all of these land in your temporary inbox until the timer runs out.`
+        : `${platform.name} typically sends a sign-in link email (subject: "${platform.expectedSubject}"). Welcome and product update messages may follow — all of these land in your temporary inbox until the timer runs out.`,
+  },
+];
+
+// JSON-LD schema for FAQPage rich results
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+<section class="uc-faqs" aria-labelledby="uc-faqs-heading">
+  <div class="uc-faqs__head">
+    <span class="label"><span class="label__dot label__dot--idle" aria-hidden="true"></span>Common questions</span>
+    <h2 id="uc-faqs-heading">FAQ · temp mail for {platform.name}</h2>
+  </div>
+
+  <div class="uc-faqs__list">
+    {faqs.map((f) => (
+      <details class="uc-faq">
+        <summary class="uc-faq__q">
+          <span>{f.q}</span>
+          <svg class="uc-faq__chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </summary>
+        <p class="uc-faq__a">{f.a}</p>
+      </details>
+    ))}
+  </div>
+</section>
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+
+<style>
+  .uc-faqs {
+    padding: var(--sp-8) 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-5);
+  }
+
+  .uc-faqs__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+  .uc-faqs__head h2 {
+    font-size: var(--fs-h2);
+    margin: 0;
+    color: var(--text);
+  }
+
+  .uc-faqs__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .uc-faq {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    overflow: hidden;
+    transition: border-color .15s ease;
+  }
+  .uc-faq:hover {
+    border-color: var(--border-strong);
+  }
+  .uc-faq[open] {
+    border-color: var(--border-strong);
+  }
+
+  .uc-faq__q {
+    list-style: none;
+    cursor: pointer;
+    padding: var(--sp-4) var(--sp-5);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
+    font-weight: 500;
+    font-size: var(--fs-body);
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .uc-faq__q::-webkit-details-marker { display: none; }
+  .uc-faq__chev {
+    color: var(--text-3);
+    transition: transform .2s var(--ease-out);
+    flex-shrink: 0;
+  }
+  .uc-faq[open] .uc-faq__chev {
+    transform: rotate(180deg);
+    color: var(--text);
+  }
+
+  .uc-faq__a {
+    margin: 0;
+    padding: 0 var(--sp-5) var(--sp-4);
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.6;
+  }
+</style>

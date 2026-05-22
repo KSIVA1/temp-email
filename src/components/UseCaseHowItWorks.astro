@@ -1,0 +1,151 @@
+---
+import type { Platform } from '~/data/platforms';
+
+interface Props { platform: Platform; }
+const { platform } = Astro.props;
+
+const verb = platform.verificationType === 'link' ? 'magic link' :
+             platform.verificationType === 'code' ? 'verification code' :
+             'code or sign-in link';
+---
+<section class="uc-steps" aria-labelledby="uc-steps-heading">
+  <div class="uc-steps__head">
+    <span class="label"><span class="label__dot label__dot--idle" aria-hidden="true"></span>How it works</span>
+    <h2 id="uc-steps-heading">Bypass {platform.name}'s email gate in three steps</h2>
+  </div>
+
+  <ol class="uc-steps__list">
+    <li class="uc-step">
+      <div class="uc-step__n" aria-hidden="true">1</div>
+      <div class="uc-step__body">
+        <h3>Copy the address above</h3>
+        <p>The address is already generated and live. Hit the Copy button — it's now in your clipboard, ready to paste.</p>
+      </div>
+    </li>
+    <li class="uc-step">
+      <div class="uc-step__n" aria-hidden="true">2</div>
+      <div class="uc-step__body">
+        <h3>Paste it into {platform.name}'s signup or login form</h3>
+        <p>Use it wherever {platform.name} asks for your email. Your real inbox stays out of the loop.</p>
+      </div>
+    </li>
+    <li class="uc-step">
+      <div class="uc-step__n" aria-hidden="true">3</div>
+      <div class="uc-step__body">
+        <h3>The {verb} appears here within {platform.typicalWaitTime}</h3>
+        <p>{platform.verificationType === 'code'
+            ? `Codes are auto-detected and shown in a big tap-to-copy chip — you barely have to read the message. Expected sender: ${platform.expectedFromName} (${platform.expectedFromDomain}).`
+            : `Click the link in the message to complete sign-in. Expected sender: ${platform.expectedFromName} (${platform.expectedFromDomain}).`}</p>
+      </div>
+    </li>
+  </ol>
+
+  <aside class="uc-tip" role="note">
+    <div class="uc-tip__head">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+        <path d="M12 2v2M12 20v2M5 5l1.4 1.4M17.6 17.6L19 19M2 12h2M20 12h2M5 19l1.4-1.4M17.6 6.4L19 5"/>
+        <circle cx="12" cy="12" r="5"/>
+      </svg>
+      <span>Specific to {platform.name}</span>
+    </div>
+    <p>{platform.uniqueTip}</p>
+  </aside>
+</section>
+
+<style>
+  .uc-steps {
+    padding: var(--sp-8) 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-6);
+  }
+
+  .uc-steps__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+  .uc-steps__head h2 {
+    font-size: var(--fs-h2);
+    margin: 0;
+    color: var(--text);
+    max-width: 32ch;
+  }
+
+  .uc-steps__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--sp-4);
+  }
+
+  .uc-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: var(--sp-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    box-shadow: var(--shadow-1);
+  }
+
+  .uc-step__n {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--r-sm);
+    background: var(--accent);
+    color: var(--accent-fg);
+    font-family: var(--ff-mono);
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+
+  .uc-step__body h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 0.3rem;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+  .uc-step__body p {
+    margin: 0;
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.55;
+  }
+
+  .uc-tip {
+    background: var(--data-soft);
+    border: 1px solid var(--data-border);
+    border-radius: var(--r-md);
+    padding: var(--sp-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+  .uc-tip__head {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--data-2);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  :root[data-theme="dark"] .uc-tip__head { color: var(--data); }
+  .uc-tip p {
+    margin: 0;
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.55;
+  }
+  :root[data-theme="dark"] .uc-tip p { color: var(--text); }
+</style>

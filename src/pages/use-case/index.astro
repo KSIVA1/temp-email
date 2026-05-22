@@ -1,0 +1,281 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Header from '~/components/Header.astro';
+import { platforms, platformsByCategory, CATEGORIES, type PlatformCategory } from '~/data/platforms';
+
+const orderedCats: PlatformCategory[] = ['social', 'gaming', 'streaming', 'finance', 'ai', 'productivity', 'shopping'];
+
+const title = `Temporary email for every platform · InboxForNow`;
+const description = `Disposable inbox addresses for ${platforms.length}+ services — Discord, Reddit, Twitter, Steam, ChatGPT, GitHub, and more. Free, instant, ad-light.`;
+
+const itemListJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: platforms.map((p, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: `Temporary email for ${p.name}`,
+    url: `https://inboxfornow.com/use-case/${p.slug}/`,
+  })),
+};
+---
+<Layout title={title} description={description}>
+  <Header />
+  <main class="page" id="top">
+    <div class="page__inner">
+      <header class="dir-hero">
+        <span class="label"><span class="label__dot" aria-hidden="true"></span>Platforms · {platforms.length} and growing</span>
+        <h1>Temporary email for every platform with a signup gate.</h1>
+        <p>Pick a service to see a working inbox plus platform-specific tips on how the verification flow works, what to expect, and what to watch for.</p>
+      </header>
+
+      {orderedCats.map((cat) => {
+        const list = platformsByCategory(cat);
+        if (!list.length) return null;
+        return (
+          <section class="dir-cat" aria-labelledby={`cat-${cat}`}>
+            <header class="dir-cat__head">
+              <h2 id={`cat-${cat}`}>{CATEGORIES[cat].label}</h2>
+              <span class="dir-cat__blurb">{CATEGORIES[cat].blurb}</span>
+            </header>
+            <ul class="dir-cat__grid">
+              {list.map((p) => (
+                <li class="dir-card">
+                  <a href={`/use-case/${p.slug}/`} class="dir-card__link">
+                    <span class="dir-card__icon" aria-hidden="true">{p.initials}</span>
+                    <span class="dir-card__body">
+                      <span class="dir-card__name">Temp mail for {p.name}</span>
+                      <span class="dir-card__meta">
+                        <span class={`dir-card__chip dir-card__chip--${p.blockingLevel}`}>
+                          {p.blockingLevel === 'low' ? 'easy' : p.blockingLevel === 'medium' ? 'medium' : 'tough'}
+                        </span>
+                        <span class="dir-card__type">
+                          {p.verificationType === 'code' ? 'Code' : p.verificationType === 'link' ? 'Magic link' : 'Code or link'}
+                          {' · '}{p.typicalWaitTime}
+                        </span>
+                      </span>
+                    </span>
+                    <svg class="dir-card__arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        );
+      })}
+
+      <footer class="foot">
+        <nav class="foot__nav" aria-label="footer">
+          <a href="/">Home</a>
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Developer API</a>
+        </nav>
+        <div class="foot__base">
+          <span>© <span id="year">2026</span> InboxForNow</span>
+          <span class="foot__sep" aria-hidden="true">·</span>
+          <span>Built on Cloudflare Workers · receive-only · no IP logs</span>
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(itemListJsonLd)} />
+
+  <style>
+    .page { padding: clamp(2rem, 1.2rem + 3vw, 4rem) clamp(1rem, 0.5rem + 2vw, 2.2rem) clamp(2rem, 3vw, 4rem); }
+    .page__inner { max-width: 1100px; margin: 0 auto; }
+
+    .dir-hero {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      padding-bottom: var(--sp-8);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: var(--sp-8);
+    }
+    .dir-hero h1 {
+      font-size: var(--fs-h1);
+      letter-spacing: -0.045em;
+      margin: 0;
+      max-width: 22ch;
+      line-height: 1.02;
+    }
+    .dir-hero p {
+      color: var(--text-2);
+      font-size: var(--fs-lead);
+      max-width: 60ch;
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    .dir-cat {
+      padding: var(--sp-7) 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .dir-cat:last-of-type { border-bottom: none; }
+
+    .dir-cat__head {
+      display: flex;
+      align-items: baseline;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin-bottom: var(--sp-4);
+    }
+    .dir-cat__head h2 {
+      font-size: var(--fs-h3);
+      font-weight: 600;
+      margin: 0;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .dir-cat__blurb {
+      color: var(--text-3);
+      font-size: var(--fs-small);
+    }
+
+    .dir-cat__grid {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .dir-card { margin: 0; }
+
+    .dir-card__link {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: var(--sp-4);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      color: var(--text);
+      text-decoration: none;
+      transition: border-color .15s ease, background-color .15s ease, transform .15s var(--ease-out);
+    }
+    .dir-card__link:hover {
+      border-color: var(--border-strong);
+      background: var(--surface-2);
+      transform: translateX(2px);
+    }
+
+    .dir-card__icon {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--r-sm);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 0.72rem;
+      color: var(--text-2);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    .dir-card__link:hover .dir-card__icon {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .dir-card__body {
+      flex: 1 1 auto;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .dir-card__name {
+      font-size: var(--fs-small);
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .dir-card__meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .dir-card__chip {
+      font-family: var(--ff-mono);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.1rem 0.4rem;
+      border-radius: var(--r-pill);
+      border: 1px solid var(--border);
+      font-weight: 600;
+    }
+    .dir-card__chip--low {
+      color: var(--data-2);
+      background: var(--data-soft);
+      border-color: var(--data-border);
+    }
+    .dir-card__chip--medium {
+      color: var(--warn);
+      background: var(--warn-soft);
+      border-color: color-mix(in srgb, var(--warn) 35%, transparent);
+    }
+    .dir-card__chip--high {
+      color: var(--danger);
+      background: var(--danger-soft);
+      border-color: color-mix(in srgb, var(--danger) 35%, transparent);
+    }
+    :root[data-theme="dark"] .dir-card__chip--low { color: var(--data); }
+    .dir-card__type {
+      font-size: var(--fs-micro);
+      color: var(--text-3);
+    }
+
+    .dir-card__arrow {
+      color: var(--text-3);
+      flex-shrink: 0;
+      transition: color .15s ease, transform .15s var(--ease-out);
+    }
+    .dir-card__link:hover .dir-card__arrow {
+      color: var(--text);
+      transform: translateX(2px);
+    }
+
+    .foot {
+      margin-top: var(--sp-7);
+      padding-top: var(--sp-7);
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-5);
+    }
+    .foot__nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.4rem;
+    }
+    .foot__nav a {
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: var(--fs-small);
+    }
+    .foot__nav a:hover { color: var(--text); }
+    .foot__base {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-top: var(--sp-4);
+      border-top: 1px solid var(--border);
+      font-size: var(--fs-micro);
+      color: var(--text-3);
+      flex-wrap: wrap;
+    }
+    .foot__sep { color: var(--text-4); }
+  </style>
+
+  <script>
+    document.getElementById('year')!.textContent = new Date().getFullYear().toString();
+  </script>
+</Layout>

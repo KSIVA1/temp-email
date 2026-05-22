@@ -1,0 +1,94 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "InboxForNow — a temporary inbox for now and only now.",
+  description = "A fast, friendly, ad-light disposable email. Get a one-use address, receive your verification, walk away.",
+} = Astro.props;
+
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+const orgJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'InboxForNow',
+  url: 'https://inboxfornow.com',
+  logo: 'https://inboxfornow.com/icons/icon-512.png',
+};
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'InboxForNow',
+  url: 'https://inboxfornow.com',
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0A0A0A" media="(prefers-color-scheme: dark)" />
+
+    {/* Social */}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:image" content="https://inboxfornow.com/og.png" />
+    <meta name="twitter:image" content="https://inboxfornow.com/og.png" />
+    <link rel="canonical" href={Astro.url.href} />
+
+    {/* PWA */}
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.svg" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="InboxForNow" />
+
+    {/* Fonts — preconnect + display swap to keep CWV strong */}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400..600&display=swap"
+    />
+
+    {turnstileSiteKey && <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(orgJsonLd)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(websiteJsonLd)} />
+
+    {/* Set theme before paint to prevent flash. Light is the brand-primary;
+        dark only ships if the visitor has explicitly toggled. */}
+    <script is:inline>
+      (function () {
+        try {
+          var saved = localStorage.getItem('ifn-theme');
+          document.documentElement.setAttribute('data-theme', saved || 'light');
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+
+    <style is:global>@import "../styles/global.css";</style>
+  </head>
+  <body>
+    <slot />
+
+    {/* PWA registration */}
+    <script is:inline>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('/sw.js').catch(function () {});
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,129 @@
+/* ── Design tokens — modern minimal tech ────────────────────────
+ * Monochrome surfaces, near-black CTAs, emerald data accent.
+ * No textures, no decorative ornaments.
+ * ─────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Surfaces */
+  --bg:            #FFFFFF;
+  --bg-soft:       #FAFAFA;
+  --surface:       #FFFFFF;
+  --surface-2:     #F4F4F5;
+  --surface-3:     #E9E9EB;
+
+  /* Borders */
+  --border:        #E4E4E7;
+  --border-strong: #D4D4D8;
+  --border-focus:  #18181B;
+
+  /* Text */
+  --text:          #09090B;
+  --text-2:        #52525B;
+  --text-3:        #A1A1AA;
+  --text-4:        #D4D4D8;
+
+  /* Accent system — black is the primary, emerald is the data signal */
+  --accent:        #0A0A0A;
+  --accent-hover:  #18181B;
+  --accent-fg:     #FAFAFA;
+
+  --data:          #059669;   /* @ sign, active states */
+  --data-2:        #047857;
+  --data-soft:     #ECFDF5;
+  --data-border:   #6EE7B7;
+
+  --warn:          #B45309;
+  --warn-soft:     #FEF3C7;
+  --danger:        #DC2626;
+  --danger-soft:   #FEE2E2;
+
+  /* Shadows — subtle, not decorative */
+  --shadow-1:      0 1px 2px 0 rgba(9,9,11,0.04);
+  --shadow-2:      0 1px 3px 0 rgba(9,9,11,0.06), 0 1px 2px -1px rgba(9,9,11,0.04);
+  --shadow-3:      0 4px 14px -2px rgba(9,9,11,0.08), 0 2px 4px -2px rgba(9,9,11,0.04);
+  --shadow-4:      0 18px 50px -12px rgba(9,9,11,0.18), 0 8px 16px -6px rgba(9,9,11,0.08);
+  --ring:          0 0 0 3px rgba(9,9,11,0.08);
+  --ring-data:     0 0 0 3px rgba(5,150,105,0.16);
+
+  /* Type scale */
+  --fs-micro:      0.75rem;    /* 12 */
+  --fs-small:      0.8125rem;  /* 13 */
+  --fs-body:       0.9375rem;  /* 15 */
+  --fs-lead:       1.0625rem;  /* 17 */
+  --fs-h3:         1.25rem;    /* 20 */
+  --fs-h2:         clamp(1.5rem, 1.25rem + 0.9vw, 2rem);
+  --fs-h1:         clamp(2.25rem, 1.6rem + 2.8vw, 3.75rem);
+  --fs-display:    clamp(2.75rem, 1.8rem + 4vw, 5.25rem);
+
+  --fs-mono-sm:    0.8125rem;
+  --fs-mono:       clamp(1.0625rem, 0.9rem + 0.8vw, 1.5rem);
+
+  /* Spacing */
+  --sp-0: 0;
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.25rem;
+  --sp-6: 1.5rem;
+  --sp-7: 2rem;
+  --sp-8: 2.5rem;
+  --sp-9: 3rem;
+  --sp-10: 4rem;
+  --sp-11: 6rem;
+
+  /* Radii */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-pill: 999px;
+
+  /* Easing */
+  --ease-out:   cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-snap:  cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  /* Type families */
+  --ff-sans: "Geist", "Geist Fallback", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --ff-mono: "Geist Mono", "SF Mono", ui-monospace, "JetBrains Mono", monospace;
+}
+
+/* Dark variant — same minimal language, inverted surfaces */
+:root[data-theme="dark"] {
+  --bg:            #0A0A0A;
+  --bg-soft:       #0F0F10;
+  --surface:       #131316;
+  --surface-2:     #18181B;
+  --surface-3:     #1F1F23;
+
+  --border:        #27272A;
+  --border-strong: #3F3F46;
+  --border-focus:  #FAFAFA;
+
+  --text:          #FAFAFA;
+  --text-2:        #A1A1AA;
+  --text-3:        #71717A;
+  --text-4:        #3F3F46;
+
+  --accent:        #FAFAFA;
+  --accent-hover:  #FFFFFF;
+  --accent-fg:     #09090B;
+
+  --data:          #10B981;
+  --data-2:        #34D399;
+  --data-soft:     #052E20;
+  --data-border:   #047857;
+
+  --warn:          #FBBF24;
+  --warn-soft:     #2E2410;
+  --danger:        #F87171;
+  --danger-soft:   #2A1212;
+
+  --shadow-1:      0 1px 2px 0 rgba(0,0,0,0.4);
+  --shadow-2:      0 1px 3px 0 rgba(0,0,0,0.5), 0 1px 2px -1px rgba(0,0,0,0.4);
+  --shadow-3:      0 4px 14px -2px rgba(0,0,0,0.5), 0 2px 4px -2px rgba(0,0,0,0.4);
+  --shadow-4:      0 18px 50px -12px rgba(0,0,0,0.6), 0 8px 16px -6px rgba(0,0,0,0.5);
+  --ring:          0 0 0 3px rgba(250,250,250,0.12);
+  --ring-data:     0 0 0 3px rgba(16,185,129,0.22);
+}

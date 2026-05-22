@@ -1,0 +1,26 @@
+"$schema" = "./node_modules/wrangler/config-schema.json"
+name = "inboxfornow-api"
+main = "src/index.ts"
+compatibility_date = "2026-05-22"
+
+[vars]
+CORS_ORIGIN = "https://inboxfornow.com"
+# Set with `wrangler secret put ADMIN_BASIC_AUTH`.
+# Value is base64("username:password") for the /admin/domains route.
+
+[[d1_databases]]
+binding = "DB"
+database_name = "inboxfornow"
+database_id = "REPLACE_WITH_WRANGLER_D1_DATABASE_ID"
+migrations_dir = "migrations"
+
+[[ratelimits]]
+name = "INBOX_GENERATION_RATE_LIMITER"
+namespace_id = "1001"
+
+  [ratelimits.simple]
+  limit = 10
+  period = 60
+
+[triggers]
+crons = ["*/5 * * * *"]

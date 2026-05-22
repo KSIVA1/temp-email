@@ -1,0 +1,320 @@
+---
+// Right column — clean inbox list. Empty state is a minimal box with a
+// pulsing dot, not an illustration. Ad slot is a quiet card at the bottom.
+const showDemo = import.meta.env.DEV;
+const showSponsored = import.meta.env.PUBLIC_SHOW_SPONSORED === 'true';
+---
+<section class="postbox" aria-labelledby="postbox-heading" data-tour="postbox">
+  <div class="postbox__head">
+    <div class="postbox__title">
+      <h2 id="postbox-heading" class="postbox__h">Inbox</h2>
+      <span class="pill" id="status-pill" data-status="waiting">
+        <span id="status-label">Waiting</span>
+      </span>
+    </div>
+    <p class="postbox__sub">
+      New messages are checked every few seconds with HTML sanitized
+      server-side.
+    </p>
+  </div>
+
+  <ul id="mail-list" class="mail">
+    {/* JS populates */}
+  </ul>
+
+  <div id="empty-state" class="empty">
+    <div class="empty__inner">
+      <div class="empty__icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+          <rect x="3" y="5" width="18" height="14" rx="2.5"/>
+          <path d="M3 7 L12 13 L21 7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h3 class="empty__h">Listening for messages<span class="empty__dots" aria-hidden="true"><span></span><span></span><span></span></span></h3>
+      <p class="empty__p">
+        Paste the address above into any signup form. The next message that
+        arrives will show up here within seconds.
+      </p>
+
+      <button class="btn btn--ghost btn--tiny empty__retry" type="button" data-api-retry hidden>
+        Tap to retry
+      </button>
+
+      {showDemo && (
+      <div class="empty__demo">
+        <span class="empty__demo-label">Or try a demo message</span>
+        <div class="empty__demo-buttons">
+          <button class="btn btn--ghost btn--tiny" type="button" data-demo="code" aria-label="Simulate a verification code message">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="3" y="11" width="18" height="11" rx="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke-linecap="round"/>
+            </svg>
+            Code email
+          </button>
+          <button class="btn btn--ghost btn--tiny" type="button" data-demo="link" aria-label="Simulate a magic link message">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M10 13a5 5 0 0 0 7.5.5L21 10a5 5 0 0 0-7-7l-2 2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 11a5 5 0 0 0-7-.5L3.5 14a5 5 0 0 0 7 7l2-2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Magic link
+          </button>
+          <button class="btn btn--ghost btn--tiny" type="button" data-demo="news" aria-label="Simulate a newsletter confirmation">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M4 4h12a2 2 0 0 1 2 2v14H6a2 2 0 0 1-2-2zM18 8h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M8 8h6M8 12h6M8 16h4" stroke-linecap="round"/>
+            </svg>
+            Newsletter
+          </button>
+        </div>
+      </div>
+      )}
+    </div>
+  </div>
+
+  {showSponsored && (
+  <aside class="ad">
+    <span class="label">
+      <span class="label__dot label__dot--idle" aria-hidden="true"></span>
+      Sponsored
+    </span>
+    <div class="ad__row">
+      <div class="ad__copy">
+        <strong>NordVPN</strong>
+        <span>Encrypt your traffic while you wait. Two-year plans from $2.99/mo.</span>
+      </div>
+      <a class="btn btn--tiny btn--ghost ad__cta" href="#" rel="sponsored nofollow">
+        View offer
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </aside>
+  )}
+</section>
+
+<style>
+  .postbox {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+    min-height: 100%;
+  }
+
+  .postbox__head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-bottom: var(--sp-3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .postbox__title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
+  }
+
+  .postbox__h {
+    font-size: var(--fs-h2);
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .postbox__sub {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    margin: 0;
+    line-height: 1.5;
+    max-width: 52ch;
+  }
+
+  /* Mail list */
+  .mail {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-height: 0;
+  }
+
+  /* Empty state — minimal */
+  .empty {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: var(--sp-8) var(--sp-6);
+    text-align: center;
+    box-shadow: var(--shadow-1);
+  }
+  .empty__inner {
+    max-width: 38ch;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-3);
+  }
+  .empty__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--r-md);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    display: grid;
+    place-items: center;
+    margin-bottom: var(--sp-2);
+    position: relative;
+    z-index: 1;
+  }
+  .empty__icon::after {
+    content: "";
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--data);
+    box-shadow: 0 0 0 3px var(--data-soft);
+    animation: pulse 1.6s ease-in-out infinite;
+    z-index: 2;
+  }
+
+  /* Radar-ping ripple — three concentric circles that scale + fade out */
+  .empty__icon::before {
+    content: "";
+    position: absolute;
+    inset: -10px;
+    border-radius: var(--r-md);
+    border: 1px solid var(--data);
+    opacity: 0;
+    animation: emptyRipple 2.4s ease-out infinite;
+    z-index: 0;
+  }
+  @keyframes emptyRipple {
+    0%   { transform: scale(1);   opacity: 0.42; }
+    80%  { transform: scale(1.7); opacity: 0; }
+    100% { transform: scale(1.7); opacity: 0; }
+  }
+  .empty__h {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+    letter-spacing: -0.02em;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.15em;
+  }
+  .empty__dots {
+    display: inline-flex;
+    gap: 0.15em;
+    margin-left: 0.1em;
+  }
+  .empty__dots span {
+    width: 4px;
+    height: 4px;
+    background: var(--text-3);
+    border-radius: 50%;
+    animation: dotPulse 1.4s ease-in-out infinite;
+  }
+  .empty__dots span:nth-child(2) { animation-delay: 0.18s; }
+  .empty__dots span:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes dotPulse {
+    0%, 80%, 100% { opacity: 0.25; transform: translateY(0); }
+    40%           { opacity: 1;    transform: translateY(-2px); }
+  }
+  .empty__p {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    margin: 0;
+    line-height: 1.55;
+  }
+  .empty__retry[hidden] { display: none; }
+  .empty[data-error="true"] .empty__icon::after,
+  .empty[data-error="true"] .empty__icon::before {
+    animation: none;
+    background: var(--danger);
+    border-color: var(--danger);
+  }
+
+  /* Demo message picker — three labeled choices replacing the random sim button */
+  .empty__demo {
+    margin-top: var(--sp-3);
+    padding-top: var(--sp-4);
+    border-top: 1px dashed var(--border-strong);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-2);
+    width: 100%;
+    max-width: 360px;
+  }
+  .empty__demo-label {
+    font-size: var(--fs-micro);
+    color: var(--text-3);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .empty__demo-buttons {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    justify-content: center;
+  }
+  .empty__demo-buttons .btn {
+    color: var(--text-2);
+  }
+  .empty__demo-buttons .btn:hover {
+    color: var(--text);
+    border-color: var(--data-border);
+    background: var(--data-soft);
+  }
+
+  .mail.has-items + .empty { display: none; }
+
+  /* Ad slot */
+  .ad {
+    margin-top: auto;
+    padding: var(--sp-4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+  }
+  .ad__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
+    flex-wrap: wrap;
+  }
+  .ad__copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+  .ad__copy strong {
+    color: var(--text);
+    font-weight: 600;
+    font-size: var(--fs-body);
+    letter-spacing: -0.01em;
+  }
+  .ad__copy span {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.45;
+  }
+  .ad__cta {
+    flex-shrink: 0;
+  }
+</style>

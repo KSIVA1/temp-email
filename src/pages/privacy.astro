@@ -1,0 +1,35 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Header from '~/components/Header.astro';
+---
+<Layout
+  title="Privacy — InboxForNow"
+  description="InboxForNow privacy policy for temporary receive-only email inboxes."
+>
+  <Header />
+  <main class="legal">
+    <article class="legal__body">
+      <p class="label"><span class="label__dot" aria-hidden="true"></span>Privacy</p>
+      <h1>Privacy Policy</h1>
+      <p>InboxForNow provides temporary, receive-only email inboxes. We do not ask for an account and we do not require your real email address.</p>
+      <h2>What we store</h2>
+      <p>We store generated inbox addresses and received email content only until the inbox timer expires or you delete the inbox. Expired inboxes and messages are hard-deleted by scheduled cleanup.</p>
+      <h2>What we do not log</h2>
+      <p>We do not intentionally log visitor IP addresses, sell personal data, or use third-party tracking cookies. The app uses localStorage to remember your theme and lightweight preferences on your device.</p>
+      <h2>Email content</h2>
+      <p>Email HTML is sanitized before display. Attachments are dropped. Email content is not retained beyond the inbox TTL.</p>
+      <h2>Sub-processors</h2>
+      <p>InboxForNow runs on Cloudflare, including Cloudflare Pages, Workers, D1, Email Routing, Turnstile, and Web Analytics. Cloudflare processes traffic and infrastructure events needed to operate the service.</p>
+      <h2>Contact</h2>
+      <p>For privacy requests, contact the site owner through the administrative email configured for inboxfornow.com.</p>
+    </article>
+  </main>
+</Layout>
+
+<style>
+  .legal { padding: clamp(2rem, 1.2rem + 3vw, 4rem) clamp(1rem, 0.5rem + 2vw, 2.2rem); }
+  .legal__body { max-width: 760px; margin: 0 auto; color: var(--text); }
+  .legal__body h1 { font-size: var(--fs-h1); margin: var(--sp-2) 0 var(--sp-5); }
+  .legal__body h2 { font-size: 1rem; margin: var(--sp-6) 0 var(--sp-2); }
+  .legal__body p { color: var(--text-2); line-height: 1.65; }
+</style>

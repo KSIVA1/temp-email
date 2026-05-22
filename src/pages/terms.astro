@@ -1,0 +1,35 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Header from '~/components/Header.astro';
+---
+<Layout
+  title="Terms — InboxForNow"
+  description="InboxForNow terms of service for temporary receive-only email inboxes."
+>
+  <Header />
+  <main class="legal">
+    <article class="legal__body">
+      <p class="label"><span class="label__dot" aria-hidden="true"></span>Terms</p>
+      <h1>Terms of Service</h1>
+      <p>InboxForNow is a temporary, receive-only email utility. You may use it to receive verification emails, magic links, and similar low-risk messages.</p>
+      <h2>Receive-only architecture</h2>
+      <p>The service does not provide outbound email. You cannot send, reply to, relay, or impersonate mail through InboxForNow.</p>
+      <h2>Prohibited use</h2>
+      <p>Do not use InboxForNow for fraud, harassment, credential theft, spam, illegal activity, or attempts to evade platform rules where temporary email is not allowed.</p>
+      <h2>No warranty</h2>
+      <p>The service is provided as-is. Inboxes may expire, be deleted, fail to receive a message, or be blocked by third-party platforms without notice.</p>
+      <h2>Abuse handling</h2>
+      <p>We may reject inbound messages, disable receiving domains, or delete inboxes when needed to protect users, platforms, or infrastructure.</p>
+      <h2>Jurisdiction</h2>
+      <p>These terms are governed by the laws applicable to the service operator's place of business, without regard to conflict-of-law rules.</p>
+    </article>
+  </main>
+</Layout>
+
+<style>
+  .legal { padding: clamp(2rem, 1.2rem + 3vw, 4rem) clamp(1rem, 0.5rem + 2vw, 2.2rem); }
+  .legal__body { max-width: 760px; margin: 0 auto; color: var(--text); }
+  .legal__body h1 { font-size: var(--fs-h1); margin: var(--sp-2) 0 var(--sp-5); }
+  .legal__body h2 { font-size: 1rem; margin: var(--sp-6) 0 var(--sp-2); }
+  .legal__body p { color: var(--text-2); line-height: 1.65; }
+</style>

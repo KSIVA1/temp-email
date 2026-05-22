@@ -1,0 +1,467 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Header from '~/components/Header.astro';
+import AddressCard from '~/components/AddressCard.astro';
+import Postbox from '~/components/Postbox.astro';
+import EmailReader from '~/components/EmailReader.astro';
+import OnboardingTour from '~/components/OnboardingTour.astro';
+import { platformMap } from '~/data/platforms';
+
+const popular = ['discord', 'reddit', 'chatgpt', 'github', 'steam', 'twitter', 'netflix', 'paypal']
+  .map((s) => platformMap[s])
+  .filter(Boolean);
+---
+<Layout>
+  <Header />
+
+  <main class="page" id="top">
+    <div class="page__inner">
+
+      <section class="grid">
+        <div class="grid__col grid__col--address">
+          <AddressCard />
+        </div>
+
+        <div class="grid__col grid__col--postbox">
+          <Postbox />
+        </div>
+      </section>
+
+      <section class="popular" aria-labelledby="popular-heading">
+        <header class="popular__head">
+          <span class="label"><span class="label__dot label__dot--idle" aria-hidden="true"></span>Popular use cases</span>
+          <h2 id="popular-heading">Tuned for the platforms people use most</h2>
+          <p>Each page shows what to expect from that platform's verification flow — sender, subject, wait time, and the gotchas to watch for.</p>
+        </header>
+        <ul class="popular__grid">
+          {popular.map((p) => (
+            <li class="popular__card">
+              <a href={`/use-case/${p.slug}/`} class="popular__link">
+                <span class="popular__icon" aria-hidden="true">{p.initials}</span>
+                <span class="popular__body">
+                  <span class="popular__name">{p.name}</span>
+                  <span class="popular__sub">Temporary email · {p.verificationType === 'code' ? 'code' : 'magic link'}</span>
+                </span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="popular__arrow" aria-hidden="true">
+                  <path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <a href="/use-case/" class="popular__all">
+          See all platforms
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </section>
+
+      <footer class="foot">
+        <div class="foot__inner">
+          <div class="foot__brand">
+            <span class="foot__mark" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="2.5" y="5.5" width="19" height="13" rx="2.5"/>
+                <path d="M3 7 L12 13 L21 7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span>InboxForNow</span>
+            <span class="foot__sep" aria-hidden="true">·</span>
+            <span class="foot__tag">A free, ad-light disposable inbox.</span>
+          </div>
+
+          <nav class="foot__nav" aria-label="footer">
+            <a href="/privacy/">Privacy</a>
+            <a href="/terms/">Terms</a>
+            <a href="#" data-tour-replay>Replay tour</a>
+          </nav>
+
+          <div class="foot__base">
+            <span>© <span id="year">2026</span> InboxForNow</span>
+            <span class="foot__sep" aria-hidden="true">·</span>
+            <span>Built on Cloudflare Workers · receive-only · no IP logs</span>
+            <span class="foot__sep" aria-hidden="true">·</span>
+            <span>We use localStorage to remember your theme. We do not set tracking cookies.</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <EmailReader />
+  <OnboardingTour />
+
+  {/* Toast — content is injected by app.ts */}
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <style>
+    .page {
+      padding: clamp(2rem, 1.2rem + 3vw, 4rem) clamp(1rem, 0.5rem + 2vw, 2.2rem) clamp(2rem, 3vw, 4rem);
+    }
+    .page__inner {
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+
+    /* Two-column grid */
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      gap: clamp(2rem, 1rem + 3vw, 4rem);
+      align-items: start;
+    }
+    .grid__col { min-width: 0; }
+
+    @media (max-width: 960px) {
+      .grid {
+        grid-template-columns: 1fr;
+        gap: clamp(2.5rem, 5vw, 3.5rem);
+      }
+    }
+
+    /* Popular use cases */
+    .popular {
+      margin-top: clamp(3rem, 6vw, 5rem);
+      padding-top: var(--sp-8);
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-5);
+    }
+    .popular__head {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+      max-width: 56ch;
+    }
+    .popular__head h2 {
+      font-size: var(--fs-h2);
+      margin: 0;
+      color: var(--text);
+    }
+    .popular__head p {
+      color: var(--text-2);
+      font-size: var(--fs-small);
+      margin: 0;
+      line-height: 1.55;
+    }
+    .popular__grid {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.5rem;
+    }
+    .popular__card { margin: 0; }
+    .popular__link {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.75rem 0.85rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      color: var(--text);
+      text-decoration: none;
+      transition: border-color .15s ease, background-color .15s ease, transform .15s var(--ease-out);
+    }
+    .popular__link:hover {
+      border-color: var(--border-strong);
+      background: var(--surface-2);
+      transform: translateX(2px);
+    }
+    .popular__icon {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--r-sm);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      font-size: 0.66rem;
+      font-weight: 600;
+      color: var(--text-2);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    .popular__link:hover .popular__icon { background: var(--surface); color: var(--text); }
+    .popular__body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 0.05rem; }
+    .popular__name { font-size: var(--fs-small); font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+    .popular__sub  { font-size: var(--fs-micro); color: var(--text-3); }
+    .popular__arrow { color: var(--text-3); flex-shrink: 0; transition: color .15s ease, transform .15s var(--ease-out); }
+    .popular__link:hover .popular__arrow { color: var(--text); transform: translateX(2px); }
+    .popular__all {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: var(--fs-small);
+      font-weight: 500;
+      padding: 0.45rem 0.85rem;
+      border-radius: var(--r-md);
+      transition: color .15s ease, background-color .15s ease;
+    }
+    .popular__all:hover { color: var(--text); background: var(--surface-2); }
+
+    /* Footer */
+    .foot {
+      margin-top: clamp(4rem, 8vw, 7rem);
+      padding-top: var(--sp-7);
+      border-top: 1px solid var(--border);
+    }
+    .foot__inner {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-5);
+    }
+    .foot__brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: var(--fs-small);
+      color: var(--text);
+      flex-wrap: wrap;
+    }
+    .foot__mark {
+      display: inline-grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      border-radius: var(--r-xs);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-2);
+    }
+    .foot__tag {
+      color: var(--text-2);
+    }
+    .foot__sep {
+      color: var(--text-4);
+    }
+
+    .foot__nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.4rem;
+    }
+    .foot__nav a {
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: var(--fs-small);
+      transition: color .15s ease;
+    }
+    .foot__nav a:hover { color: var(--text); }
+
+    .foot__base {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-top: var(--sp-4);
+      border-top: 1px solid var(--border);
+      font-size: var(--fs-micro);
+      color: var(--text-3);
+      flex-wrap: wrap;
+    }
+
+    /* Envelope card styling — used by JS-rendered mail list */
+    :global(.envelope) {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    :global(.envelope__btn) {
+      width: 100%;
+      appearance: none;
+      cursor: pointer;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 0.7rem 0.85rem;
+      display: grid;
+      grid-template-columns: 32px 1fr auto;
+      gap: 0.7rem;
+      align-items: center;
+      text-align: left;
+      color: var(--text);
+      transition: background-color .15s ease,
+                  border-color .15s ease,
+                  box-shadow .15s ease,
+                  transform .15s var(--ease-out);
+      box-shadow: var(--shadow-1);
+      position: relative;
+    }
+    :global(.envelope__btn:hover) {
+      border-color: var(--border-strong);
+      background: var(--surface-2);
+    }
+    :global(.envelope__btn:focus-visible) {
+      outline: none;
+      box-shadow: var(--ring);
+      border-color: var(--border-focus);
+    }
+    :global(.envelope--new .envelope__btn) {
+      border-color: var(--data-border);
+      background:
+        linear-gradient(0deg, var(--data-soft) 0%, var(--surface) 80%);
+    }
+    :root[data-theme="dark"] :global(.envelope--new .envelope__btn) {
+      background:
+        linear-gradient(0deg, var(--data-soft) 0%, var(--surface) 80%);
+    }
+
+    /* Mail-arrival entrance animation */
+    :global(.envelope--enter) {
+      animation: envelopeEnter .55s var(--ease-out) both;
+    }
+    :global(.envelope--enter .envelope__btn) {
+      animation: envelopeShine 1.1s var(--ease-out) .1s 1;
+    }
+    @keyframes envelopeEnter {
+      0%   { opacity: 0; transform: translateY(-10px) scale(0.98); }
+      60%  { opacity: 1; }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes envelopeShine {
+      0%   { box-shadow: 0 0 0 0 rgba(5,150,105,0.22); }
+      40%  { box-shadow: 0 0 0 8px rgba(5,150,105,0.0); }
+      100% { box-shadow: var(--shadow-1); }
+    }
+
+    :global(.envelope__stamp) {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--r-sm);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      font-family: var(--ff-sans);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--text-2);
+    }
+    :global(.envelope--new .envelope__stamp) {
+      background: var(--surface);
+      border-color: var(--data-border);
+      color: var(--data-2);
+    }
+    :global(.envelope__stamp .postmark) {
+      all: unset;
+      display: contents;
+    }
+    :global(.envelope__stamp .postmark__inner) {
+      all: unset;
+      display: contents;
+    }
+
+    :global(.envelope__body) {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.05rem;
+    }
+    :global(.envelope__top) {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    :global(.envelope__from) {
+      font-weight: 600;
+      font-size: var(--fs-small);
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    :global(.envelope__time) {
+      font-family: var(--ff-mono);
+      font-size: 0.7rem;
+      color: var(--text-3);
+      letter-spacing: -0.005em;
+      white-space: nowrap;
+      font-weight: 400;
+    }
+    :global(.envelope__subject) {
+      font-size: var(--fs-small);
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 500;
+    }
+    :global(.envelope__bottom) {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 0;
+    }
+    :global(.envelope__preview) {
+      font-size: 0.8125rem;
+      color: var(--text-2);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    :global(.envelope__code) {
+      font-family: var(--ff-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--data-2);
+      background: var(--data-soft);
+      border: 1px solid var(--data-border);
+      padding: 0.12rem 0.4rem;
+      border-radius: var(--r-sm);
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+    :root[data-theme="dark"] :global(.envelope__code) { color: var(--data); }
+    :global(.envelope__dot) {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--data);
+      box-shadow: 0 0 0 3px var(--data-soft);
+      align-self: center;
+      flex-shrink: 0;
+    }
+
+    /* Copy button flash */
+    :global(.btn--flash) {
+      animation: copyFlash .4s var(--ease-out);
+    }
+    @keyframes copyFlash {
+      0%   { box-shadow: var(--shadow-2); }
+      40%  { box-shadow: var(--ring-data); }
+      100% { box-shadow: var(--shadow-2); }
+    }
+
+    /* Hero entrance — minimal staggered fade */
+    .grid__col > * { opacity: 0; transform: translateY(4px); animation: settle .55s var(--ease-out) forwards; }
+    .grid__col--address > *:nth-child(1) { animation-delay: 0.04s; }
+    .grid__col--address > *:nth-child(2) { animation-delay: 0.10s; }
+    .grid__col--address > *:nth-child(3) { animation-delay: 0.16s; }
+    .grid__col--address > *:nth-child(4) { animation-delay: 0.22s; }
+    .grid__col--address > *:nth-child(5) { animation-delay: 0.28s; }
+    .grid__col--address > *:nth-child(6) { animation-delay: 0.34s; }
+    .grid__col--postbox > *:nth-child(1) { animation-delay: 0.16s; }
+    .grid__col--postbox > *:nth-child(2) { animation-delay: 0.22s; }
+    .grid__col--postbox > *:nth-child(3) { animation-delay: 0.28s; }
+    .grid__col--postbox > *:nth-child(4) { animation-delay: 0.34s; }
+
+    @keyframes settle {
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+  <script>
+    document.getElementById('year')!.textContent = new Date().getFullYear().toString();
+  </script>
+
+  <script src="../scripts/app.ts"></script>
+  <script src="../scripts/pwa.ts"></script>
+</Layout>

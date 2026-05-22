@@ -1,0 +1,154 @@
+---
+// Modern masthead: monoline envelope mark + single-weight wordmark,
+// utility row on the right (install + theme).
+---
+<header class="masthead">
+  <div class="masthead__inner">
+    <a class="brand" href="/" aria-label="InboxForNow home">
+      <span class="brand__mark" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <rect x="2.5" y="5.5" width="19" height="13" rx="2.5" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M3 7 L12 13 L21 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="19" cy="6" r="2.4" fill="var(--data)" stroke="var(--bg)" stroke-width="1.4"/>
+        </svg>
+      </span>
+      <span class="brand__name">InboxForNow</span>
+    </a>
+
+    <nav class="masthead__nav" aria-label="utilities">
+      <a class="masthead__link" href="/privacy/">Privacy</a>
+      <a class="masthead__link" href="/terms/">Terms</a>
+
+      <span class="masthead__sep" aria-hidden="true"></span>
+
+      <button id="install-btn" class="btn btn--tiny btn--ghost" hidden type="button">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Install app
+      </button>
+
+      <button id="sound-toggle" class="btn btn--icon btn--ghost" type="button" aria-label="Enable notification sound" aria-pressed="false">
+        <svg class="sound-icon sound-icon--off" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M11 5 6 9H3a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h3l5 4V5zM22 9l-6 6M16 9l6 6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg class="sound-icon sound-icon--on" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M11 5 6 9H3a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h3l5 4V5zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <button id="notif-toggle" class="btn btn--icon btn--ghost" type="button" aria-label="Enable desktop notifications" aria-pressed="false">
+        <svg class="notif-icon notif-icon--off" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M13.73 21a2 2 0 0 1-3.46 0M2 2l20 20" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg class="notif-icon notif-icon--on" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M13.73 21a2 2 0 0 1-3.46 0" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <button id="theme-toggle" class="btn btn--icon btn--ghost" type="button" aria-label="Toggle theme">
+        <svg class="theme-icon theme-icon--sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke-linecap="round"/>
+        </svg>
+        <svg class="theme-icon theme-icon--moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .masthead {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+  }
+
+  .masthead__inner {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0.75rem clamp(1rem, 0.5rem + 2vw, 2rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    height: 56px;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    text-decoration: none;
+    color: var(--text);
+    font-family: var(--ff-sans);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .brand__mark {
+    display: inline-grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--r-sm);
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .brand__name {
+    line-height: 1;
+  }
+
+  .masthead__nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .masthead__link {
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: var(--fs-small);
+    font-weight: 500;
+    padding: 0.3rem 0.55rem;
+    border-radius: var(--r-sm);
+    transition: color .15s ease, background-color .15s ease;
+  }
+  .masthead__link:hover {
+    color: var(--text);
+    background: var(--surface-2);
+  }
+
+  .masthead__sep {
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+    margin: 0 0.25rem;
+  }
+
+  @media (max-width: 560px) {
+    .masthead__link { display: none; }
+    .masthead__sep { display: none; }
+  }
+
+  .theme-icon { transition: opacity .15s ease; }
+  .theme-icon--sun { display: block; }
+  .theme-icon--moon { display: none; }
+  :root[data-theme="dark"] .theme-icon--sun { display: none; }
+  :root[data-theme="dark"] .theme-icon--moon { display: block; }
+
+  /* Sound + notification toggles — show the opposite icon based on state */
+  .sound-icon, .notif-icon { transition: opacity .15s ease; }
+  .sound-icon--on, .notif-icon--on { display: none; }
+  #sound-toggle[aria-pressed="true"] .sound-icon--off { display: none; }
+  #sound-toggle[aria-pressed="true"] .sound-icon--on  { display: block; }
+  #notif-toggle[aria-pressed="true"] .notif-icon--off { display: none; }
+  #notif-toggle[aria-pressed="true"] .notif-icon--on  { display: block; }
+</style>

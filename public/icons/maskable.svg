@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  {/* Maskable: safe zone is the inner 40% radius circle. Mark sits inside it. */}
+  <rect width="512" height="512" fill="#0A0A0A"/>
+
+  <g transform="translate(140 200)">
+    <rect x="0" y="0" width="232" height="148" rx="22" fill="none" stroke="#FAFAFA" stroke-width="16"/>
+    <path d="M10 12 L116 100 L222 12" fill="none" stroke="#FAFAFA" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="206" cy="-4" r="30" fill="#10B981" stroke="#0A0A0A" stroke-width="16"/>
+  </g>
+</svg>

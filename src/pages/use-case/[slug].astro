@@ -1,0 +1,237 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Layout from '~/layouts/Layout.astro';
+import Header from '~/components/Header.astro';
+import AddressCard from '~/components/AddressCard.astro';
+import Postbox from '~/components/Postbox.astro';
+import EmailReader from '~/components/EmailReader.astro';
+import OnboardingTour from '~/components/OnboardingTour.astro';
+import UseCaseHero from '~/components/UseCaseHero.astro';
+import UseCaseHowItWorks from '~/components/UseCaseHowItWorks.astro';
+import UseCaseFAQs from '~/components/UseCaseFAQs.astro';
+import UseCaseRelated from '~/components/UseCaseRelated.astro';
+import { platforms, type Platform } from '~/data/platforms';
+
+export const getStaticPaths: GetStaticPaths = () => {
+  return platforms.map((p) => ({
+    params: { slug: p.slug },
+    props: { platform: p },
+  }));
+};
+
+interface Props { platform: Platform; }
+const { platform } = Astro.props;
+
+const title = `Temporary email for ${platform.name} — InboxForNow`;
+const description = `Bypass ${platform.name}'s email gate with a free, instant disposable inbox. ${platform.privacyAngle.slice(0, 110)}`;
+
+// JSON-LD for the WebPage itself
+const webPageJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: `Temporary email for ${platform.name}`,
+  description,
+  url: `https://inboxfornow.com/use-case/${platform.slug}/`,
+  isPartOf: { '@type': 'WebSite', name: 'InboxForNow', url: 'https://inboxfornow.com' },
+  about: { '@type': 'Thing', name: platform.name },
+};
+
+const kicker  = `For ${platform.name} · live`;
+const heading = `Your ${platform.name} inbox`;
+const sub     = `Generated below. Copy it into ${platform.name}'s signup and the verification will land here.`;
+---
+<Layout title={title} description={description}>
+  <Header />
+
+  <main class="page" id="top">
+    <div class="page__inner">
+      <UseCaseHero platform={platform} />
+
+      <section class="grid">
+        <div class="grid__col grid__col--address">
+          <AddressCard kicker={kicker} heading={heading} sub={sub} />
+        </div>
+        <div class="grid__col grid__col--postbox">
+          <Postbox />
+        </div>
+      </section>
+
+      <UseCaseHowItWorks platform={platform} />
+      <UseCaseFAQs platform={platform} />
+      <UseCaseRelated platform={platform} />
+
+      <footer class="foot">
+        <div class="foot__inner">
+          <nav class="foot__nav" aria-label="footer">
+            <a href="/">Home</a>
+            <a href="/use-case/">All platforms</a>
+            <a href="/privacy/">Privacy</a>
+            <a href="/terms/">Terms</a>
+            <a href="#" data-tour-replay>Show me how</a>
+          </nav>
+          <div class="foot__base">
+            <span>© <span id="year">2026</span> InboxForNow</span>
+            <span class="foot__sep" aria-hidden="true">·</span>
+            <span>Built on Cloudflare Workers · receive-only · no IP logs</span>
+            <span class="foot__sep" aria-hidden="true">·</span>
+            <span>We use localStorage to remember your theme. We do not set tracking cookies.</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <EmailReader />
+  <OnboardingTour />
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(webPageJsonLd)} />
+  <script>
+    document.getElementById('year')!.textContent = new Date().getFullYear().toString();
+  </script>
+
+  <style>
+    .page { padding: clamp(2rem, 1.2rem + 3vw, 4rem) clamp(1rem, 0.5rem + 2vw, 2.2rem) clamp(2rem, 3vw, 4rem); }
+    .page__inner { max-width: 1320px; margin: 0 auto; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      gap: clamp(2rem, 1rem + 3vw, 4rem);
+      align-items: start;
+      padding-bottom: var(--sp-7);
+      border-bottom: 1px solid var(--border);
+    }
+    .grid__col { min-width: 0; }
+    @media (max-width: 960px) {
+      .grid {
+        grid-template-columns: 1fr;
+        gap: clamp(2.5rem, 5vw, 3.5rem);
+      }
+    }
+
+    .foot {
+      margin-top: var(--sp-7);
+      padding-top: var(--sp-7);
+      border-top: 1px solid var(--border);
+    }
+    .foot__inner {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-5);
+    }
+    .foot__nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.4rem;
+    }
+    .foot__nav a {
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: var(--fs-small);
+    }
+    .foot__nav a:hover { color: var(--text); }
+    .foot__base {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-top: var(--sp-4);
+      border-top: 1px solid var(--border);
+      font-size: var(--fs-micro);
+      color: var(--text-3);
+      flex-wrap: wrap;
+    }
+    .foot__sep { color: var(--text-4); }
+
+    /* Envelope card styling — re-declared since this page also has the inbox.
+       (Both index and [slug] include the same component, but Astro scopes
+        styles per file. Globals live in global.css.) */
+    :global(.envelope) { margin: 0; padding: 0; list-style: none; }
+    :global(.envelope__btn) {
+      width: 100%;
+      appearance: none;
+      cursor: pointer;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 0.7rem 0.85rem;
+      display: grid;
+      grid-template-columns: 32px 1fr auto;
+      gap: 0.7rem;
+      align-items: center;
+      text-align: left;
+      color: var(--text);
+      box-shadow: var(--shadow-1);
+      transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease, transform .15s var(--ease-out);
+    }
+    :global(.envelope__btn:hover) {
+      border-color: var(--border-strong);
+      background: var(--surface-2);
+    }
+    :global(.envelope__btn:focus-visible) {
+      outline: none;
+      box-shadow: var(--ring);
+      border-color: var(--border-focus);
+    }
+    :global(.envelope--new .envelope__btn) {
+      border-color: var(--data-border);
+      background: linear-gradient(0deg, var(--data-soft) 0%, var(--surface) 80%);
+    }
+    :global(.envelope--enter) { animation: envelopeEnter .55s var(--ease-out) both; }
+    @keyframes envelopeEnter {
+      0%   { opacity: 0; transform: translateY(-10px) scale(0.98); }
+      60%  { opacity: 1; }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    :global(.envelope__stamp) {
+      width: 32px; height: 32px;
+      border-radius: var(--r-sm);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: grid; place-items: center;
+      font-family: var(--ff-sans);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--text-2);
+    }
+    :global(.envelope--new .envelope__stamp) {
+      background: var(--surface);
+      border-color: var(--data-border);
+      color: var(--data-2);
+    }
+    :global(.envelope__body) { min-width: 0; display: flex; flex-direction: column; gap: 0.05rem; }
+    :global(.envelope__top) { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+    :global(.envelope__from) { font-weight: 600; font-size: var(--fs-small); color: var(--text); letter-spacing: -0.01em; }
+    :global(.envelope__time) { font-family: var(--ff-mono); font-size: 0.7rem; color: var(--text-3); white-space: nowrap; }
+    :global(.envelope__subject) { font-size: var(--fs-small); color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+    :global(.envelope__bottom) { display: flex; align-items: center; gap: 0.5rem; min-width: 0; }
+    :global(.envelope__preview) { font-size: 0.8125rem; color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1 1 auto; min-width: 0; }
+    :global(.envelope__code) {
+      font-family: var(--ff-mono); font-size: 0.72rem; font-weight: 600;
+      color: var(--data-2); background: var(--data-soft);
+      border: 1px solid var(--data-border);
+      padding: 0.12rem 0.4rem; border-radius: var(--r-sm);
+      letter-spacing: 0.04em; flex-shrink: 0;
+    }
+    :root[data-theme="dark"] :global(.envelope__code) { color: var(--data); }
+    :global(.envelope__dot) {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--data); box-shadow: 0 0 0 3px var(--data-soft);
+      align-self: center; flex-shrink: 0;
+    }
+    :global(.btn--flash) { animation: copyFlash .4s var(--ease-out); }
+    @keyframes copyFlash {
+      0%   { box-shadow: var(--shadow-2); }
+      40%  { box-shadow: var(--ring-data); }
+      100% { box-shadow: var(--shadow-2); }
+    }
+  </style>
+
+  <script>
+    document.getElementById('year')!.textContent = new Date().getFullYear().toString();
+  </script>
+
+  <script src="../../scripts/app.ts"></script>
+  <script src="../../scripts/pwa.ts"></script>
+</Layout>

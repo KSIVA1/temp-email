@@ -1,0 +1,159 @@
+---
+import type { Platform } from '~/data/platforms';
+import { getRelated, CATEGORIES } from '~/data/platforms';
+
+interface Props { platform: Platform; }
+const { platform } = Astro.props;
+const related = getRelated(platform);
+---
+<section class="uc-related" aria-labelledby="uc-related-heading">
+  <div class="uc-related__head">
+    <span class="label"><span class="label__dot label__dot--idle" aria-hidden="true"></span>Other platforms</span>
+    <h2 id="uc-related-heading">Temp mail for other services</h2>
+  </div>
+
+  <ul class="uc-related__grid">
+    {related.map((p) => (
+      <li class="uc-related__card">
+        <a href={`/use-case/${p.slug}/`} class="uc-related__link">
+          <span class="uc-related__icon" aria-hidden="true">{p.initials}</span>
+          <span class="uc-related__body">
+            <span class="uc-related__name">Temp mail for {p.name}</span>
+            <span class="uc-related__category">{CATEGORIES[p.category].label} · {p.typicalWaitTime}</span>
+          </span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="uc-related__arrow" aria-hidden="true">
+            <path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  <div class="uc-related__foot">
+    <a href="/use-case/" class="uc-related__more">
+      See all platforms
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<style>
+  .uc-related {
+    padding: var(--sp-8) 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-5);
+  }
+
+  .uc-related__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+  .uc-related__head h2 {
+    font-size: var(--fs-h2);
+    margin: 0;
+    color: var(--text);
+  }
+
+  .uc-related__grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .uc-related__card { margin: 0; }
+
+  .uc-related__link {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    padding: var(--sp-4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color .15s ease, background-color .15s ease, transform .15s var(--ease-out);
+  }
+  .uc-related__link:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-2);
+    transform: translateX(2px);
+  }
+
+  .uc-related__icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--r-sm);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.02em;
+    color: var(--text-2);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .uc-related__link:hover .uc-related__icon {
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .uc-related__body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  .uc-related__name {
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .uc-related__category {
+    font-size: var(--fs-micro);
+    color: var(--text-3);
+    letter-spacing: 0.02em;
+  }
+
+  .uc-related__arrow {
+    color: var(--text-3);
+    flex-shrink: 0;
+    transition: color .15s ease, transform .15s var(--ease-out);
+  }
+  .uc-related__link:hover .uc-related__arrow {
+    color: var(--text);
+    transform: translateX(2px);
+  }
+
+  .uc-related__foot {
+    display: flex;
+    justify-content: center;
+    padding-top: var(--sp-2);
+  }
+  .uc-related__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: var(--fs-small);
+    font-weight: 500;
+    padding: 0.45rem 0.85rem;
+    border-radius: var(--r-md);
+    transition: color .15s ease, background-color .15s ease;
+  }
+  .uc-related__more:hover {
+    color: var(--text);
+    background: var(--surface-2);
+  }
+</style>
