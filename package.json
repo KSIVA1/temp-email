@@ -9,7 +9,14 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview --host",
-    "astro": "astro"
+    "astro": "astro",
+    "infra:namecheap:verify": "node infra/scripts/namecheap-verify.mjs",
+    "infra:namecheap:point-ns": "node infra/scripts/namecheap-point-ns.mjs",
+    "infra:cf-add-zones": "node infra/scripts/cloudflare-add-zones.mjs",
+    "infra:pages-dns": "node infra/scripts/cloudflare-pages-dns.mjs",
+    "infra:email-routing": "bash infra/scripts/setup-email-routing.sh",
+    "infra:verify-dns": "node infra/scripts/verify-dns.mjs",
+    "infra:deploy-worker": "bash infra/scripts/deploy-worker.sh"
   },
   "dependencies": {
     "astro": "^6.3.7"

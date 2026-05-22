@@ -21,15 +21,17 @@ This document lists every concrete task required to ship a launch-ready MVP per 
 
 ## 1. Domains & DNS
 
-- [ ] Confirm `veqla.com` is registered and accessible. It is the **sole** receiving domain for MVP. Naming passes the strategy §9 test — no `temp/trash/burner/disposable` substrings, innocuous-sounding, `.com` TLD.
-- [ ] Add both domains (`inboxfornow.com` + `veqla.com`) to the existing Cloudflare account.
-- [ ] Point `inboxfornow.com` nameservers to Cloudflare.
-- [ ] Point `veqla.com` nameservers to Cloudflare.
-- [ ] Enable **Cloudflare Email Routing** on `veqla.com` (MX records auto-provisioned by Cloudflare).
-- [ ] On `veqla.com`, configure a **catch-all rule → Worker** (the worker is built in §2).
+> **Automation:** [infra/README.md](../infra/README.md) — Namecheap API scripts + Wrangler Email Routing. Secrets: repo-root `.env` from `infra/env.example`.
+
+- [ ] Confirm `veqla.com` is registered and accessible. It is the **sole** receiving domain for MVP. Naming passes the strategy §9 test — no `temp/trash/burner/disposable` substrings, innocuous-sounding, `.com` TLD. (`npm run infra:namecheap:verify`)
+- [ ] Add both domains (`inboxfornow.com` + `veqla.com`) to the existing Cloudflare account. (`npm run infra:cf-add-zones`)
+- [ ] Point `inboxfornow.com` nameservers to Cloudflare. (`npm run infra:namecheap:point-ns`)
+- [ ] Point `veqla.com` nameservers to Cloudflare. (same script)
+- [ ] Enable **Cloudflare Email Routing** on `veqla.com` (MX records auto-provisioned by Cloudflare). (`npm run infra:email-routing`)
+- [ ] On `veqla.com`, configure a **catch-all rule → Worker** (the worker is built in §2). (included in `infra:email-routing`)
 - [ ] Verify SPF/DKIM/DMARC are **not** configured on `veqla.com` (we are receive-only — no need to authorize outbound, which would invite abuse vectors).
-- [ ] Set `inboxfornow.com` DNS for Cloudflare Pages (created in §6).
-- [ ] **Pre-stage a backup**: identify (don't yet register) 2 candidate fallback domains so that if `veqla.com` is blacklisted on day 1, a replacement can be in rotation within an hour. Store the shortlist in a private note.
+- [ ] Set `inboxfornow.com` DNS for Cloudflare Pages (created in §6). (`npm run infra:pages-dns` + Pages custom domains in dashboard)
+- [ ] **Pre-stage a backup**: identify (don't yet register) 2 candidate fallback domains so that if `veqla.com` is blacklisted on day 1, a replacement can be in rotation within an hour. Template: [infra/backup-domain-candidates.md](../infra/backup-domain-candidates.md).
 
 ## 2. Backend — Cloudflare Workers & D1
 

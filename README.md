@@ -108,3 +108,9 @@ npm run preview    # → serve dist/ on 0.0.0.0
 
 `dist/` is fully static. Drop it on Cloudflare Pages, pair it with the Email
 Worker, and you're live.
+
+## Domains, DNS, Namecheap & Cloudflare
+
+Go-live DNS and Email Routing are scripted under [`infra/`](infra/). Copy
+`infra/env.example` → repo-root `.env` (gitignored) for the Namecheap API key.
+See [`infra/README.md`](infra/README.md) for the full ordered checklist.

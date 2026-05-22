@@ -1,0 +1,14 @@
+{
+  "brandDomain": "inboxfornow.com",
+  "receivingDomain": "veqla.com",
+  "apiHostname": "api.inboxfornow.com",
+  "pagesProject": "inboxfornow",
+  "workerName": "inboxfornow-api",
+  "cloudflareAccountId": "7ed31ecd01f2a97f6083b1c18da66779",
+  "namecheapDomains": ["inboxfornow.com", "veqla.com"],
+  "expectedMxHosts": [
+    "route1.mx.cloudflare.net",
+    "route2.mx.cloudflare.net",
+    "route3.mx.cloudflare.net"
+  ]
+}

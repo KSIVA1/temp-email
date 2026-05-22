@@ -10,6 +10,8 @@ node_modules/
 .env.local
 .env.production
 .env.*
+!.env.example
+!infra/env.example
 
 # logs
 npm-debug.log*
