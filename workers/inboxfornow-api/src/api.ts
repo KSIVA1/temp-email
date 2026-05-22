@@ -177,10 +177,14 @@ async function verifyTurnstile(request: Request, env: Env): Promise<boolean> {
 }
 
 function corsHeaders(request: Request, env: Env): HeadersInit {
-  const allowed = env.CORS_ORIGIN || 'https://inboxfornow.com';
+  const allowedOrigins = (env.CORS_ORIGIN || 'https://inboxfornow.com')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
   const origin = request.headers.get('Origin');
+  const allowed = origin && allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
   return {
-    'Access-Control-Allow-Origin': origin === allowed ? allowed : allowed,
+    'Access-Control-Allow-Origin': allowed,
     'Access-Control-Allow-Methods': 'GET,POST,DELETE,OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type,X-IFN-Dev-Skip-Turnstile',
     'Vary': 'Origin',

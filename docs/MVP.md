@@ -36,7 +36,7 @@ This document lists every concrete task required to ship a launch-ready MVP per 
 Create a **separate repository** (or `workers/` sibling directory) for the backend. The frontend repo stays static-only.
 
 - [x] Initialize Wrangler project: `npm create cloudflare@latest inboxfornow-api -- --type=hello-world --ts`.
-- [ ] Provision D1 database via Wrangler: `npx wrangler d1 create inboxfornow`. Save the database ID into `wrangler.toml`.
+- [x] Provision D1 database via Wrangler: `npx wrangler d1 create inboxfornow`. Save the database ID into `wrangler.toml`.
 - [x] Write initial D1 schema migration (`migrations/0001_init.sql`):
   - `inboxes(id TEXT PK, local_part TEXT, domain TEXT, created_at INTEGER, expires_at INTEGER)`
   - `messages(id TEXT PK, inbox_id TEXT FK, from_name TEXT, from_email TEXT, subject TEXT, body_html TEXT, preview TEXT, otp TEXT NULL, received_at INTEGER, expires_at INTEGER)`

@@ -4,14 +4,14 @@ main = "src/index.ts"
 compatibility_date = "2026-05-22"
 
 [vars]
-CORS_ORIGIN = "https://inboxfornow.com"
+CORS_ORIGIN = "https://inboxfornow.com,https://inboxfornow.pages.dev"
 # Set with `wrangler secret put ADMIN_BASIC_AUTH`.
 # Value is base64("username:password") for the /admin/domains route.
 
 [[d1_databases]]
 binding = "DB"
 database_name = "inboxfornow"
-database_id = "REPLACE_WITH_WRANGLER_D1_DATABASE_ID"
+database_id = "a15cbdef-db25-439b-91d8-0530c5b21038"
 migrations_dir = "migrations"
 
 [[ratelimits]]
