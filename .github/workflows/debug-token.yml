@@ -1,0 +1,24 @@
+name: Debug Token
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hash secret
+        run: echo -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" | sha256sum
+      - name: Hash account ID
+        run: echo -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" | sha256sum
+      - name: Test curl Pages
+        run: |
+          curl -s -X GET "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/inboxfornow" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json" | jq '{success: .success, errors: .errors}'
+      - name: Test curl D1 query
+        run: |
+          curl -s -X POST "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/d1/database/a15cbdef-db25-439b-91d8-0530c5b21038/query" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"sql": "SELECT 1"}' | jq '{success: .success, errors: .errors}'
