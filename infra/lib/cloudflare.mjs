@@ -102,3 +102,29 @@ export async function setCatchAllWorker(zoneId, workerName) {
     }),
   });
 }
+
+/** @param {string} zoneId */
+export async function listRedirectRulesets(zoneId) {
+  return cf(`/zones/${zoneId}/rulesets?phase=http_request_dynamic_redirect`);
+}
+
+/** @param {string} zoneId @param {Array<unknown>} rules */
+export async function createRedirectRuleset(zoneId, rules) {
+  return cf(`/zones/${zoneId}/rulesets`, {
+    method: 'POST',
+    body: JSON.stringify({
+      name: 'default',
+      kind: 'zone',
+      phase: 'http_request_dynamic_redirect',
+      rules,
+    }),
+  });
+}
+
+/** @param {string} zoneId @param {string} rulesetId @param {Object} rule */
+export async function addRedirectRule(zoneId, rulesetId, rule) {
+  return cf(`/zones/${zoneId}/rulesets/${rulesetId}/rules`, {
+    method: 'POST',
+    body: JSON.stringify(rule),
+  });
+}

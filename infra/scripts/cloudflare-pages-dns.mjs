@@ -6,7 +6,7 @@
  * Usage: node infra/scripts/cloudflare-pages-dns.mjs [--dry-run]
  */
 import { loadDotEnv } from '../lib/env.mjs';
-import { loadConfig, getZone, upsertDnsRecords } from '../lib/cloudflare.mjs';
+import { loadConfig, getZone, upsertDnsRecords, listRedirectRulesets, createRedirectRuleset, addRedirectRule } from '../lib/cloudflare.mjs';
 
 const dryRun = process.argv.includes('--dry-run');
 loadDotEnv();
@@ -31,5 +31,39 @@ if (dryRun) {
 
 await upsertDnsRecords(zone.id, records);
 console.log(`✓ ${brandDomain} and www → ${pagesTarget}`);
+
+try {
+  const rulesets = await listRedirectRulesets(zone.id);
+  let ruleset = rulesets[0];
+  if (!ruleset) {
+    ruleset = await createRedirectRuleset(zone.id, []);
+  }
+  const hasRule = ruleset.rules?.some((r) =>
+    r.expression?.includes(`www.${brandDomain}`) && r.action === 'redirect'
+  );
+  if (!hasRule) {
+    await addRedirectRule(zone.id, ruleset.id, {
+      expression: `(http.host eq "www.${brandDomain}")`,
+      action: 'redirect',
+      action_parameters: {
+        from_value: {
+          status_code: 301,
+          preserve_query_string: true,
+          target_url: {
+            expression: `concat("https://${brandDomain}", http.request.uri.path)`,
+          },
+        },
+      },
+      description: `Redirect www.${brandDomain} to apex`,
+      enabled: true,
+    });
+    console.log(`✓ Created redirect rule: www.${brandDomain} → ${brandDomain}`);
+  } else {
+    console.log(`✓ Redirect rule already exists: www.${brandDomain} → ${brandDomain}`);
+  }
+} catch (err) {
+  console.warn(`⚠ Could not create redirect rule (token may lack Zone:Edit permission): ${err.message}`);
+}
+
 console.log('\nAlso run: npx wrangler pages project list');
 console.log('Add custom domains in dashboard or: wrangler pages deployment (see infra/README.md)');
