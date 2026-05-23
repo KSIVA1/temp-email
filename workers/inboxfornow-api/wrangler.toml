@@ -10,7 +10,7 @@ pattern = "api.inboxfornow.com"
 custom_domain = true
 
 [vars]
-CORS_ORIGIN = "https://inboxfornow.com,https://inboxfornow.pages.dev"
+CORS_ORIGIN = "https://inboxfornow.com,https://inboxfornow.pages.dev,http://localhost:4321"
 # Set with `wrangler secret put ADMIN_BASIC_AUTH`.
 # Value is base64("username:password") for the /admin/domains route.
 

@@ -72,6 +72,7 @@ const state = {
 
 let pollTimer = 0;
 let lastMessageTs = 0;
+let consecutiveErrors = 0;
 
 // ── Persistence helpers ──────────────────────────────────────────────────
 
@@ -357,7 +358,8 @@ async function getTurnstileToken(): Promise<string | undefined> {
 }
 
 function handleApiError(message = 'Could not reach the inbox service. Tap to retry.') {
-  setStatus('alert', 'Offline');
+  const isOffline = typeof navigator !== 'undefined' && navigator.onLine === false;
+  setStatus('alert', isOffline ? 'Offline' : 'Unavailable');
   const empty = $<HTMLDivElement>('#empty-state');
   empty.dataset.error = 'true';
   const retry = empty.querySelector<HTMLButtonElement>('[data-api-retry]');
@@ -366,6 +368,7 @@ function handleApiError(message = 'Could not reach the inbox service. Tap to ret
 }
 
 function clearApiError() {
+  consecutiveErrors = 0;
   const empty = $<HTMLDivElement>('#empty-state');
   delete empty.dataset.error;
   const retry = empty.querySelector<HTMLButtonElement>('[data-api-retry]');
@@ -494,6 +497,7 @@ async function pollMessages() {
   try {
     const res = await apiFetch(`/api/inbox/${state.inboxId}/messages?since=${lastMessageTs}`);
     const body = await res.json() as { messages?: ApiMessage[] };
+    consecutiveErrors = 0;
     clearApiError();
     const incoming = (body.messages || [])
       .filter((m) => !state.mail.some((existing) => existing.id === m.id))
@@ -513,7 +517,10 @@ async function pollMessages() {
       maybeNotify(mail);
     }
   } catch {
-    handleApiError();
+    consecutiveErrors++;
+    if (consecutiveErrors >= 2) {
+      handleApiError();
+    }
   }
 }
 
@@ -1241,6 +1248,29 @@ function bindEvents() {
       if (state.activeMailId) closeReader();
       else dismissToast();
     }
+  });
+
+  // Online / offline awareness
+  window.addEventListener('online', () => {
+    clearApiError();
+    if (state.mail.length === 0) {
+      setStatus('waiting', 'Waiting');
+    } else {
+      setStatus('active', `${state.mail.length} ${state.mail.length === 1 ? 'message' : 'messages'}`);
+    }
+    if (state.inboxId) {
+      void pollMessages();
+    } else {
+      void bootInbox().catch(() => handleApiError());
+    }
+  });
+
+  window.addEventListener('offline', () => {
+    const empty = $<HTMLDivElement>('#empty-state');
+    empty.dataset.error = 'true';
+    const retry = empty.querySelector<HTMLButtonElement>('[data-api-retry]');
+    if (retry) retry.hidden = false;
+    setStatus('alert', 'Offline');
   });
 }
 
