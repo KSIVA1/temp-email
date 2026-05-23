@@ -51,7 +51,14 @@ class FakeD1Database {
   executePrepared(sql: string, values: unknown[]) {
     const normalized = normalize(sql);
     if (normalized.startsWith('insert into inboxes')) {
-      this.tables.inboxes.push(row(['id', 'local_part', 'domain', 'created_at', 'expires_at'], values));
+      const newRow = row(['id', 'local_part', 'domain', 'created_at', 'expires_at'], values);
+      const duplicate = this.tables.inboxes.find(
+        (r) => r.local_part === newRow.local_part && r.domain === newRow.domain,
+      );
+      if (duplicate) {
+        throw new Error('UNIQUE constraint failed: inboxes.local_part, inboxes.domain');
+      }
+      this.tables.inboxes.push(newRow);
       return;
     }
     if (normalized.startsWith('insert into messages')) {

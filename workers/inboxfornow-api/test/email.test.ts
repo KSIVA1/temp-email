@@ -20,10 +20,10 @@ describe('Email Worker', () => {
   it('parses, sanitizes, rewrites links, extracts OTP, and drops attachments', async () => {
     const env = createTestEnv();
     await env.DB.exec("INSERT INTO domains (name, status, added_at, last_inbound_at) VALUES ('veqla.com', 'active', 1000, null)");
-    await env.DB.exec("INSERT INTO inboxes (id, local_part, domain, created_at, expires_at) VALUES ('inb_1', 'fast-fox-1234', 'veqla.com', 1000, 9999999999999)");
+    await env.DB.exec("INSERT INTO inboxes (id, local_part, domain, created_at, expires_at) VALUES ('inb_1', 'fox1234', 'veqla.com', 1000, 9999999999999)");
     const raw = [
       'From: Test Sender <sender@example.com>',
-      'To: fast-fox-1234@veqla.com',
+      'To: fox1234@veqla.com',
       'Subject: Your code',
       'MIME-Version: 1.0',
       'Content-Type: text/html; charset=utf-8',
@@ -31,7 +31,7 @@ describe('Email Worker', () => {
       '<p>Verification code: 418229</p><script>alert(1)</script><img src="https://track.example/pixel.png"><a href="javascript:alert(1)">bad</a><a href="https://example.com/ok">ok</a>',
     ].join('\r\n');
 
-    await worker.email(incomingEmail({ to: 'fast-fox-1234@veqla.com', from: 'sender@example.com', raw }), env, {} as ExecutionContext);
+    await worker.email(incomingEmail({ to: 'fox1234@veqla.com', from: 'sender@example.com', raw }), env, {} as ExecutionContext);
 
     const [message] = env.DB.table('messages');
     expect(message.otp).toBe('418229');

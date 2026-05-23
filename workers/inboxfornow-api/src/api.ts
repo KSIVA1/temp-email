@@ -3,8 +3,24 @@ import type { DomainRow, Env, InboxRow, MessageRow } from './types';
 const DEFAULT_TTL_SECONDS = 600;
 const MAX_TTL_MS = 86_400_000;
 const ALLOWED_EXTENSIONS = new Set([600, 3600, 86400]);
-const ADJECTIVES = ['fast', 'quiet', 'brisk', 'calm', 'quick', 'sly', 'plain', 'soft', 'warm', 'spry', 'bright', 'still', 'crisp'];
-const ANIMALS = ['fox', 'heron', 'otter', 'wren', 'pine', 'crane', 'badger', 'lynx', 'sparrow', 'marten', 'rook', 'vole', 'dove'];
+const ANIMALS = [
+  'fox', 'heron', 'otter', 'wren', 'pine', 'crane', 'badger', 'lynx',
+  'sparrow', 'marten', 'rook', 'vole', 'dove', 'wolf', 'bear', 'eagle',
+  'hawk', 'finch', 'robin', 'swift', 'falcon', 'osprey', 'raven', 'jay',
+  'owl', 'hare', 'mole', 'shrew', 'stoat', 'ferret', 'bison', 'moose',
+  'elk', 'deer', 'stag', 'ram', 'goat', 'lamb', 'puma', 'tiger',
+  'lion', 'panther', 'jaguar', 'cobra', 'viper', 'gecko', 'newt', 'toad',
+  'frog', 'salmon', 'trout', 'bass', 'pike', 'perch', 'carp', 'cod',
+  'tuna', 'seal', 'whale', 'walrus', 'panda', 'koala', 'sloth', 'lemur',
+  'chimp', 'gibbon', 'tapir', 'camel', 'llama', 'alpaca', 'zebra', 'rhino',
+  'hippo', 'gator', 'iguana', 'parrot', 'macaw', 'toucan', 'stork', 'ibis',
+  'egret', 'pelican', 'puffin', 'tern', 'gull', 'lark', 'pipit', 'dingo',
+  'jackal', 'hyena', 'mink', 'orca', 'ray', 'squid', 'clam', 'snail',
+  'crab', 'moth', 'beetle', 'ant', 'wasp', 'cricket', 'mantis', 'cicada',
+  'coral', 'starling', 'magpie', 'thrush', 'oriole', 'bunting', 'plover',
+  'curlew', 'avocet', 'gannet', 'grouse', 'quail', 'pheasant', 'condor',
+  'kite', 'ermine', 'bobcat', 'coyote', 'emu', 'kiwi', 'skunk',
+];
 
 export async function handleHttp(request: Request, env: Env): Promise<Response> {
   const cors = corsHeaders(request, env);
@@ -65,15 +81,29 @@ async function createInbox(request: Request, env: Env, cors: HeadersInit): Promi
   if (!domain) return json({ error: 'No active receiving domains' }, 503, cors);
 
   const now = Date.now();
-  const localPart = generateLocal();
-  const id = `inb_${crypto.randomUUID()}`;
   const expiresAt = now + DEFAULT_TTL_SECONDS * 1000;
-  await env.DB.prepare(
-    'INSERT INTO inboxes (id, local_part, domain, created_at, expires_at) VALUES (?, ?, ?, ?, ?)',
-  ).bind(id, localPart, domain.name, now, expiresAt).run();
+  const MAX_RETRIES = 5;
 
-  console.log(JSON.stringify({ event: 'inbox-generate', inboxId: id, domain: domain.name }));
-  return json({ id, address: `${localPart}@${domain.name}`, expiresAt }, 201, cors);
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    const localPart = generateLocal();
+    const id = `inb_${crypto.randomUUID()}`;
+    try {
+      await env.DB.prepare(
+        'INSERT INTO inboxes (id, local_part, domain, created_at, expires_at) VALUES (?, ?, ?, ?, ?)',
+      ).bind(id, localPart, domain.name, now, expiresAt).run();
+
+      console.log(JSON.stringify({ event: 'inbox-generate', inboxId: id, domain: domain.name }));
+      return json({ id, address: `${localPart}@${domain.name}`, expiresAt }, 201, cors);
+    } catch (err) {
+      if (isUniqueViolation(err)) {
+        console.log(JSON.stringify({ event: 'inbox-collision', attempt, domain: domain.name }));
+        continue;
+      }
+      throw err;
+    }
+  }
+
+  return json({ error: 'Could not generate a unique address. Please try again.' }, 503, cors);
 }
 
 async function listActiveDomains(env: Env, cors: HeadersInit): Promise<Response> {
@@ -208,8 +238,13 @@ function escapeHtml(s: string): string {
 }
 
 function generateLocal(): string {
-  const adjective = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
   const animal = ANIMALS[Math.floor(Math.random() * ANIMALS.length)];
-  const num = Math.floor(1000 + Math.random() * 9000);
-  return `${adjective}-${animal}-${num}`;
+  const num = Math.floor(10000 + Math.random() * 90000);
+  return `${animal}${num}`;
+}
+
+function isUniqueViolation(err: unknown): boolean {
+  if (!(err instanceof Error)) return false;
+  const msg = err.message.toLowerCase();
+  return msg.includes('unique') || msg.includes('constraint');
 }

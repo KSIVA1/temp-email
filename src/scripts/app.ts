@@ -43,8 +43,24 @@ const IS_DEV = import.meta.env.DEV;
 
 let RECEIVING_DOMAINS = ['veqla.com'];
 
-const ADJECTIVES = ['fast','quiet','brisk','calm','quick','sly','plain','soft','warm','spry','bright','still','crisp'];
-const ANIMALS    = ['fox','heron','otter','wren','pine','crane','badger','lynx','sparrow','marten','rook','vole','dove'];
+const ANIMALS = [
+  'fox', 'heron', 'otter', 'wren', 'pine', 'crane', 'badger', 'lynx',
+  'sparrow', 'marten', 'rook', 'vole', 'dove', 'wolf', 'bear', 'eagle',
+  'hawk', 'finch', 'robin', 'swift', 'falcon', 'osprey', 'raven', 'jay',
+  'owl', 'hare', 'mole', 'shrew', 'stoat', 'ferret', 'bison', 'moose',
+  'elk', 'deer', 'stag', 'ram', 'goat', 'lamb', 'puma', 'tiger',
+  'lion', 'panther', 'jaguar', 'cobra', 'viper', 'gecko', 'newt', 'toad',
+  'frog', 'salmon', 'trout', 'bass', 'pike', 'perch', 'carp', 'cod',
+  'tuna', 'seal', 'whale', 'walrus', 'panda', 'koala', 'sloth', 'lemur',
+  'chimp', 'gibbon', 'tapir', 'camel', 'llama', 'alpaca', 'zebra', 'rhino',
+  'hippo', 'gator', 'iguana', 'parrot', 'macaw', 'toucan', 'stork', 'ibis',
+  'egret', 'pelican', 'puffin', 'tern', 'gull', 'lark', 'pipit', 'dingo',
+  'jackal', 'hyena', 'mink', 'orca', 'ray', 'squid', 'clam', 'snail',
+  'crab', 'moth', 'beetle', 'ant', 'wasp', 'cricket', 'mantis', 'cicada',
+  'coral', 'starling', 'magpie', 'thrush', 'oriole', 'bunting', 'plover',
+  'curlew', 'avocet', 'gannet', 'grouse', 'quail', 'pheasant', 'condor',
+  'kite', 'ermine', 'bobcat', 'coyote', 'emu', 'kiwi', 'skunk',
+];
 
 const DEFAULT_TTL = 10 * 60; // seconds
 const HISTORY_MAX = 5;
@@ -57,7 +73,7 @@ const TITLE_BASE  = document.title;
 
 const state = {
   inboxId: '',
-  localPart: 'fast-fox-9821',
+  localPart: 'fox9821',
   domain: RECEIVING_DOMAINS[0],
   createdAt: Date.now(),
   expiresAt: Date.now() + DEFAULT_TTL * 1000,
@@ -117,10 +133,9 @@ function $opt<T extends Element>(sel: string): T | null {
 }
 
 function generateLocal(): string {
-  const a = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
-  const n = ANIMALS[Math.floor(Math.random() * ANIMALS.length)];
-  const num = Math.floor(1000 + Math.random() * 9000);
-  return `${a}-${n}-${num}`;
+  const a = ANIMALS[Math.floor(Math.random() * ANIMALS.length)];
+  const num = Math.floor(10000 + Math.random() * 90000);
+  return `${a}${num}`;
 }
 
 function pad(n: number): string { return n.toString().padStart(2, '0'); }

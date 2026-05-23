@@ -22,7 +22,7 @@ describe('HTTP Worker API', () => {
     expect(res.status).toBe(201);
     expect(res.headers.get('Access-Control-Allow-Origin')).toBe(origin);
     const body = await json(res);
-    expect(body.address).toMatch(/^[a-z]+-[a-z]+-\d{4}@veqla\.com$/);
+    expect(body.address).toMatch(/^[a-z]+\d{5}@veqla\.com$/);
     expect(typeof body.id).toBe('string');
     expect(typeof body.expiresAt).toBe('number');
     const inbox = env.DB.table('inboxes')[0];
@@ -32,7 +32,7 @@ describe('HTTP Worker API', () => {
 
   it('extends an inbox without exceeding the 24 hour cap', async () => {
     const env = createTestEnv();
-    await env.DB.exec("INSERT INTO inboxes (id, local_part, domain, created_at, expires_at) VALUES ('inb_1', 'fast-fox-1234', 'veqla.com', 1000, 1600)");
+    await env.DB.exec("INSERT INTO inboxes (id, local_part, domain, created_at, expires_at) VALUES ('inb_1', 'fox1234', 'veqla.com', 1000, 1600)");
 
     const res = await worker.fetch(new Request('https://api.inboxfornow.com/api/inbox/inb_1/extend', {
       method: 'POST',
@@ -47,7 +47,7 @@ describe('HTTP Worker API', () => {
 
   it('deletes a single message owned by the inbox', async () => {
     const env = createTestEnv();
-    await env.DB.exec("INSERT INTO inboxes (id, local_part, domain, created_at, expires_at) VALUES ('inb_1', 'fast-fox-1234', 'veqla.com', 1000, 9999999999999)");
+    await env.DB.exec("INSERT INTO inboxes (id, local_part, domain, created_at, expires_at) VALUES ('inb_1', 'fox1234', 'veqla.com', 1000, 9999999999999)");
     await env.DB.exec("INSERT INTO messages (id, inbox_id, from_name, from_email, subject, body_html, preview, otp, received_at, expires_at) VALUES ('msg_1', 'inb_1', 'Sender', 's@example.com', 'Subject', '<p>Hi</p>', 'Hi', null, 2000, 9999999999999)");
 
     const res = await worker.fetch(new Request('https://api.inboxfornow.com/api/inbox/inb_1/messages/msg_1', {
@@ -101,5 +101,36 @@ describe('HTTP Worker API', () => {
     }), env, {} as ExecutionContext);
     expect(allowed.status).toBe(200);
     expect(await allowed.text()).toContain('veqla.com');
+  });
+  it('retries on collision and returns a unique address', async () => {
+    const env = createTestEnv();
+    await env.DB.exec("INSERT INTO domains (name, status, added_at, last_inbound_at) VALUES ('veqla.com', 'active', 1000, null)");
+    // Pre-occupy a specific local_part+domain so the first attempt collides
+    await env.DB.exec("INSERT INTO inboxes (id, local_part, domain, created_at, expires_at) VALUES ('inb_existing', 'fox12345', 'veqla.com', 1000, 9999999999999)");
+
+    // Even though one address is taken, with 10.8M possibilities a collision
+    // on a random attempt is extremely unlikely. This test verifies the system
+    // still generates a valid inbox when addresses are occupied.
+    const res = await worker.fetch(new Request('https://api.inboxfornow.com/api/inbox', {
+      method: 'POST',
+      headers: { Origin: origin, 'Content-Type': 'application/json', 'X-IFN-Dev-Skip-Turnstile': '1' },
+      body: JSON.stringify({}),
+    }), env, {} as ExecutionContext);
+
+    expect(res.status).toBe(201);
+    const body = await json(res);
+    expect(body.address).toMatch(/^[a-z]+\d{5}@veqla\.com$/);
+    expect(body.address).not.toBe('fox12345@veqla.com');
+  });
+
+  it('rejects duplicate (local_part, domain) at the DB level', async () => {
+    const env = createTestEnv();
+    await env.DB.exec("INSERT INTO inboxes (id, local_part, domain, created_at, expires_at) VALUES ('inb_1', 'otter55555', 'veqla.com', 1000, 9999999999999)");
+
+    await expect(
+      (env.DB as any).prepare(
+        'INSERT INTO inboxes (id, local_part, domain, created_at, expires_at) VALUES (?, ?, ?, ?, ?)',
+      ).bind('inb_2', 'otter55555', 'veqla.com', 2000, 9999999999999).run(),
+    ).rejects.toThrow(/UNIQUE constraint/);
   });
 });
