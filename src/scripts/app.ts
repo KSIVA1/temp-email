@@ -333,12 +333,21 @@ async function createInbox(): Promise<{ id: string; address: string; expiresAt: 
   return res.json();
 }
 
+class ApiError extends Error {
+  status: number;
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+    this.name = 'ApiError';
+  }
+}
+
 async function apiFetch(path: string, init: RequestInit = {}) {
   const headers = new Headers(init.headers);
   if (init.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
   const res = await fetch(`${API_BASE}${path}`, { ...init, headers });
   if (!res.ok) {
-    throw new Error(`API ${res.status}`);
+    throw new ApiError(res.status, `API ${res.status}`);
   }
   return res;
 }
@@ -357,9 +366,23 @@ async function getTurnstileToken(): Promise<string | undefined> {
   return turnstile.execute(widget.dataset.widgetId, { async: true });
 }
 
-function handleApiError(message = 'Could not reach the inbox service. Tap to retry.') {
+function handleApiError(err?: Error | string) {
+  let message = 'Could not reach the inbox service. Tap to retry.';
+  let label = 'Unavailable';
+
+  if (typeof err === 'string') {
+    message = err;
+  } else if (err instanceof ApiError) {
+    if (err.status === 429) {
+      label = 'Rate limited';
+      message = 'Too many requests. Please wait a few minutes and try again.';
+    }
+  }
+
   const isOffline = typeof navigator !== 'undefined' && navigator.onLine === false;
-  setStatus('alert', isOffline ? 'Offline' : 'Unavailable');
+  if (isOffline) label = 'Offline';
+
+  setStatus('alert', label);
   const empty = $<HTMLDivElement>('#empty-state');
   empty.dataset.error = 'true';
   const retry = empty.querySelector<HTMLButtonElement>('[data-api-retry]');
@@ -516,10 +539,10 @@ async function pollMessages() {
       playChime();
       maybeNotify(mail);
     }
-  } catch {
+  } catch (err) {
     consecutiveErrors++;
     if (consecutiveErrors >= 2) {
-      handleApiError();
+      handleApiError(err instanceof Error ? err : undefined);
     }
   }
 }
@@ -1323,7 +1346,7 @@ async function bootInbox() {
     await fetchActiveDomains();
     await createFreshInbox(false);
     clearApiError();
-  } catch {
+  } catch (err) {
     state.localPart = generateLocal();
     state.domain = RECEIVING_DOMAINS[Math.floor(Math.random() * RECEIVING_DOMAINS.length)];
     state.createdAt = Date.now();
@@ -1331,7 +1354,7 @@ async function bootInbox() {
     renderAddress();
     renderTimer();
     renderMail();
-    handleApiError();
+    handleApiError(err instanceof Error ? err : undefined);
   }
 }
 

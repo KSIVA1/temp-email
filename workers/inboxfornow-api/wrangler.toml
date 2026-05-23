@@ -25,7 +25,7 @@ name = "INBOX_GENERATION_RATE_LIMITER"
 namespace_id = "1001"
 
   [ratelimits.simple]
-  limit = 10
+  limit = 50
   period = 60
 
 [triggers]

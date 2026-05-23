@@ -69,10 +69,10 @@ describe('HTTP Worker API', () => {
     expect(await json(res)).toEqual({ ok: true });
   });
 
-  it('limits inbox generation to 10 per IP per hour', async () => {
+  it('limits inbox generation to 50 per IP per hour', async () => {
     const env = createTestEnv();
     await env.DB.exec("INSERT INTO domains (name, status, added_at, last_inbound_at) VALUES ('veqla.com', 'active', 1000, null)");
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 50; i++) {
       const res = await worker.fetch(new Request('https://api.inboxfornow.com/api/inbox', {
         method: 'POST',
         headers: { Origin: origin, 'Content-Type': 'application/json', 'X-IFN-Dev-Skip-Turnstile': '1', 'cf-connecting-ip': '203.0.113.10' },

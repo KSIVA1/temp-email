@@ -158,7 +158,7 @@ async function applyHourlyD1RateLimit(key: string, env: Env): Promise<boolean> {
     await env.DB.prepare('INSERT OR REPLACE INTO rate_limits (key, window_start, count) VALUES (?, ?, ?)').bind(key, windowStart, 1).run();
     return false;
   }
-  if (row.count >= 10) return true;
+  if (row.count >= 50) return true;
   await env.DB.prepare('UPDATE rate_limits SET count = ? WHERE key = ?').bind(row.count + 1, key).run();
   return false;
 }
