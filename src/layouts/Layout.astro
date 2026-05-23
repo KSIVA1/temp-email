@@ -2,26 +2,55 @@
 interface Props {
   title?: string;
   description?: string;
+  /** Absolute URL for OG image. Defaults to /og.png. */
+  image?: string;
+  /** Alt text describing the OG image. */
+  imageAlt?: string;
+  /** If true, emits `<meta name="robots" content="noindex, nofollow">`. */
+  noindex?: boolean;
+  /** Extra JSON-LD blocks to inject in <head>. Each entry is a JS object. */
+  additionalJsonLd?: Record<string, unknown>[];
 }
 
 const {
-  title = "InboxForNow — a temporary inbox for now and only now.",
-  description = "A fast, friendly, ad-light disposable email. Get a one-use address, receive your verification, walk away.",
+  title = 'InboxForNow — Free temporary email, instant disposable inbox',
+  description = 'Free disposable email address for signups and verification codes. Instant inbox, no account, no tracking, hard-deleted on expiry. Privacy by design.',
+  image = 'https://inboxfornow.com/og.png',
+  imageAlt = 'InboxForNow — a free, instant disposable email inbox',
+  noindex = false,
+  additionalJsonLd = [],
 } = Astro.props;
 
+const canonical = Astro.url.href.replace(/\/+$/, '/').replace(/\/(\?|$)/, (m) => m === '/' ? '/' : m);
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+
 const orgJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
+  '@id': 'https://inboxfornow.com/#organization',
   name: 'InboxForNow',
+  alternateName: 'Inbox For Now',
   url: 'https://inboxfornow.com',
-  logo: 'https://inboxfornow.com/icons/icon-512.png',
+  logo: {
+    '@type': 'ImageObject',
+    url: 'https://inboxfornow.com/icons/icon-512.png',
+    width: 512,
+    height: 512,
+  },
+  description: 'Free disposable temporary email service — instant inbox, no signup, hard-deleted on expiry.',
+  foundingDate: '2026',
+  slogan: 'A temporary inbox for now and only now.',
 };
+
 const websiteJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
+  '@id': 'https://inboxfornow.com/#website',
   name: 'InboxForNow',
   url: 'https://inboxfornow.com',
+  description: 'Free disposable temporary email service. Instant inbox for signup verification codes — no account, no tracking.',
+  inLanguage: 'en',
+  publisher: { '@id': 'https://inboxfornow.com/#organization' },
 };
 ---
 <!doctype html>
@@ -31,17 +60,31 @@ const websiteJsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0A0A0A" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
 
-    {/* Social */}
+    <link rel="canonical" href={canonical} />
+
+    {/* OpenGraph */}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="InboxForNow" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt} />
+
+    {/* Twitter / X */}
     <meta name="twitter:card" content="summary_large_image" />
-    <meta property="og:image" content="https://inboxfornow.com/og.png" />
-    <meta name="twitter:image" content="https://inboxfornow.com/og.png" />
-    <link rel="canonical" href={Astro.url.href} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    <meta name="twitter:image:alt" content={imageAlt} />
 
     {/* PWA */}
     <link rel="manifest" href="/manifest.webmanifest" />
@@ -51,6 +94,7 @@ const websiteJsonLd = {
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="InboxForNow" />
+    <meta name="application-name" content="InboxForNow" />
 
     {/* Fonts — preconnect + display swap to keep CWV strong */}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -61,8 +105,12 @@ const websiteJsonLd = {
     />
 
     {turnstileSiteKey && <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+
     <script type="application/ld+json" is:inline set:html={JSON.stringify(orgJsonLd)} />
     <script type="application/ld+json" is:inline set:html={JSON.stringify(websiteJsonLd)} />
+    {additionalJsonLd.map((block) => (
+      <script type="application/ld+json" is:inline set:html={JSON.stringify(block)} />
+    ))}
 
     {/* Set theme before paint to prevent flash. Light is the brand-primary;
         dark only ships if the visitor has explicitly toggled. */}

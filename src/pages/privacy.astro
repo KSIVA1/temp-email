@@ -1,19 +1,57 @@
 ---
 import Layout from '~/layouts/Layout.astro';
 import Header from '~/components/Header.astro';
+
+const lastUpdated = '2026-05-23';
+const lastUpdatedDisplay = 'May 23, 2026';
+
+const faqs = [
+  {
+    q: 'Do you log IP addresses?',
+    a: 'No. InboxForNow does not intentionally log visitor IP addresses. Cloudflare, our edge provider, processes traffic-level events needed to operate the service and absorb abuse, but those records are not joined to your inbox or shared with us as a personal profile.',
+  },
+  {
+    q: 'How long is email content stored?',
+    a: 'Until the inbox timer expires or you delete the inbox — whichever comes first. A scheduled cleanup runs every 5 minutes and hard-deletes expired inboxes and messages from the database. There is no archive and no soft-delete.',
+  },
+  {
+    q: 'Do you set tracking cookies or run third-party analytics?',
+    a: 'No tracking cookies. We use Cloudflare Web Analytics, which is cookieless and does not fingerprint visitors. The app uses localStorage on your device to remember your theme and small UI preferences — that data never leaves your browser.',
+  },
+  {
+    q: 'Can the InboxForNow team read mail sent to my temporary inbox?',
+    a: 'Operators have database access for abuse-handling and debugging, but we do not routinely read inbox content. Treat any verification code as readable by anyone who controls the infrastructure — for high-stakes accounts, use your real email.',
+  },
+  {
+    q: 'Do you sell or share data with advertisers?',
+    a: 'No. We do not sell personal data, do not run programmatic ad networks, and do not share inbox content with third parties. The service has no ad slots at launch.',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
 ---
 <Layout
-  title="Privacy — InboxForNow"
-  description="InboxForNow privacy policy for temporary receive-only email inboxes."
+  title="Privacy Policy — InboxForNow"
+  description="How InboxForNow handles your data: no IP logging, no tracking cookies, hard-deletion on expiry. Cloudflare is our only sub-processor."
+  additionalJsonLd={[faqJsonLd]}
 >
   <Header />
   <main class="legal">
     <article class="legal__body">
       <p class="label"><span class="label__dot" aria-hidden="true"></span>Privacy</p>
       <h1>Privacy Policy</h1>
+      <p class="legal__meta">Last updated <time datetime={lastUpdated}>{lastUpdatedDisplay}</time></p>
       <p>InboxForNow provides temporary, receive-only email inboxes. We do not ask for an account and we do not require your real email address.</p>
       <h2>What we store</h2>
-      <p>We store generated inbox addresses and received email content only until the inbox timer expires or you delete the inbox. Expired inboxes and messages are hard-deleted by scheduled cleanup.</p>
+      <p>We store generated inbox addresses and received email content only until the inbox timer expires or you delete the inbox. Expired inboxes and messages are hard-deleted by scheduled cleanup that runs every 5 minutes.</p>
       <h2>What we do not log</h2>
       <p>We do not intentionally log visitor IP addresses, sell personal data, or use third-party tracking cookies. The app uses localStorage to remember your theme and lightweight preferences on your device.</p>
       <h2>Email content</h2>
@@ -22,6 +60,16 @@ import Header from '~/components/Header.astro';
       <p>InboxForNow runs on Cloudflare, including Cloudflare Pages, Workers, D1, Email Routing, Turnstile, and Web Analytics. Cloudflare processes traffic and infrastructure events needed to operate the service.</p>
       <h2>Contact</h2>
       <p>For privacy requests, contact the site owner through the administrative email configured for inboxfornow.com.</p>
+
+      <section class="legal__faq" aria-labelledby="privacy-faq-heading">
+        <h2 id="privacy-faq-heading">Privacy FAQ</h2>
+        {faqs.map((f) => (
+          <details class="legal__faq__item">
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </section>
     </article>
   </main>
 </Layout>
@@ -29,7 +77,41 @@ import Header from '~/components/Header.astro';
 <style>
   .legal { padding: clamp(2rem, 1.2rem + 3vw, 4rem) clamp(1rem, 0.5rem + 2vw, 2.2rem); }
   .legal__body { max-width: 760px; margin: 0 auto; color: var(--text); }
-  .legal__body h1 { font-size: var(--fs-h1); margin: var(--sp-2) 0 var(--sp-5); }
+  .legal__body h1 { font-size: var(--fs-h1); margin: var(--sp-2) 0 var(--sp-3); }
   .legal__body h2 { font-size: 1rem; margin: var(--sp-6) 0 var(--sp-2); }
   .legal__body p { color: var(--text-2); line-height: 1.65; }
+  .legal__meta {
+    color: var(--text-3);
+    font-size: var(--fs-small);
+    margin: 0 0 var(--sp-5);
+  }
+  .legal__faq {
+    margin-top: var(--sp-8);
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--border);
+  }
+  .legal__faq h2 { margin-top: 0; font-size: var(--fs-h3); }
+  .legal__faq__item {
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 0;
+    margin: var(--sp-2) 0;
+    background: var(--surface);
+  }
+  .legal__faq__item summary {
+    cursor: pointer;
+    padding: var(--sp-3) var(--sp-4);
+    font-weight: 500;
+    color: var(--text);
+    list-style: none;
+    font-size: var(--fs-small);
+  }
+  .legal__faq__item summary::-webkit-details-marker { display: none; }
+  .legal__faq__item[open] summary { border-bottom: 1px solid var(--border); }
+  .legal__faq__item p {
+    padding: var(--sp-3) var(--sp-4);
+    margin: 0;
+    font-size: var(--fs-small);
+    line-height: 1.6;
+  }
 </style>

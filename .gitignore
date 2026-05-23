@@ -2,6 +2,9 @@
 dist/
 .astro/
 
+# SEO cache (per-project, populated by ~/.claude/skills/seo/scripts/gsc/fetch.py)
+.seo-cache/
+
 # deps
 node_modules/
 

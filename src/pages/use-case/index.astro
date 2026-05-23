@@ -5,12 +5,14 @@ import { platforms, platformsByCategory, CATEGORIES, type PlatformCategory } fro
 
 const orderedCats: PlatformCategory[] = ['social', 'gaming', 'streaming', 'finance', 'ai', 'productivity', 'shopping'];
 
-const title = `Temporary email for every platform · InboxForNow`;
-const description = `Disposable inbox addresses for ${platforms.length}+ services — Discord, Reddit, Twitter, Steam, ChatGPT, GitHub, and more. Free, instant, ad-light.`;
+const title = `Temporary email for ${platforms.length}+ platforms — InboxForNow`;
+const description = `Disposable inbox addresses tuned for Discord, Reddit, Twitter, Steam, ChatGPT, GitHub & ${platforms.length - 6} more services. Free, instant, no signup, no tracking.`;
 
 const itemListJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
+  name: `Temporary email pages for ${platforms.length}+ platforms`,
+  numberOfItems: platforms.length,
   itemListElement: platforms.map((p, i) => ({
     '@type': 'ListItem',
     position: i + 1,
@@ -18,8 +20,28 @@ const itemListJsonLd = {
     url: `https://inboxfornow.com/use-case/${p.slug}/`,
   })),
 };
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://inboxfornow.com/' },
+    { '@type': 'ListItem', position: 2, name: 'All platforms', item: 'https://inboxfornow.com/use-case/' },
+  ],
+};
+
+const collectionPageJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: title,
+  description,
+  url: 'https://inboxfornow.com/use-case/',
+  inLanguage: 'en',
+  isPartOf: { '@id': 'https://inboxfornow.com/#website' },
+  about: { '@id': 'https://inboxfornow.com/#organization' },
+};
 ---
-<Layout title={title} description={description}>
+<Layout title={title} description={description} additionalJsonLd={[breadcrumbJsonLd, collectionPageJsonLd]}>
   <Header />
   <main class="page" id="top">
     <div class="page__inner">
@@ -69,9 +91,8 @@ const itemListJsonLd = {
       <footer class="foot">
         <nav class="foot__nav" aria-label="footer">
           <a href="/">Home</a>
-          <a href="#">Privacy</a>
-          <a href="#">Terms</a>
-          <a href="#">Developer API</a>
+          <a href="/privacy/">Privacy</a>
+          <a href="/terms/">Terms</a>
         </nav>
         <div class="foot__base">
           <span>© <span id="year">2026</span> InboxForNow</span>

@@ -2,5 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /r
+Disallow: /r/
+Disallow: /404
 
 Sitemap: https://inboxfornow.com/sitemap.xml

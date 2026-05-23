@@ -1,0 +1,99 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Header from '~/components/Header.astro';
+import { platformMap } from '~/data/platforms';
+
+const popular = ['discord', 'reddit', 'chatgpt', 'github', 'steam', 'twitter']
+  .map((s) => platformMap[s])
+  .filter(Boolean);
+---
+<Layout
+  title="Page not found — InboxForNow"
+  description="That address doesn't exist. Try the home page for a fresh disposable inbox, or pick a platform-specific page."
+  noindex={true}
+>
+  <Header />
+  <main class="notfound">
+    <section class="notfound__body">
+      <p class="label"><span class="label__dot label__dot--idle" aria-hidden="true"></span>404</p>
+      <h1>Nothing here.</h1>
+      <p class="notfound__lead">
+        The address you tried doesn't match a page on InboxForNow. It may have been removed,
+        renamed, or never existed. Try one of these instead.
+      </p>
+
+      <div class="notfound__actions">
+        <a class="btn btn--primary" href="/">Go to home</a>
+        <a class="btn btn--ghost" href="/use-case/">Browse all platforms</a>
+      </div>
+
+      {popular.length > 0 && (
+        <nav class="notfound__popular" aria-label="popular pages">
+          <span class="notfound__popular__label">Popular pages</span>
+          <ul>
+            {popular.map((p) => (
+              <li><a href={`/use-case/${p.slug}/`}>Temp mail for {p.name}</a></li>
+            ))}
+          </ul>
+        </nav>
+      )}
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .notfound {
+    min-height: 60vh;
+    display: grid;
+    place-items: center;
+    padding: clamp(2rem, 1.2rem + 3vw, 4rem) clamp(1rem, 0.5rem + 2vw, 2.2rem);
+  }
+  .notfound__body { max-width: 680px; width: 100%; }
+  .notfound__body h1 {
+    font-size: var(--fs-h1);
+    line-height: 1;
+    letter-spacing: -0.045em;
+    margin: var(--sp-2) 0 var(--sp-4);
+  }
+  .notfound__lead {
+    color: var(--text-2);
+    font-size: var(--fs-lead);
+    line-height: 1.55;
+    margin: 0 0 var(--sp-6);
+    max-width: 56ch;
+  }
+  .notfound__actions {
+    display: flex;
+    gap: var(--sp-3);
+    flex-wrap: wrap;
+    margin-bottom: var(--sp-7);
+  }
+  .notfound__popular {
+    padding-top: var(--sp-5);
+    border-top: 1px solid var(--border);
+  }
+  .notfound__popular__label {
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: var(--fs-micro);
+    font-weight: 600;
+    color: var(--text-3);
+    margin-bottom: var(--sp-3);
+  }
+  .notfound__popular ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.4rem 1.2rem;
+  }
+  .notfound__popular a {
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: var(--fs-small);
+    transition: color .15s ease;
+  }
+  .notfound__popular a:hover { color: var(--text); }
+</style>

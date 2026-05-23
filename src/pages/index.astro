@@ -6,13 +6,48 @@ import Postbox from '~/components/Postbox.astro';
 import EmailReader from '~/components/EmailReader.astro';
 import OnboardingTour from '~/components/OnboardingTour.astro';
 import ExpiredModal from '~/components/ExpiredModal.astro';
-import { platformMap } from '~/data/platforms';
+import { platformMap, platforms } from '~/data/platforms';
 
 const popular = ['discord', 'reddit', 'chatgpt', 'github', 'steam', 'twitter', 'netflix', 'paypal']
   .map((s) => platformMap[s])
   .filter(Boolean);
+
+const title = 'Temporary Email — Free Disposable Inbox · InboxForNow';
+const description = `Free temporary email for signups & verification codes. Instant disposable inbox, no account, no tracking, hard-deleted on expiry. Works with ${platforms.length}+ platforms.`;
+
+const webAppJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'InboxForNow',
+  url: 'https://inboxfornow.com/',
+  description,
+  applicationCategory: 'CommunicationApplication',
+  operatingSystem: 'Any',
+  browserRequirements: 'Requires a modern web browser with JavaScript enabled.',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+  featureList: [
+    'Instant disposable email address on page load',
+    'Receive verification codes and magic links in real-time',
+    'Hard-deletion on timer expiry — no IP logs, no tracking cookies',
+    'Sanitized HTML email rendering with external images blocked',
+    'Installable as a Progressive Web App',
+  ],
+  publisher: { '@id': 'https://inboxfornow.com/#organization' },
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://inboxfornow.com/' },
+  ],
+};
 ---
-<Layout>
+<Layout title={title} description={description} additionalJsonLd={[webAppJsonLd, breadcrumbJsonLd]}>
   {/* Auto-deploy test — CI/CD verified v2 */}
   <Header />
 
