@@ -285,10 +285,21 @@ function flashCopy() {
 
 function renderTimer() {
   const secsLeft = Math.max(0, Math.floor((state.expiresAt - Date.now()) / 1000));
-  const mm = Math.floor(secsLeft / 60);
-  const ss = secsLeft % 60;
-  $<HTMLSpanElement>('#timer-mm').textContent = pad(mm);
-  $<HTMLSpanElement>('#timer-ss').textContent = pad(ss);
+  
+  const d = Math.floor(secsLeft / 86400);
+  const h = Math.floor((secsLeft % 86400) / 3600);
+  const m = Math.floor((secsLeft % 3600) / 60);
+  const s = secsLeft % 60;
+
+  const clockEl = $<HTMLSpanElement>('#timer-clock');
+
+  if (d >= 1) {
+    clockEl.innerHTML = `<span class="address__clock-n">${d}d</span> <span class="address__clock-n">${pad(h)}</span><span class="address__clock-c">:</span><span class="address__clock-n">${pad(m)}</span><span class="address__clock-c">:</span><span class="address__clock-n">${pad(s)}</span>`;
+  } else if (h >= 1) {
+    clockEl.innerHTML = `<span class="address__clock-n">${pad(h)}</span><span class="address__clock-c">:</span><span class="address__clock-n">${pad(m)}</span><span class="address__clock-c">:</span><span class="address__clock-n">${pad(s)}</span>`;
+  } else {
+    clockEl.innerHTML = `<span class="address__clock-n">${pad(m)}</span><span class="address__clock-c">:</span><span class="address__clock-n">${pad(s)}</span>`;
+  }
 
   if (secsLeft === 0 && state.expiresAt !== 0) {
     pushCurrentToHistory();
