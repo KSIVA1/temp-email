@@ -283,7 +283,7 @@ function renderTimer() {
     updateTitleBadge();
     closeReader();
     renderMail();
-    toast({ message: 'Inbox expired. Tap "New address" to get a fresh one.' });
+    openExpiredModal();
     state.expiresAt = 0; // sentinel — frozen
   }
 }
@@ -1047,6 +1047,8 @@ function renderTourStep() {
 }
 
 function positionTour() {
+  const root = document.getElementById('tour');
+  if (!root || root.getAttribute('aria-hidden') !== 'false') return;
   const step = TOUR_STEPS[tourIdx];
   if (!step) return;
   const target = document.querySelector<HTMLElement>(step.target);
@@ -1125,6 +1127,48 @@ function bindTour() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && document.getElementById('tour')?.getAttribute('aria-hidden') === 'false') {
       endTour();
+    }
+  });
+}
+
+// ── Expired modal ─────────────────────────────────────────────────────────
+
+let expiredLastFocus: HTMLElement | null = null;
+
+function openExpiredModal() {
+  const root = document.getElementById('expired-modal');
+  if (!root || root.getAttribute('aria-hidden') === 'false') return;
+  expiredLastFocus = (document.activeElement instanceof HTMLElement) ? document.activeElement : null;
+  root.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  // Focus the primary CTA after the transition starts
+  window.requestAnimationFrame(() => {
+    document.getElementById('xm-action')?.focus();
+  });
+}
+
+function closeExpiredModal() {
+  const root = document.getElementById('expired-modal');
+  if (!root || root.getAttribute('aria-hidden') !== 'false') return;
+  root.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  // Return focus to the refresh button, since that's the equivalent control
+  const fallback = document.getElementById('refresh-btn') as HTMLElement | null;
+  (expiredLastFocus ?? fallback)?.focus();
+  expiredLastFocus = null;
+}
+
+function bindExpiredModal() {
+  document.querySelectorAll('[data-xm-dismiss]').forEach((el) => {
+    el.addEventListener('click', closeExpiredModal);
+  });
+  document.getElementById('xm-action')?.addEventListener('click', () => {
+    closeExpiredModal();
+    void regenerate().catch(() => handleApiError('Could not generate a new address. Tap to retry.'));
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.getElementById('expired-modal')?.getAttribute('aria-hidden') === 'false') {
+      closeExpiredModal();
     }
   });
 }
@@ -1301,6 +1345,7 @@ function boot() {
   renderHistory();
   bindEvents();
   bindTour();
+  bindExpiredModal();
   refreshSoundUI();
   refreshNotificationsUI();
   void bootInbox();

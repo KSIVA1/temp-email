@@ -5,6 +5,7 @@ import AddressCard from '~/components/AddressCard.astro';
 import Postbox from '~/components/Postbox.astro';
 import EmailReader from '~/components/EmailReader.astro';
 import OnboardingTour from '~/components/OnboardingTour.astro';
+import ExpiredModal from '~/components/ExpiredModal.astro';
 import { platformMap } from '~/data/platforms';
 
 const popular = ['discord', 'reddit', 'chatgpt', 'github', 'steam', 'twitter', 'netflix', 'paypal']
@@ -92,6 +93,7 @@ const popular = ['discord', 'reddit', 'chatgpt', 'github', 'steam', 'twitter', '
 
   <EmailReader />
   <OnboardingTour />
+  <ExpiredModal />
 
   {/* Toast — content is injected by app.ts */}
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
