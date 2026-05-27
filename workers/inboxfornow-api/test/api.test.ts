@@ -32,7 +32,10 @@ describe('HTTP Worker API', () => {
 
   it('extends an inbox without exceeding the 24 hour cap', async () => {
     const env = createTestEnv();
-    await env.DB.exec("INSERT INTO inboxes (id, local_part, domain, created_at, expires_at) VALUES ('inb_1', 'fox1234', 'veqla.com', 1000, 1600)");
+    const now = Date.now();
+    await (env.DB as any).prepare(
+      'INSERT INTO inboxes (id, local_part, domain, created_at, expires_at) VALUES (?, ?, ?, ?, ?)',
+    ).bind('inb_1', 'fox1234', 'veqla.com', now, now + 600_000).run();
 
     const res = await worker.fetch(new Request('https://api.inboxfornow.com/api/inbox/inb_1/extend', {
       method: 'POST',
@@ -43,6 +46,47 @@ describe('HTTP Worker API', () => {
     expect(res.status).toBe(200);
     const body = await json(res);
     expect(body.expiresAt).toBeLessThanOrEqual(Date.now() + 86_400_000 + 1000);
+  });
+
+  it('does not extend an expired inbox before cron purges it', async () => {
+    const env = createTestEnv();
+    await env.DB.exec("INSERT INTO inboxes (id, local_part, domain, created_at, expires_at) VALUES ('inb_expired', 'fox1234', 'veqla.com', 1000, 2000)");
+
+    const res = await worker.fetch(new Request('https://api.inboxfornow.com/api/inbox/inb_expired/extend', {
+      method: 'POST',
+      headers: { Origin: origin, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ seconds: 600 }),
+    }), env, {} as ExecutionContext);
+
+    expect(res.status).toBe(404);
+    expect(Number(env.DB.table('inboxes')[0].expires_at)).toBe(2000);
+  });
+
+  it('does not list messages for an expired inbox before cron purges it', async () => {
+    const env = createTestEnv();
+    await env.DB.exec("INSERT INTO inboxes (id, local_part, domain, created_at, expires_at) VALUES ('inb_expired', 'fox1234', 'veqla.com', 1000, 2000)");
+    await env.DB.exec("INSERT INTO messages (id, inbox_id, from_name, from_email, subject, body_html, preview, otp, received_at, expires_at) VALUES ('msg_1', 'inb_expired', 'Sender', 's@example.com', 'Subject', '<p>Hi</p>', 'Hi', null, 1500, 2000)");
+
+    const res = await worker.fetch(new Request('https://api.inboxfornow.com/api/inbox/inb_expired/messages', {
+      headers: { Origin: origin },
+    }), env, {} as ExecutionContext);
+
+    expect(res.status).toBe(404);
+  });
+
+  it('does not list expired messages even if the inbox is still live', async () => {
+    const env = createTestEnv();
+    await env.DB.exec("INSERT INTO inboxes (id, local_part, domain, created_at, expires_at) VALUES ('inb_1', 'fox1234', 'veqla.com', 1000, 9999999999999)");
+    await env.DB.exec("INSERT INTO messages (id, inbox_id, from_name, from_email, subject, body_html, preview, otp, received_at, expires_at) VALUES ('msg_old', 'inb_1', 'Sender', 's@example.com', 'Old', '<p>Old</p>', 'Old', null, 1500, 2000)");
+    await env.DB.exec("INSERT INTO messages (id, inbox_id, from_name, from_email, subject, body_html, preview, otp, received_at, expires_at) VALUES ('msg_live', 'inb_1', 'Sender', 's@example.com', 'Live', '<p>Live</p>', 'Live', null, 1600, 9999999999999)");
+
+    const res = await worker.fetch(new Request('https://api.inboxfornow.com/api/inbox/inb_1/messages', {
+      headers: { Origin: origin },
+    }), env, {} as ExecutionContext);
+
+    expect(res.status).toBe(200);
+    const body = await json(res);
+    expect(body.messages).toMatchObject([{ id: 'msg_live' }]);
   });
 
   it('deletes a single message owned by the inbox', async () => {

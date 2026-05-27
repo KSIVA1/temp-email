@@ -112,16 +112,20 @@ async function listActiveDomains(env: Env, cors: HeadersInit): Promise<Response>
 }
 
 async function getInbox(id: string, env: Env, cors: HeadersInit): Promise<Response> {
-  const inbox = await env.DB.prepare('SELECT * FROM inboxes WHERE id = ? AND expires_at > ?').bind(id, Date.now()).first<InboxRow>();
+  const inbox = await getLiveInbox(id, env);
   if (!inbox) return json({ error: 'Inbox not found' }, 404, cors);
   return json({ id: inbox.id, address: `${inbox.local_part}@${inbox.domain}`, expiresAt: inbox.expires_at }, 200, cors);
 }
 
 async function listMessages(inboxId: string, url: URL, env: Env, cors: HeadersInit): Promise<Response> {
+  const now = Date.now();
+  const inbox = await getLiveInbox(inboxId, env, now);
+  if (!inbox) return json({ error: 'Inbox not found' }, 404, cors);
+
   const since = Number(url.searchParams.get('since') || 0);
   const rows = await env.DB.prepare(
-    'SELECT id, from_name, from_email, subject, body_html, preview, otp, received_at FROM messages WHERE inbox_id = ? AND received_at > ? ORDER BY received_at DESC',
-  ).bind(inboxId, since).all<MessageRow>();
+    'SELECT id, from_name, from_email, subject, body_html, preview, otp, received_at FROM messages WHERE inbox_id = ? AND received_at > ? AND expires_at > ? ORDER BY received_at DESC',
+  ).bind(inboxId, since, now).all<MessageRow>();
   return json({
     messages: rows.results.map((row) => ({
       id: row.id,
@@ -139,7 +143,7 @@ async function listMessages(inboxId: string, url: URL, env: Env, cors: HeadersIn
 async function extendInbox(id: string, request: Request, env: Env, cors: HeadersInit): Promise<Response> {
   const body = await request.json().catch(() => ({})) as { seconds?: number };
   if (!ALLOWED_EXTENSIONS.has(Number(body.seconds))) return json({ error: 'Invalid extension' }, 400, cors);
-  const inbox = await env.DB.prepare('SELECT * FROM inboxes WHERE id = ?').bind(id).first<InboxRow>();
+  const inbox = await getLiveInbox(id, env);
   if (!inbox) return json({ error: 'Inbox not found' }, 404, cors);
   const base = Math.max(Date.now(), inbox.expires_at);
   const expiresAt = Math.min(base + Number(body.seconds) * 1000, Date.now() + MAX_TTL_MS);
@@ -157,6 +161,10 @@ async function deleteInbox(id: string, env: Env, cors: HeadersInit): Promise<Res
 async function deleteMessage(inboxId: string, messageId: string, env: Env, cors: HeadersInit): Promise<Response> {
   await env.DB.prepare('DELETE FROM messages WHERE inbox_id = ? AND id = ?').bind(inboxId, messageId).run();
   return new Response(null, { status: 204, headers: cors });
+}
+
+async function getLiveInbox(id: string, env: Env, now = Date.now()): Promise<InboxRow | null> {
+  return env.DB.prepare('SELECT * FROM inboxes WHERE id = ? AND expires_at > ?').bind(id, now).first<InboxRow>();
 }
 
 async function pickActiveDomain(env: Env): Promise<DomainRow | null> {

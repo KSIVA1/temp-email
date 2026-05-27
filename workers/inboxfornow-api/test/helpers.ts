@@ -139,7 +139,11 @@ class FakeD1Database {
     }
     if (normalized.includes('from messages where inbox_id = ? and received_at > ?')) {
       return this.tables.messages
-        .filter((r) => r.inbox_id === values[0] && Number(r.received_at) > Number(values[1]))
+        .filter((r) => {
+          const matchesInboxAndSince = r.inbox_id === values[0] && Number(r.received_at) > Number(values[1]);
+          if (!normalized.includes('and expires_at > ?')) return matchesInboxAndSince;
+          return matchesInboxAndSince && Number(r.expires_at) > Number(values[2]);
+        })
         .sort((a, b) => Number(b.received_at) - Number(a.received_at));
     }
     throw new Error(`Unsupported query SQL: ${sql}`);
