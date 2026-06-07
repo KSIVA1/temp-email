@@ -14,6 +14,10 @@ interface Props {
   heading?: string;
   sub?: string;
   hideHero?: boolean;
+  // Heading level for the hero headline. The homepage uses this as the page's
+  // sole H1; pages that already render their own H1 above this card (e.g.
+  // /use-case/[slug]) must pass 'h2' to avoid emitting a second H1.
+  headingLevel?: 'h1' | 'h2';
 }
 
 const {
@@ -21,8 +25,10 @@ const {
   heading = 'A throwaway inbox,<br/>ready in zero clicks.',
   sub     = 'Use this address to receive verification codes, magic links and newsletter sign-ups. Hard-deleted when the timer runs out.',
   hideHero = false,
+  headingLevel = 'h1',
 } = Astro.props;
 
+const Heading = headingLevel;
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 ---
 <section class="address" aria-labelledby="address-heading">
@@ -33,7 +39,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
         {kicker}
       </span>
 
-      <h1 id="address-heading" class="address__h" set:html={heading} />
+      <Heading id="address-heading" class="address__h" set:html={heading} />
 
       <p class="address__sub">{sub}</p>
     </>
