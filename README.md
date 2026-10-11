@@ -1,116 +1,99 @@
-# InboxForNow
+# InboxForNow — temporary email for one-time messages
 
-A temporary inbox utility designed in the spirit of a small, well-printed magazine.
-Built per `docs/Temp-email-strategy.md` — Astro frontend, intended to sit in front of
-a Cloudflare Email Worker + D1 backend that is **not** part of this repo yet.
+[InboxForNow](https://inboxfornow.com/) is a free, receive-only temporary email tool
+for permitted one-time messages and manual email testing. Open the site, wait for
+a live address, and copy it into a form or an application you control. No account
+or everyday email address is required.
 
-The current code is a fully working **front-end prototype** of the inbox tool. It
-mocks the incoming-mail pipeline so you can see the empty state, the populated
-state, the reader, the timer, the copy interaction, QR, theme toggle, and PWA
-install — without standing up the worker first.
+The project contains an Astro frontend and a Cloudflare Worker backend using D1
+and Email Routing. It is connected to a real receiving service; synthetic sample
+messages in development are separate from production email delivery.
 
-## Run it
+## Use the live tool
 
-```bash
-npm install
+- **Receive email:** create an inbox and wait for an expected message. The browser
+  polls the API while the inbox is active. Delivery and sender acceptance are not
+  guaranteed.
+- **Manage its lifetime:** the initial timer is ten minutes. Extend it before it
+  expires, up to 24 hours remaining, or delete the inbox when finished.
+- **Read expected content:** received messages are parsed and sanitized before
+  display. The tool can identify likely verification codes, but check the message
+  itself because automatic detection can select the wrong number.
+- **Know the limits:** there is no outbound email, reply, forwarding, attachment
+  viewer, SMS verification, or recovery of an expired inbox. Use lasting email
+  for accounts, purchases, subscriptions, or work you need to retain.
+
+Do not send sensitive personal information or production credentials to a
+temporary inbox. Disposable addresses may be rejected by a sender, and an email
+inbox does not replace a platform's phone or identity requirements.
+
+## Practical guides
+
+- [Verification email not arriving](https://inboxfornow.com/guides/email-not-arriving/)
+  — distinguish a rejected address, sender delay, expired inbox and browser error.
+- [Test signup emails with a temporary inbox](https://inboxfornow.com/guides/testing-signup-emails/)
+  — run a manual checklist for a staging application using synthetic data.
+- [Platform limits](https://inboxfornow.com/use-case/)
+  — read account-recovery risks and documented verification restrictions.
+- [How the service works](https://inboxfornow.com/about/),
+  [privacy](https://inboxfornow.com/privacy/) and
+  [terms](https://inboxfornow.com/terms/).
+
+## Run the frontend locally
+
+Use Node.js 22, matching the repository's deployment workflow:
+
+```sh
+npm ci
 npm run dev
 ```
 
-Open the URL Astro prints (default `http://localhost:4321`).
+Open the URL Astro prints (normally `http://localhost:4321`). The frontend uses
+`https://api.inboxfornow.com` by default. An alternate API can be selected with
+`PUBLIC_API_BASE`; its CORS configuration must permit the frontend's origin.
+Never put a secret in a `PUBLIC_` environment variable.
 
-## What you'll see
+For the static build and preview:
 
-- **Instant address** in the left card — playful adjective-animal-number @ a
-  rotating receiver domain. Click **New** to regenerate.
-- **Live countdown** with `+10m / +1h / +24h` extension chips and a **Burn it**
-  destructor. The clock turns over second-by-second; the colon blinks.
-- **Copy**, **QR**, and **New** all wired with toasts, a tactile copy flash, and
-  a tiny SVG QR (decorative — swap in a real QR lib for production).
-- **The Postbox** on the right starts empty (with an illustrated envelope and a
-  "Try a sample letter" button). About **4 seconds after first load** a demo
-  letter arrives so you can see the populated state without clicking.
-- **Reader** slides in from the right (or up from the bottom on mobile). It
-  honors the "show images" toggle, surfaces a safety pill, renders an OTP block,
-  and burns the letter on demand.
-- **Theme toggle** — light primary; dark variant respects the same letterpress
-  mood with lifted accents. Persisted in `localStorage`.
-- **PWA** — manifest, service worker (app-shell cache, network-first HTML),
-  iOS meta, and an in-toolbar `Install` button that surfaces only when the
-  browser fires `beforeinstallprompt`.
-
-## Project shape
-
-```
-public/
-  manifest.webmanifest
-  sw.js
-  favicon.svg
-  icons/
-    icon.svg            ← master, used in manifest + favicon
-    maskable.svg        ← Android adaptive icon (safe-zone respected)
-    apple-touch-icon.svg
-src/
-  layouts/Layout.astro  ← <head>, fonts, theme bootstrap, SW reg
-  pages/index.astro     ← composes Header + AddressCard + Postbox + Reader
-  components/
-    Header.astro        ← masthead nameplate, dateline ornament, install + theme
-    AddressCard.astro   ← stamp-framed card, postmark seal, timer, extend chips
-    Postbox.astro       ← envelope list, empty state with illustration, ad slot
-    EmailReader.astro   ← slide-in / sheet reader with sanitized HTML body
-  scripts/
-    app.ts              ← all interactivity (state, timer, mock mail, reader)
-    pwa.ts              ← beforeinstallprompt handler
-  styles/
-    tokens.css          ← palette, type scale, spacing, easings
-    global.css          ← reset, base, paper grain, buttons, pills, postmark
-scripts/
-  gen-png-icons.mjs     ← optional sharp script to render PNG fallbacks
-docs/
-  Temp-email-strategy.md
+```sh
+npm run build
+npm run preview
 ```
 
-## Wiring up the real backend (next)
+A static frontend build does not provision an email domain or prove receiving.
+Production is deployed separately; record the deployment revision when testing
+the live service rather than assuming it matches any particular checkout.
 
-The prototype is shaped to accept a real Worker API with minimal change:
+## Backend and infrastructure
 
-1. Replace `simulateOne()` and the `setTimeout(simulateOne, 4200)` boot in
-   `src/scripts/app.ts` with a real SSE subscription or `setInterval` poll
-   against `GET /api/inbox/:id/messages`.
-2. Move the `RECEIVING_DOMAINS` constant server-side so the worker dictates
-   which domains are currently un-blacklisted, and have the client read the
-   active pool from `GET /api/domains/active`.
-3. The reader already expects pre-sanitized HTML in `bodyHtml`. Run DOMPurify
-   in the Cloudflare Email Worker, not on the client — defense in depth.
+The HTTP API, inbound email handler and scheduled cleanup are in
+[`workers/inboxfornow-api/`](workers/inboxfornow-api/). Read its
+[deployment instructions](workers/inboxfornow-api/README.md) and run its tests
+before changing receiving behavior:
 
-The brand domain (`InboxForNow.com`) must stay decoupled from the receiver
-domains per strategy §9. The prototype already reflects this — the visible
-address is `<local>@<rotating-receiver-domain>`, never `@inboxfornow.com`.
-
-## PWA — light & full Android support
-
-Chrome 96+ accepts SVG manifest icons, so the prototype ships with SVG only.
-For older Android installs you can render PNG fallbacks:
-
-```bash
-npm i -D sharp
-node scripts/gen-png-icons.mjs
+```sh
+cd workers/inboxfornow-api
+npm ci
+npm test
 ```
 
-This writes `icon-192.png`, `icon-512.png`, and `maskable-512.png` into
-`public/icons/`. The manifest already references them.
+Domain setup, DNS and Email Routing scripts are under [`infra/`](infra/).
+Follow the [infrastructure instructions](infra/README.md) for configuration.
+Keep provider credentials and local environment files outside Git. Do not run
+infrastructure mutation scripts just to preview the frontend.
 
-## Build for deploy
+## Code map
 
-```bash
-npm run build      # → dist/
-npm run preview    # → serve dist/ on 0.0.0.0
-```
+| Path | Purpose |
+|---|---|
+| `src/pages/` | Inbox and supporting pages |
+| `src/components/` | Address controls, message list, reader and navigation |
+| `src/scripts/app.ts` | Browser state, inbox API calls and interactions |
+| `src/styles/` | Shared type, theme and layout styles |
+| `public/` | Static assets, PWA manifest and service worker |
+| `workers/inboxfornow-api/` | HTTP, inbound-email and cleanup Worker |
+| `infra/` | Provider and domain configuration scripts |
 
-`dist/` is fully static. Drop it on Cloudflare Pages, pair it with the Email
-Worker, and you're live.
-
-## Domains, DNS, Namecheap & Cloudflare
-
-Go-live DNS and Email Routing are scripted under [`infra/`](infra/). Copy
-`infra/env.example` → repo-root `.env` (gitignored) for the Namecheap API key.
-See [`infra/README.md`](infra/README.md) for the full ordered checklist.
+Controlled tests establish the behavior they cover; they do not establish live
+SMTP latency, inbox placement, universal platform acceptance, or email rendering
+across other clients.
