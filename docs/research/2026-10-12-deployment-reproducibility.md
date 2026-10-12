@@ -12,13 +12,17 @@ Exported the committed baseline into a new local directory and overlaid only the
 
 `npm run check:seo` passed for 31 sitemap URLs and 517 internal links, including Worker indexing/redirect assertions and the two-day completion test. All 19 inbox/QR checks and eight offline DNS-monitor tests passed in the clean source directory. Existing credential literals were absent from the reviewed files. These checks support rebuild reproducibility; they do not establish Google rankings or full accessibility.
 
-The existing repository deployment has the two required Cloudflare secret names configured. Its frontend workflow now includes build, SEO and inbox/QR gates. Publishing the reviewed source will trigger that workflow; record its actual result and deployment after completion rather than treating a Git push as deployment proof.
+The existing repository deployment has the two required Cloudflare secret names configured. Its frontend workflow includes build, SEO and inbox/QR gates. Verified the actual workflow and production deployment separately from the Git push, as recorded below.
 
 ## Publication and deployment repair
 
 Published the reviewed source in commit `2c5bf66`. The resulting [frontend run](https://github.com/KSIVA1/temp-email/actions/runs/38261605935) failed during job setup before checkout or build: GitHub could not resolve the existing `cloudflare/pages-action` reference. This did not deploy or change the live site.
 
-Cloudflare’s current [Direct Upload CI instructions](https://developers.cloudflare.com/pages/how-to/use-direct-upload-with-continuous-integration/) and maintained [Wrangler action documentation](https://github.com/cloudflare/wrangler-action) support Pages deployment through `cloudflare/wrangler-action@v4` with a `pages deploy` command. Replaced only the obsolete deployment step, retaining the existing project, production branch, secret names and pre-deployment gates. Pinned Wrangler to 4.94.0, the version already used successfully for this site’s direct deployments. The actual rerun result must be verified before treating the repository deployment as repaired.
+Cloudflare’s current [Direct Upload CI instructions](https://developers.cloudflare.com/pages/how-to/use-direct-upload-with-continuous-integration/) and maintained [Wrangler action documentation](https://github.com/cloudflare/wrangler-action) support Pages deployment through `cloudflare/wrangler-action@v4` with a `pages deploy` command. Replaced only the obsolete deployment step, retaining the existing project, production branch, secret names and pre-deployment gates. Pinned Wrangler to 4.94.0, the version already used successfully for this site’s direct deployments.
+
+Published that repair as `3b16667`. [Run 38261812711](https://github.com/KSIVA1/temp-email/actions/runs/38261812711) passed checkout, dependency install, build, SEO checks, inbox tests and deployment. Cloudflare independently reports successful deployment **03c239f7.inboxfornow.pages.dev**, tied to full commit `3b16667c86e05f7940165ad5e6dab56dde018acd`, completed October 12 at 14:18:04 UTC. No secret or permission changes were required.
+
+Post-deployment snapshot `snapshot-091835.json` passed 31 pages, robots, 10 assets, API probes and receiving DNS. Production browser confirmed one H1, the matching apex canonical, guide links and an enabled real inbox without console warnings/errors. Original proof is retained under `.seo-cache/research/2026-10-12/` as `deployment-run.json`, `pages-deployment.json`, `deployment-success.*` and `production-after-ci.*`. The clean-output hash manifest is `rebuild-verification.json`; the temporary fresh-build directory can be removed after these checks.
 
 ## Daily observations
 
