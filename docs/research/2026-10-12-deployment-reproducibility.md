@@ -14,6 +14,12 @@ Exported the committed baseline into a new local directory and overlaid only the
 
 The existing repository deployment has the two required Cloudflare secret names configured. Its frontend workflow now includes build, SEO and inbox/QR gates. Publishing the reviewed source will trigger that workflow; record its actual result and deployment after completion rather than treating a Git push as deployment proof.
 
+## Publication and deployment repair
+
+Published the reviewed source in commit `2c5bf66`. The resulting [frontend run](https://github.com/KSIVA1/temp-email/actions/runs/38261605935) failed during job setup before checkout or build: GitHub could not resolve the existing `cloudflare/pages-action` reference. This did not deploy or change the live site.
+
+Cloudflare’s current [Direct Upload CI instructions](https://developers.cloudflare.com/pages/how-to/use-direct-upload-with-continuous-integration/) and maintained [Wrangler action documentation](https://github.com/cloudflare/wrangler-action) support Pages deployment through `cloudflare/wrangler-action@v4` with a `pages deploy` command. Replaced only the obsolete deployment step, retaining the existing project, production branch, secret names and pre-deployment gates. Pinned Wrangler to 4.94.0, the version already used successfully for this site’s direct deployments. The actual rerun result must be verified before treating the repository deployment as repaired.
+
 ## Daily observations
 
 October 12 snapshot `snapshot-090436.json` passed all 31 pages, robots, 10 declared assets, both API probes and receiving-domain DNS. Compared with the final October 11 snapshot, crawl and service status remain healthy and the known GSC RefreshError is unchanged.

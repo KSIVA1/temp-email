@@ -50,10 +50,10 @@ jobs:
         run: npm run test:inbox
 
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+        uses: cloudflare/wrangler-action@v4
         with:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          projectName: inboxfornow
-          directory: dist
+          wranglerVersion: '4.94.0'
+          command: pages deploy dist --project-name=inboxfornow --branch=main
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
