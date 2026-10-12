@@ -1,0 +1,55 @@
+---
+const configure = 'git config --local user.email "YOUR_GITHUB_NOREPLY_ADDRESS"\ngit config --local user.email';
+const inspect = "git show -s --format='Author: %ae%nCommitter: %ce' HEAD";
+---
+<section class="github-guide" aria-labelledby="github-guide-heading">
+  <header>
+    <span class="label">GitHub email guide</span>
+    <h2 id="github-guide-heading">Keep your account reachable and your commit email private</h2>
+    <p class="review">By <a href="/about/">InboxForNow</a> · Sources reviewed <time datetime="2026-10-11">October 11, 2026</time></p>
+    <p>GitHub’s <a href="https://docs.github.com/en/account-and-profile/reference/email-addresses-reference">email verification restrictions</a> exclude disposable email services. Generating another temporary address is not a documented solution. For commit privacy, GitHub provides a separate noreply address.</p>
+  </header>
+
+  <div class="guide-sections">
+    <section id="github-account" aria-labelledby="github-account-heading">
+      <h3 id="github-account-heading">1. Verify an account email you can keep</h3>
+      <p>Use a lasting mailbox for account verification and future account messages. GitHub limits important features until an email is verified, including creating repositories, issues and pull requests.</p>
+      <p>If you need another verification email, open your profile menu → <strong>Settings → Emails</strong>, then select <strong>Resend verification email</strong> beneath the address. Open the link in the received message. These are <a href="https://docs.github.com/en/account-and-profile/how-tos/email-preferences/verifying-your-email-address">GitHub’s verification steps</a>; interface labels may change.</p>
+    </section>
+
+    <section id="github-privacy" aria-labelledby="github-privacy-heading">
+      <h3 id="github-privacy-heading">2. Use GitHub’s noreply address for commit privacy</h3>
+      <p>In Settings → Emails, enable <strong>Keep my email addresses private</strong> and copy the GitHub-provided noreply address shown there. Use that exact value rather than guessing its format. GitHub’s web-based commits use noreply when email privacy is enabled; command-line commits need their own Git configuration.</p>
+      <p>In the local repository where you want this setting, replace the placeholder below with your copied noreply address. The first command changes this repository’s setting; the second reads it back.</p>
+      <pre aria-label="Configure and check this repository’s commit email"><code>{configure}</code></pre>
+      <p>GitHub documents <a href="https://docs.github.com/en/account-and-profile/how-tos/email-preferences/setting-your-commit-email-address">web and command-line commit email settings</a>. Git’s <a href="https://git-scm.com/docs/git-config">local configuration reference</a> explains the repository scope. Your account mailbox and commit-author address serve different purposes: a noreply commit identity does not replace account verification.</p>
+    </section>
+
+    <section id="github-check" aria-labelledby="github-check-heading">
+      <h3 id="github-check-heading">3. Check the commit, not just the setting</h3>
+      <p>After making a new local commit, inspect its stored author and committer addresses before pushing:</p>
+      <pre aria-label="Inspect the latest commit’s email addresses"><code>{inspect}</code></pre>
+      <p>The <a href="https://git-scm.com/docs/pretty-formats">Git format reference</a> defines these two fields. Changing your configuration affects future commits; it does not rewrite an earlier commit. If the output still shows another address, check the tool or environment that created that commit before publishing it.</p>
+      <p>GitHub also offers <strong>Block command line pushes that expose my email</strong> in email settings. It checks the latest commit’s author address against private emails on your account; inspect other commits separately. See the <a href="https://docs.github.com/en/account-and-profile/how-tos/email-preferences/blocking-command-line-pushes-that-expose-your-personal-email-address">push-blocking documentation</a>. This does not erase addresses already published in repository history.</p>
+    </section>
+  </div>
+
+  <aside class="testing" aria-labelledby="github-testing-heading">
+    <h3 id="github-testing-heading">Testing emails from an app you build?</h3>
+    <p>A disposable inbox can help inspect permitted test messages from your own application. Follow our <a href="/guides/testing-signup-emails/">signup-email testing checklist</a>. That use is separate from verifying a GitHub account. InboxForNow is independent of GitHub.</p>
+  </aside>
+</section>
+
+<style>
+  .github-guide { padding-bottom: var(--sp-8); border-bottom: 1px solid var(--border); margin-bottom: var(--sp-8); }
+  header, .guide-sections { max-width: 78ch; }
+  h2 { color: var(--text); font-size: var(--fs-h2); margin: var(--sp-3) 0; }
+  h3 { color: var(--text); font-size: 1.15rem; line-height: 1.4; margin: 0 0 .75rem; }
+  p { color: var(--text-2); line-height: 1.7; }
+  strong { color: var(--text); }
+  .review { font-size: var(--fs-small); }
+  .guide-sections section { margin-top: var(--sp-7); scroll-margin-top: 100px; }
+  pre { max-width: 100%; white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-2); padding: var(--sp-4); font-family: var(--ff-mono); font-size: .8rem; line-height: 1.8; color: var(--text); }
+  .testing { margin-top: var(--sp-7); border-left: 3px solid var(--data); background: var(--surface-2); padding: var(--sp-5); max-width: 78ch; }
+  .testing p { margin-bottom: 0; }
+</style>

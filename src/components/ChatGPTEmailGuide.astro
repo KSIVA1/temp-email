@@ -1,0 +1,56 @@
+<section class="chatgpt-guide" aria-labelledby="chatgpt-guide-heading">
+  <header>
+    <span class="label">ChatGPT account email guide</span>
+    <h2 id="chatgpt-guide-heading">A one-time code can still require a lasting inbox</h2>
+    <p class="review">By <a href="/about/">InboxForNow</a> · Sources reviewed <time datetime="2026-10-11">October 11, 2026</time></p>
+    <p>We recommend a lasting email address for a ChatGPT account you want to keep. OpenAI may request email verification again, and an expired InboxForNow mailbox cannot receive that later message. We have not verified whether ChatGPT accepts our current receiving domain.</p>
+  </header>
+
+  <section id="chatgpt-login" aria-labelledby="chatgpt-login-heading">
+    <h3 id="chatgpt-login-heading">Start with the account and sign-in method</h3>
+    <p>OpenAI’s <a href="https://help.openai.com/en/articles/7426629-why-cant-i-log-in-to-chatgpt">login troubleshooting guide</a> says to use the email on your ChatGPT account, which can differ from your billing email. If you are still signed in on the web, check <strong>Settings → Account</strong> before signing out.</p>
+    <p>If you registered through Google, Microsoft or Apple, use that provider’s sign-in option and the same provider account. With Apple’s Hide My Email, the account may use a private relay address rather than your personal email. Generating a new InboxForNow address does not update an existing ChatGPT account or its sign-in method.</p>
+  </section>
+
+  <section id="chatgpt-code" aria-labelledby="chatgpt-code-heading">
+    <h3 id="chatgpt-code-heading">Match the prompt before requesting another code</h3>
+    <dl class="scenarios">
+      <div><dt>Wrong authentication method</dt><dd>Return to the sign-in method used for that account. A different receiving address does not fix this error.</dd></div>
+      <div><dt>Email code missing or expired</dt><dd>Check the registered recipient. Use the resend option when offered and the newest valid code. With a lasting mailbox, also check its spam or quarantine controls.</dd></div>
+      <div><dt>App approval requested</dt><dd>OpenAI may offer approval in a signed-in ChatGPT mobile app. If that fails and “Try with email” is offered, it sends a code to the account’s email; you still need that inbox.</dd></div>
+      <div><dt>InboxForNow has expired</dt><dd>Creating another inbox does not restore the old mailbox. This service cannot retrieve a later login or recovery message sent to the expired address.</dd></div>
+    </dl>
+    <p>OpenAI documents email codes and app approval in its <a href="https://help.openai.com/en/articles/9889414-why-am-i-being-asked-to-verify-my-login">login-verification guidance</a>. Which options appear depends on the account and device. InboxForNow has no spam folder or sender-allowlist setting. For an active inbox, our <a href="/guides/email-not-arriving/">missing-email checklist</a> separates address, connection and expiry checks.</p>
+  </section>
+
+  <section id="chatgpt-change" aria-labelledby="chatgpt-change-heading">
+    <h3 id="chatgpt-change-heading">Change an account email while you still control it</h3>
+    <p>OpenAI’s <a href="https://help.openai.com/en/articles/4936827-how-to-change-your-email-address">email-change instructions</a> require access to the current email inbox. They say an email change is unsupported without that access, including through Support.</p>
+    <p>Self-service eligibility requires that you have never used SSO, are not in an Enterprise workspace or organization, and your current domain is not verified for an Enterprise or Business customer. Managed accounts may require an administrator. Social-login users must first add a password.</p>
+    <p>For an eligible account, sign in to ChatGPT on the web, open <strong>Settings → Account</strong>, select your email, and follow the new-address verification prompts. Email changes are not available in the iOS or Android apps. After the change, sign back in with the new address. The same account email is used for ChatGPT and the API Platform.</p>
+  </section>
+
+  <aside class="limits" aria-labelledby="chatgpt-limits-heading">
+    <h3 id="chatgpt-limits-heading">If access is already lost</h3>
+    <p><a href="https://help.openai.com/en/articles/7426629-why-cant-i-log-in-to-chatgpt">OpenAI’s login guide</a> says self-service troubleshooting cannot resolve loss of access to the account inbox, and SMS is not a replacement for email-based verification. It directs subscription holders who need cancellation help to Support. A saved password does not make an expired mailbox reachable.</p>
+    <p>Follow the official account guidance for your situation. InboxForNow is independent of OpenAI; these sources do not establish a successful temporary-email signup or a way around account requirements.</p>
+  </aside>
+</section>
+
+<style>
+  .chatgpt-guide { padding-bottom: var(--sp-8); border-bottom: 1px solid var(--border); margin-bottom: var(--sp-8); }
+  header, section, .limits { max-width: 78ch; }
+  h2 { color: var(--text); font-size: var(--fs-h2); margin: var(--sp-3) 0; }
+  h3 { color: var(--text); font-size: 1.15rem; line-height: 1.4; margin: 0 0 .75rem; }
+  p, dd { color: var(--text-2); line-height: 1.7; }
+  strong, dt { color: var(--text); }
+  .review { font-size: var(--fs-small); }
+  section { margin-top: var(--sp-7); scroll-margin-top: 100px; }
+  .scenarios { margin: 1.5rem 0; }
+  .scenarios div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 1.5rem; border-top: 1px solid var(--border); padding: 1rem 0; }
+  dt { font-weight: 600; line-height: 1.6; }
+  dd { margin: 0; }
+  .limits { margin-top: var(--sp-7); border-left: 3px solid var(--data); background: var(--surface-2); padding: var(--sp-5); }
+  .limits p:last-child { margin-bottom: 0; }
+  @media (max-width: 640px) { .scenarios div { grid-template-columns: 1fr; gap: .5rem; } }
+</style>

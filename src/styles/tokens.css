@@ -19,7 +19,7 @@
   /* Text */
   --text:          #09090B;
   --text-2:        #52525B;
-  --text-3:        #A1A1AA;
+  --text-3:        #62626C;
   --text-4:        #D4D4D8;
 
   /* Accent system — black is the primary, emerald is the data signal */
@@ -34,7 +34,7 @@
 
   --warn:          #B45309;
   --warn-soft:     #FEF3C7;
-  --danger:        #DC2626;
+  --danger:        #B91C1C;
   --danger-soft:   #FEE2E2;
 
   /* Shadows — subtle, not decorative */
@@ -85,8 +85,8 @@
   --ease-snap:  cubic-bezier(0.34, 1.4, 0.64, 1);
 
   /* Type families */
-  --ff-sans: "Geist", "Geist Fallback", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  --ff-mono: "Geist Mono", "SF Mono", ui-monospace, "JetBrains Mono", monospace;
+  --ff-sans: "Geist Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --ff-mono: "Geist Mono Variable", "SF Mono", ui-monospace, "JetBrains Mono", monospace;
 }
 
 /* Dark variant — same minimal language, inverted surfaces */
@@ -103,7 +103,7 @@
 
   --text:          #FAFAFA;
   --text-2:        #A1A1AA;
-  --text-3:        #71717A;
+  --text-3:        #94949E;
   --text-4:        #3F3F46;
 
   --accent:        #FAFAFA;

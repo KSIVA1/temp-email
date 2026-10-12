@@ -7,9 +7,9 @@ const showSponsored = import.meta.env.PUBLIC_SHOW_SPONSORED === 'true';
 <section class="postbox" aria-labelledby="postbox-heading" data-tour="postbox">
   <div class="postbox__head">
     <div class="postbox__title">
-      <h2 id="postbox-heading" class="postbox__h">Inbox</h2>
+      <h2 id="postbox-heading" class="postbox__h" tabindex="-1">Inbox</h2>
       <span class="pill" id="status-pill" data-status="waiting">
-        <span id="status-label">Waiting</span>
+        <span id="status-label">Connecting</span>
       </span>
     </div>
     <p class="postbox__sub">
@@ -30,10 +30,9 @@ const showSponsored = import.meta.env.PUBLIC_SHOW_SPONSORED === 'true';
           <path d="M3 7 L12 13 L21 7" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <h3 class="empty__h">Listening for messages<span class="empty__dots" aria-hidden="true"><span></span><span></span><span></span></span></h3>
-      <p class="empty__p">
-        Paste the address above into any signup form. The next message that
-        arrives will show up here within seconds.
+      <h3 class="empty__h"><span id="empty-heading">Connecting to your inbox</span><span class="empty__dots" aria-hidden="true"><span></span><span></span><span></span></span></h3>
+      <p id="empty-description" class="empty__p">
+        Wait for a live address before requesting your message.
       </p>
 
       <button class="btn btn--ghost btn--tiny empty__retry" type="button" data-api-retry hidden>

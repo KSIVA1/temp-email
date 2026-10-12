@@ -1,6 +1,6 @@
 ---
 import type { Platform } from '~/data/platforms';
-import { getRelated, CATEGORIES } from '~/data/platforms';
+import { getRelated, CATEGORIES, suitabilityLabels } from '~/data/platforms';
 
 interface Props { platform: Platform; }
 const { platform } = Astro.props;
@@ -19,7 +19,7 @@ const related = getRelated(platform);
           <span class="uc-related__icon" aria-hidden="true">{p.initials}</span>
           <span class="uc-related__body">
             <span class="uc-related__name">Temp mail for {p.name}</span>
-            <span class="uc-related__category">{CATEGORIES[p.category].label} · {p.typicalWaitTime}</span>
+            <span class="uc-related__category">{CATEGORIES[p.category].label} · {suitabilityLabels[p.suitability]}</span>
           </span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="uc-related__arrow" aria-hidden="true">
             <path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>

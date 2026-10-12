@@ -1,0 +1,54 @@
+---
+import GuideLayout from '~/layouts/GuideLayout.astro';
+const sections = [{id:'quick-check',title:'Start here'},{id:'symptoms',title:'Match the symptom'},{id:'sender',title:'Check your sender'},{id:'limits',title:'Understand the limits'},{id:'next',title:'Choose the next step'}];
+---
+<GuideLayout title="Verification Email Not Arriving? Temp Mail Help · InboxForNow" heading="Verification email not arriving? Start here." description="Troubleshoot missing email in an InboxForNow temporary inbox: check the address, timer, connection, sender delivery status, and domain restrictions." sections={sections}>
+  <section id="quick-check">
+    <h2>Four checks before you request another code</h2>
+    <ol>
+      <li><strong>Copy the live address again.</strong> Wait until the inbox has connected and use its Copy button. Compare the full address with the recipient in the signup form. A screenshot, remembered address, or address from a previous session may belong to a different inbox.</li>
+      <li><strong>Check the timer.</strong> New inboxes start with 10 minutes. Extend an active inbox before it expires. After expiry the service stops access, even if cleanup has not run yet. Generating another address does not restore the old inbox.</li>
+      <li><strong>Look for a connection error.</strong> Keep the inbox tab open and connected. The app checks for messages every three seconds while polling is active; that is a check interval, not a delivery promise. A connection error means the browser may be unable to retrieve mail that has already arrived.</li>
+      <li><strong>Read the sending site’s response.</strong> “Invalid email” or “disposable address not allowed” is an address-policy problem, not a slow inbox. Use an address supported by that service. New address can generate another mailbox on the same domain.</li>
+    </ol>
+    <p class="note">Avoid repeatedly requesting codes. A sender may rate-limit resends or invalidate older codes. Follow that service’s instructions and use the newest valid message when it arrives.</p>
+  </section>
+  <section id="symptoms">
+    <h2>Match what you see to the next check</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th scope="col">What you see</th><th scope="col">What to check</th></tr></thead>
+      <tbody>
+        <tr><td>The form rejects the address immediately</td><td>Check for a typo and the site’s email policy. The inbox cannot override a sender’s domain block or phone requirement.</td></tr>
+        <tr><td>The site says “sent,” but the inbox is empty</td><td>Confirm the recipient and expiry. “Sent” can mean queued by the application; it does not prove delivery to this inbox.</td></tr>
+        <tr><td>The inbox shows a connection error</td><td>Check your connection and whether a browser extension or network filter blocks the API. Use Retry to reconnect. Reloading this tab also checks the same inbox when session storage is available, without extending its timer. Wait for a working address before requesting a message.</td></tr>
+        <tr><td>The message arrived, but images or formatting are missing</td><td>This is a rendering limit. InboxForNow strips images, scripts, styles, forms, and attachments from received mail. Put important instructions and codes in text.</td></tr>
+        <tr><td>A code arrived, but the website rejects it</td><td>Check the code’s age, recipient account, and whether a later resend replaced it. The sender controls code validity.</td></tr>
+        <tr><td>A verification link opens but cannot sign you in</td><td>Check the sender’s session or same-browser requirements. An inbox is a receiver; it cannot repair an expired or account-specific login link.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+  <section id="sender">
+    <h2>If you own the application sending the email</h2>
+    <p>Trace one message rather than retrying blindly. Record a unique subject such as <code>signup-test-01</code>, the exact recipient, and the request time. In your email provider’s dashboard, follow that message from queued to delivered, deferred, bounced, or suppressed.</p>
+    <ul>
+      <li><strong>No provider event:</strong> investigate your application, job queue, environment configuration, or sandbox restrictions.</li>
+      <li><strong>Suppressed or rejected:</strong> inspect the provider’s reason. Check suppression lists, recipient allowlists, and your own disposable-domain rules.</li>
+      <li><strong>Deferred:</strong> let the provider retry according to its policy. Extend the inbox while it is active, or repeat the test with a fresh address and a distinct subject.</li>
+      <li><strong>Bounced:</strong> save the exact SMTP response. An unknown or expired InboxForNow recipient is rejected; making up an address on the receiving domain does not create an inbox.</li>
+      <li><strong>Delivered but absent:</strong> confirm the address and original inbox session, then check browser retrieval errors. Provider delivery status alone does not prove that a message was displayed to a user.</li>
+    </ul>
+    <p>Use the <a href="/guides/testing-signup-emails/">signup email testing checklist</a> to reproduce the failure with one variable changed at a time.</p>
+  </section>
+  <section id="limits">
+    <h2>What a temporary inbox can and cannot fix</h2>
+    <p>InboxForNow receives email only. It cannot send a reply, provide a phone number, forward mail to your permanent inbox, or restore expired messages. A sender can delay delivery or reject a disposable domain independently of this site.</p>
+    <p>The remaining timer can be extended up to 24 hours. Access ends at expiry; scheduled cleanup runs every five minutes. Neither the timer nor a successful inbox connection guarantees acceptance by a particular platform.</p>
+    <p>For accounts with purchases, subscriptions, workspaces, or future recovery needs, use a permanent address or lasting alias. See <a href="/use-case/">platform-specific restrictions</a> before relying on temporary email.</p>
+    <p>For Discord, use the <a href="/use-case/discord/#discord-email">Discord verification steps</a> to distinguish a missing email from phone or server requirements. GitHub excludes disposable-address verification; the <a href="/use-case/github/#github-account">GitHub email guide</a> explains lasting account email and the separate noreply option for commit privacy.</p>
+  </section>
+  <section id="next">
+    <h2>Choose the next step</h2>
+    <p>If your current inbox is active and the sender permits it, correct the recipient and follow the sender’s resend instructions. If it has expired, <a href="/">open a fresh temporary inbox</a> and start the permitted flow again. If the platform rejects the domain, switch to its supported email method.</p>
+    <p>This guide was checked against the InboxForNow receiving and expiry implementation and its automated tests on October 11, 2026. It is not a successful compatibility test with any third-party platform or a guarantee about that sender’s delivery.</p>
+  </section>
+</GuideLayout>

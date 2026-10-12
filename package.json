@@ -16,12 +16,21 @@
     "infra:pages-dns": "node infra/scripts/cloudflare-pages-dns.mjs",
     "infra:email-routing": "bash infra/scripts/setup-email-routing.sh",
     "infra:verify-dns": "node infra/scripts/verify-dns.mjs",
-    "infra:deploy-worker": "bash infra/scripts/deploy-worker.sh"
+    "infra:deploy-worker": "bash infra/scripts/deploy-worker.sh",
+    "check:seo": "node --experimental-strip-types scripts/seo-check.mjs && node --test scripts/seo-goal.test.mjs",
+    "test:inbox": "node --experimental-strip-types --test scripts/inbox-session.test.mjs scripts/address-qr.test.mjs",
+    "seo:monitor": ".seo-cache/venv/bin/python scripts/seo-monitor.py",
+    "seo:authorize": ".seo-cache/venv/bin/python scripts/seo-monitor.py --authorize",
+    "seo:rankings": "node scripts/seo-rankings.mjs"
   },
   "dependencies": {
-    "astro": "^6.3.7"
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource-variable/geist-mono": "^5.3.0",
+    "astro": "^6.3.7",
+    "qrcode-generator": "^2.0.4"
   },
   "devDependencies": {
+    "jsqr": "^1.4.0",
     "sharp": "^0.34.5"
   }
 }

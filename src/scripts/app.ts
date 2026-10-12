@@ -1,8 +1,8 @@
 // ─────────────────────────────────────────────────────────────────────────
 //  InboxForNow — client interactivity
-//  Prototype logic. Real polling against the Cloudflare Worker API replaces
-//  simulateOne() and the MOCK_MAILS table; the rest of the wiring stays.
+//  Live inbox connections; demo messages are limited to development builds.
 // ─────────────────────────────────────────────────────────────────────────
+import { createInboxSession } from '~/lib/inbox-session';
 
 type Mail = {
   id: string;
@@ -41,28 +41,6 @@ type Settings = {
 const API_BASE = import.meta.env.PUBLIC_API_BASE || 'https://api.inboxfornow.com';
 const IS_DEV = import.meta.env.DEV;
 
-let RECEIVING_DOMAINS = ['veqla.com'];
-
-const ANIMALS = [
-  'fox', 'heron', 'otter', 'wren', 'pine', 'crane', 'badger', 'lynx',
-  'sparrow', 'marten', 'rook', 'vole', 'dove', 'wolf', 'bear', 'eagle',
-  'hawk', 'finch', 'robin', 'swift', 'falcon', 'osprey', 'raven', 'jay',
-  'owl', 'hare', 'mole', 'shrew', 'stoat', 'ferret', 'bison', 'moose',
-  'elk', 'deer', 'stag', 'ram', 'goat', 'lamb', 'puma', 'tiger',
-  'lion', 'panther', 'jaguar', 'cobra', 'viper', 'gecko', 'newt', 'toad',
-  'frog', 'salmon', 'trout', 'bass', 'pike', 'perch', 'carp', 'cod',
-  'tuna', 'seal', 'whale', 'walrus', 'panda', 'koala', 'sloth', 'lemur',
-  'chimp', 'gibbon', 'tapir', 'camel', 'llama', 'alpaca', 'zebra', 'rhino',
-  'hippo', 'gator', 'iguana', 'parrot', 'macaw', 'toucan', 'stork', 'ibis',
-  'egret', 'pelican', 'puffin', 'tern', 'gull', 'lark', 'pipit', 'dingo',
-  'jackal', 'hyena', 'mink', 'orca', 'ray', 'squid', 'clam', 'snail',
-  'crab', 'moth', 'beetle', 'ant', 'wasp', 'cricket', 'mantis', 'cicada',
-  'coral', 'starling', 'magpie', 'thrush', 'oriole', 'bunting', 'plover',
-  'curlew', 'avocet', 'gannet', 'grouse', 'quail', 'pheasant', 'condor',
-  'kite', 'ermine', 'bobcat', 'coyote', 'emu', 'kiwi', 'skunk',
-];
-
-const DEFAULT_TTL = 10 * 60; // seconds
 const HISTORY_MAX = 5;
 // Read whatever <title> the page shipped with — so per-page titles
 // (e.g. "Temporary email for Discord — InboxForNow") are preserved when
@@ -73,10 +51,11 @@ const TITLE_BASE  = document.title;
 
 const state = {
   inboxId: '',
-  localPart: 'fox9821',
-  domain: RECEIVING_DOMAINS[0],
+  localPart: '',
+  domain: '',
   createdAt: Date.now(),
-  expiresAt: Date.now() + DEFAULT_TTL * 1000,
+  expiresAt: 0,
+  phase: 'connecting' as 'connecting' | 'ready' | 'unavailable' | 'expired',
   mail: [] as Mail[],
   qrShown: false,
   imagesOn: false,
@@ -89,6 +68,13 @@ const state = {
 let pollTimer = 0;
 let lastMessageTs = 0;
 let consecutiveErrors = 0;
+let connectionBusy = false;
+let pollingInboxId = '';
+const inboxSession = createInboxSession({
+  storage: (() => { try { return sessionStorage; } catch { return undefined; } })(),
+  readInbox: async id => (await apiFetch(`/api/inbox/${encodeURIComponent(id)}`)).json(),
+  createInbox,
+});
 
 // ── Persistence helpers ──────────────────────────────────────────────────
 
@@ -130,12 +116,6 @@ function $<T extends Element>(sel: string): T {
 }
 function $opt<T extends Element>(sel: string): T | null {
   return document.querySelector<T>(sel);
-}
-
-function generateLocal(): string {
-  const a = ANIMALS[Math.floor(Math.random() * ANIMALS.length)];
-  const num = Math.floor(10000 + Math.random() * 90000);
-  return `${a}${num}`;
 }
 
 function pad(n: number): string { return n.toString().padStart(2, '0'); }
@@ -221,10 +201,24 @@ function fullAddress(): string {
 }
 
 function renderAddress() {
-  $<HTMLSpanElement>('#addr-local').textContent = state.localPart;
+  const live = !!state.inboxId && state.expiresAt > Date.now();
+  $<HTMLSpanElement>('#addr-local').textContent = state.localPart || (connectionBusy || state.phase === 'connecting' ? 'Connecting…' : 'Unavailable');
   $<HTMLSpanElement>('#addr-domain').textContent = state.domain;
+  $<HTMLSpanElement>('#addr-at').hidden = !state.localPart;
+  $<HTMLParagraphElement>('#address-status').textContent = connectionBusy ? 'Connecting to your inbox…'
+    : live ? (inboxSession.retainedInTab ? 'This tab keeps your inbox through reloads until expiry.' : 'Keep this page open. Your browser cannot retain this inbox through reloads.')
+    : state.phase === 'expired' ? 'This inbox has expired. Generate a new address.'
+    : 'Inbox unavailable. Retry to get a working address.';
+  for (const button of document.querySelectorAll<HTMLButtonElement>('#copy-btn, #qr-btn, #burn-btn, [data-extend]')) button.disabled = connectionBusy || !live;
+  $<HTMLButtonElement>('#refresh-btn').disabled = connectionBusy;
+  document.querySelectorAll<HTMLButtonElement>('[data-api-retry]').forEach(button => { button.disabled = connectionBusy; });
   $<HTMLDivElement>('#reader-to').textContent = fullAddress();
-  if (state.qrShown) renderQr();
+  if (!live) {
+    state.qrShown = false;
+    $<HTMLDivElement>('#qr-panel').hidden = true;
+    $<HTMLButtonElement>('#qr-btn').setAttribute('aria-expanded', 'false');
+    $<HTMLDivElement>('#qr-canvas').replaceChildren();
+  } else if (state.qrShown) void renderQr();
 }
 
 function pushCurrentToHistory() {
@@ -232,7 +226,7 @@ function pushCurrentToHistory() {
   const entry: HistoryEntry = {
     address: fullAddress(),
     createdAt: state.createdAt,
-    expiredAt: Date.now(),
+    expiredAt: state.expiresAt,
   };
   state.history = [entry, ...state.history.filter((h) => h.address !== entry.address)].slice(0, HISTORY_MAX);
   saveHistory();
@@ -240,33 +234,54 @@ function pushCurrentToHistory() {
 }
 
 async function regenerate() {
-  pushCurrentToHistory();
   await createFreshInbox();
 }
 
 async function createFreshInbox(showToast = true) {
+  await connectInbox(true, showToast);
+}
+
+async function connectInbox(replace = false, showToast = false) {
+  if (connectionBusy) return;
+  connectionBusy = true;
   stopPolling();
-  const inbox = await createInbox();
-  const [localPart, domain] = inbox.address.split('@');
-  state.inboxId = inbox.id;
-  state.localPart = localPart;
-  state.domain = domain;
-  state.createdAt = Date.now();
-  state.expiresAt = inbox.expiresAt;
-  state.mail = [];
-  state.unread = 0;
-  state.activeMailId = null;
-  lastMessageTs = 0;
-  updateTitleBadge();
   renderAddress();
-  renderTimer();
-  renderMail();
-  closeReader();
-  startPolling();
-  if (showToast) toast({ message: 'Fresh address generated' });
+  setStatus('waiting', 'Connecting');
+  try {
+    const inbox = await inboxSession.connect(replace);
+    const changed = state.inboxId !== inbox.id;
+    if (changed && state.inboxId) pushCurrentToHistory();
+    const [localPart, domain] = inbox.address.split('@');
+    state.inboxId = inbox.id;
+    state.localPart = localPart;
+    state.domain = domain;
+    state.expiresAt = inbox.expiresAt;
+    state.phase = 'ready';
+    if (changed) {
+      state.createdAt = Date.now();
+      state.mail = [];
+      state.unread = 0;
+      lastMessageTs = 0;
+      updateTitleBadge();
+      closeReader();
+    }
+    closeExpiredModal();
+    clearApiError();
+    renderMail();
+    if (showToast) toast({ message: 'Fresh address generated' });
+  } catch (err) {
+    if (!state.inboxId) state.phase = 'unavailable';
+    handleApiError(err instanceof Error ? err : undefined);
+  } finally {
+    connectionBusy = false;
+    renderAddress();
+    renderTimer();
+    if (state.inboxId && state.expiresAt > Date.now()) startPolling();
+  }
 }
 
 function copyAddress() {
+  if (connectionBusy || !state.inboxId || state.expiresAt <= Date.now()) return;
   navigator.clipboard.writeText(fullAddress()).then(() => {
     toast({ message: `Copied · ${fullAddress()}`, kind: 'success' });
     flashCopy();
@@ -284,7 +299,11 @@ function flashCopy() {
 // ── Timer ────────────────────────────────────────────────────────────────
 
 function renderTimer() {
-  const secsLeft = Math.max(0, Math.floor((state.expiresAt - Date.now()) / 1000));
+  if (!state.expiresAt) {
+    $<HTMLSpanElement>('#timer-clock').textContent = '—';
+    return;
+  }
+  const secsLeft = Math.max(0, Math.ceil((state.expiresAt - Date.now()) / 1000));
   
   const d = Math.floor(secsLeft / 86400);
   const h = Math.floor((secsLeft % 86400) / 3600);
@@ -302,25 +321,38 @@ function renderTimer() {
   }
 
   if (secsLeft === 0 && state.expiresAt !== 0) {
-    pushCurrentToHistory();
-    state.mail = [];
-    state.unread = 0;
-    state.activeMailId = null;
-    updateTitleBadge();
-    closeReader();
-    renderMail();
-    openExpiredModal();
-    state.expiresAt = 0; // sentinel — frozen
+    expireCurrentInbox();
   }
 }
 
+function expireCurrentInbox() {
+  if (state.inboxId) pushCurrentToHistory();
+  inboxSession.forget(state.inboxId);
+  stopPolling();
+  state.inboxId = '';
+  state.expiresAt = 0;
+  state.phase = 'expired';
+  state.mail = [];
+  state.unread = 0;
+  updateTitleBadge();
+  closeReader();
+  renderMail();
+  $<HTMLSpanElement>('#empty-heading').textContent = 'This inbox has expired';
+  $<HTMLParagraphElement>('#empty-description').textContent = 'Generate a new address to receive another message. Expired mail cannot be recovered.';
+  setStatus('alert', 'Expired');
+  renderAddress();
+  openExpiredModal();
+}
+
 async function extend(seconds: number) {
-  if (!state.inboxId) return;
+  if (connectionBusy || !state.inboxId || state.expiresAt <= Date.now()) return;
+  const inboxId = state.inboxId;
   const res = await apiFetch(`/api/inbox/${state.inboxId}/extend`, {
     method: 'POST',
     body: JSON.stringify({ seconds }),
   });
   const body = await res.json() as { expiresAt: number };
+  if (inboxId !== state.inboxId) return;
   state.expiresAt = body.expiresAt;
   renderTimer();
   const label = seconds >= 86400 ? '+24 hours'
@@ -330,22 +362,17 @@ async function extend(seconds: number) {
 }
 
 async function burnNow() {
-  if (state.inboxId) {
+  if (connectionBusy || !state.inboxId) return;
+  connectionBusy = true;
+  renderAddress();
+  try {
     await apiFetch(`/api/inbox/${state.inboxId}`, { method: 'DELETE' });
-  }
-  pushCurrentToHistory();
-  stopPolling();
-  state.inboxId = '';
-  state.expiresAt = Date.now();
-  renderTimer();
-  toast({ message: 'Inbox deleted.' });
-}
-
-async function fetchActiveDomains() {
-  const res = await apiFetch('/api/domains/active');
-  const body = await res.json() as { domains?: string[] };
-  if (Array.isArray(body.domains) && body.domains.length > 0) {
-    RECEIVING_DOMAINS = body.domains;
+    expireCurrentInbox();
+    renderTimer();
+    toast({ message: 'Inbox deleted.' });
+  } finally {
+    connectionBusy = false;
+    renderAddress();
   }
 }
 
@@ -409,6 +436,10 @@ function handleApiError(err?: Error | string) {
   if (isOffline) label = 'Offline';
 
   setStatus('alert', label);
+  $<HTMLSpanElement>('#empty-heading').textContent = 'Connection unavailable';
+  $<HTMLParagraphElement>('#empty-description').textContent = state.inboxId
+    ? 'Your address stays selected. Retry to reconnect before the timer expires.'
+    : 'No receiving address is ready yet. Retry before requesting a message.';
   const empty = $<HTMLDivElement>('#empty-state');
   empty.dataset.error = 'true';
   const retry = empty.querySelector<HTMLButtonElement>('[data-api-retry]');
@@ -422,52 +453,38 @@ function clearApiError() {
   delete empty.dataset.error;
   const retry = empty.querySelector<HTMLButtonElement>('[data-api-retry]');
   if (retry) retry.hidden = true;
+  $<HTMLSpanElement>('#empty-heading').textContent = 'Listening for messages';
+  $<HTMLParagraphElement>('#empty-description').textContent = 'Use the live address for a permitted one-time message. Delivered emails appear here while this inbox is active.';
 }
 
 // ── QR ───────────────────────────────────────────────────────────────────
 
 function toggleQr() {
+  if (connectionBusy || !state.inboxId || state.expiresAt <= Date.now()) return;
   state.qrShown = !state.qrShown;
   const panel = $<HTMLDivElement>('#qr-panel');
   const btn = $<HTMLButtonElement>('#qr-btn');
   panel.hidden = !state.qrShown;
   btn.setAttribute('aria-expanded', String(state.qrShown));
-  if (state.qrShown) renderQr();
+  if (state.qrShown) void renderQr();
 }
 
-function renderQr() {
-  // Decorative QR-style placeholder. Real apps should ship a QR lib.
-  const seed = fullAddress();
-  const size = 21;
-  const cells: boolean[][] = Array.from({ length: size }, () => Array(size).fill(false));
-  let h = 0;
-  for (let i = 0; i < seed.length; i++) h = (h * 131 + seed.charCodeAt(i)) >>> 0;
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      h = (h * 1103515245 + 12345) >>> 0;
-      cells[y][x] = ((h >> 16) & 1) === 1;
-    }
+async function renderQr() {
+  const address = fullAddress();
+  const canvas = $<HTMLDivElement>('#qr-canvas');
+  canvas.textContent = 'Generating code…';
+  canvas.setAttribute('aria-label', 'Generating address QR code');
+  try {
+    // Load the encoder only when requested, preserving the initial inbox load.
+    const { createAddressQr } = await import('~/lib/address-qr');
+    if (!state.qrShown || address !== fullAddress() || !state.inboxId || state.expiresAt <= Date.now()) return;
+    canvas.innerHTML = createAddressQr(address);
+    canvas.setAttribute('aria-label', `QR code containing ${address}`);
+  } catch {
+    if (!state.qrShown || address !== fullAddress()) return;
+    canvas.textContent = 'QR unavailable. Use Copy instead.';
+    canvas.setAttribute('aria-label', 'QR unavailable. Use Copy instead.');
   }
-  const drawFinder = (ox: number, oy: number) => {
-    for (let y = 0; y < 7; y++) for (let x = 0; x < 7; x++) {
-      const onBorder = x === 0 || y === 0 || x === 6 || y === 6;
-      const inCore   = x >= 2 && x <= 4 && y >= 2 && y <= 4;
-      cells[oy + y][ox + x] = onBorder || inCore;
-    }
-  };
-  drawFinder(0, 0); drawFinder(size - 7, 0); drawFinder(0, size - 7);
-
-  const cell = 100 / size;
-  let rects = '';
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      if (cells[y][x]) {
-        rects += `<rect x="${(x * cell).toFixed(2)}" y="${(y * cell).toFixed(2)}" width="${cell.toFixed(2)}" height="${cell.toFixed(2)}"/>`;
-      }
-    }
-  }
-  const svg = `<svg viewBox="0 0 100 100" preserveAspectRatio="none" fill="currentColor">${rects}</svg>`;
-  $<HTMLDivElement>('#qr-canvas').innerHTML = svg;
 }
 
 // ── Status pill ──────────────────────────────────────────────────────────
@@ -486,7 +503,7 @@ function renderMail(enteringId?: string) {
   if (state.mail.length === 0) {
     list.classList.remove('has-items');
     $<HTMLDivElement>('#empty-state').style.display = '';
-    if ($<HTMLDivElement>('#empty-state').dataset.error !== 'true') setStatus('waiting', 'Waiting');
+    if ($<HTMLDivElement>('#empty-state').dataset.error !== 'true') setStatus('waiting', state.phase === 'connecting' ? 'Connecting' : state.phase === 'expired' ? 'Expired' : 'Waiting');
     return;
   }
   list.classList.add('has-items');
@@ -542,10 +559,13 @@ function stopPolling() {
 }
 
 async function pollMessages() {
-  if (!state.inboxId) return;
+  const inboxId = state.inboxId;
+  if (!inboxId || pollingInboxId === inboxId || state.expiresAt <= Date.now()) return;
+  pollingInboxId = inboxId;
   try {
-    const res = await apiFetch(`/api/inbox/${state.inboxId}/messages?since=${lastMessageTs}`);
+    const res = await apiFetch(`/api/inbox/${inboxId}/messages?since=${lastMessageTs}`);
     const body = await res.json() as { messages?: ApiMessage[] };
+    if (inboxId !== state.inboxId || state.expiresAt <= Date.now()) return;
     consecutiveErrors = 0;
     clearApiError();
     const incoming = (body.messages || [])
@@ -566,10 +586,14 @@ async function pollMessages() {
       maybeNotify(mail);
     }
   } catch (err) {
+    if (inboxId !== state.inboxId) return;
+    if (err instanceof ApiError && err.status === 404) { expireCurrentInbox(); return; }
     consecutiveErrors++;
     if (consecutiveErrors >= 2) {
       handleApiError(err instanceof Error ? err : undefined);
     }
+  } finally {
+    if (pollingInboxId === inboxId) pollingInboxId = '';
   }
 }
 
@@ -597,6 +621,17 @@ document.addEventListener('visibilitychange', () => {
 });
 
 // ── Reader ───────────────────────────────────────────────────────────────
+
+const readerBackground = new Map<HTMLElement, boolean>();
+let readerPreviousOverflow = '';
+
+function readerTabStops() {
+  return [...document.querySelectorAll<HTMLElement>(
+    '#reader button, #reader a[href], #reader input, #reader select, #reader textarea, #reader [tabindex]',
+  )].filter((el) => el.tabIndex >= 0 && !el.matches(':disabled') &&
+    !el.closest('[hidden], [inert]') && el.getClientRects().length > 0 &&
+    getComputedStyle(el).visibility === 'visible');
+}
 
 function openReader(mailId: string) {
   const m = state.mail.find((x) => x.id === mailId);
@@ -645,7 +680,19 @@ function openReader(mailId: string) {
 
   $<HTMLDivElement>('#reader-body').innerHTML = m.bodyHtml;
 
-  $<HTMLElement>('#reader').setAttribute('aria-hidden', 'false');
+  const reader = $<HTMLElement>('#reader');
+  const wasOpen = reader.getAttribute('aria-hidden') === 'false';
+  reader.inert = false;
+  reader.setAttribute('aria-hidden', 'false');
+  $<HTMLButtonElement>('#reader [data-reader-close].reader__back').focus({ preventScroll: true });
+  if (!wasOpen) {
+    readerPreviousOverflow = document.body.style.overflow;
+    for (const child of document.body.children) {
+      if (!(child instanceof HTMLElement) || child === reader || child.matches('script, style, link')) continue;
+      readerBackground.set(child, child.inert);
+      child.inert = true;
+    }
+  }
   document.body.style.overflow = 'hidden';
 
   state.imagesOn = false;
@@ -653,9 +700,20 @@ function openReader(mailId: string) {
 }
 
 function closeReader() {
-  $<HTMLElement>('#reader').setAttribute('aria-hidden', 'true');
-  document.body.style.overflow = '';
+  const reader = $<HTMLElement>('#reader');
+  if (reader.getAttribute('aria-hidden') !== 'false') return;
+  const mailId = state.activeMailId;
   state.activeMailId = null;
+  for (const [el, wasInert] of readerBackground) el.inert = wasInert;
+  readerBackground.clear();
+  document.body.style.overflow = readerPreviousOverflow;
+  // renderMail replaces the invoking button; restore to its current instance.
+  const row = state.mail.some((m) => m.id === mailId)
+    ? [...document.querySelectorAll<HTMLElement>('#mail-list .envelope')].find((el) => el.dataset.id === mailId)
+    : null;
+  (row?.querySelector<HTMLButtonElement>('button') ?? $<HTMLElement>('#postbox-heading')).focus({ preventScroll: true });
+  reader.inert = true;
+  reader.setAttribute('aria-hidden', 'true');
 }
 
 function copyOTP(code: string) {
@@ -859,7 +917,7 @@ function renderHistory() {
     <li class="history__item">
       <div class="history__main">
         <span class="history__addr">${escapeHtml(h.address)}</span>
-        <span class="history__when">${escapeHtml(fmtRelative(h.createdAt))} · expired</span>
+        <span class="history__when">${escapeHtml(fmtRelative(h.createdAt))} · ${h.expiredAt <= Date.now() ? 'expired' : 'no longer selected'}</span>
       </div>
       <div class="history__actions">
         <button class="btn btn--tiny btn--ghost" type="button" data-history-copy="${escapeAttr(h.address)}" aria-label="Copy ${escapeAttr(h.address)}">
@@ -1029,12 +1087,12 @@ const TOUR_STEPS: TourStep[] = [
   {
     target: '[data-tour="address"]',
     title: 'Your throwaway address',
-    body: 'Already generated and live. Copy it and paste it into any signup form — your real inbox stays out of it.',
+    body: 'Already generated and live. Copy it for a permitted one-time message — your real inbox stays out of the form.',
   },
   {
     target: '[data-tour="postbox"]',
     title: 'Messages land here in real time',
-    body: 'Verification codes, magic links and newsletter confirms appear within seconds. Codes are auto-detected and surfaced in a big tap-to-copy chip so you barely have to read the message.',
+    body: 'Delivered messages appear while your inbox is active. Detected verification codes get a tap-to-copy chip. Sender delays and domain restrictions can prevent delivery.',
   },
   {
     target: '[data-tour="timer"]',
@@ -1222,14 +1280,6 @@ function bindExpiredModal() {
   });
 }
 
-function maybeStartTourOnFirstVisit() {
-  try {
-    if (localStorage.getItem('ifn-onboarded')) return;
-  } catch { return; }
-  // Wait for the page to settle before opening the tour
-  window.setTimeout(startTour, 1100);
-}
-
 // ── Boot ──────────────────────────────────────────────────────────────────
 
 function bindEvents() {
@@ -1252,8 +1302,8 @@ function bindEvents() {
     void apiFetch(`/api/inbox/${state.inboxId}/messages/${id}`, { method: 'DELETE' })
       .then(() => {
         state.mail = state.mail.filter((m) => m.id !== id);
-        closeReader();
         renderMail();
+        closeReader();
         toast({ message: 'Message deleted.' });
       })
       .catch(() => handleApiError('Could not delete this message.'));
@@ -1335,10 +1385,29 @@ function bindEvents() {
   // Notifications toggle
   $<HTMLButtonElement>('#notif-toggle').addEventListener('click', toggleNotifications);
 
-  // Esc closes reader / dismisses toast
+  // Keep keyboard navigation inside the modal reader, including dynamic body links.
   document.addEventListener('keydown', (e) => {
+    if (state.activeMailId && e.key === 'Tab') {
+      const stops = readerTabStops();
+      const first = stops[0];
+      const last = stops.at(-1);
+      const active = document.activeElement;
+      if (!first) {
+        e.preventDefault();
+        $<HTMLElement>('#reader .reader__panel').focus();
+      } else if (e.shiftKey && (active === first || !stops.includes(active as HTMLElement))) {
+        e.preventDefault();
+        last?.focus();
+      } else if (!e.shiftKey && (active === last || !stops.includes(active as HTMLElement))) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
     if (e.key === 'Escape') {
-      if (state.activeMailId) closeReader();
+      if (state.activeMailId) {
+        e.preventDefault();
+        closeReader();
+      }
       else dismissToast();
     }
   });
@@ -1368,20 +1437,7 @@ function bindEvents() {
 }
 
 async function bootInbox() {
-  try {
-    await fetchActiveDomains();
-    await createFreshInbox(false);
-    clearApiError();
-  } catch (err) {
-    state.localPart = generateLocal();
-    state.domain = RECEIVING_DOMAINS[Math.floor(Math.random() * RECEIVING_DOMAINS.length)];
-    state.createdAt = Date.now();
-    state.expiresAt = Date.now() + DEFAULT_TTL * 1000;
-    renderAddress();
-    renderTimer();
-    renderMail();
-    handleApiError(err instanceof Error ? err : undefined);
-  }
+  await connectInbox();
 }
 
 function boot() {
@@ -1401,8 +1457,7 @@ function boot() {
 
   window.setInterval(renderTimer, 1000);
 
-  // First-time visitors get the three-step onboarding tour
-  maybeStartTourOnFirstVisit();
+  // Keep the inbox immediately usable. The footer opens the tour on request.
 
   // Demo flourish — first session only. Land a CODE-bearing mail so the
   // OTP feature is immediately visible without the user having to fish for it.

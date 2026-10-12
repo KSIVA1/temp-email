@@ -1,467 +1,409 @@
-// ─────────────────────────────────────────────────────────────────────────
-//  Platforms — the source of truth for programmatic SEO landing pages.
-//
-//  Each entry generates a static page at /use-case/[slug] at build time.
-//  Copy MUST be genuinely platform-specific. Generic boilerplate gets
-//  flagged by Google as thin content and never ranks.
-//
-//  See docs/Temp-email-strategy.md §5 for the strategic rationale.
-// ─────────────────────────────────────────────────────────────────────────
-
-export type PlatformCategory =
-  | 'social'
-  | 'gaming'
-  | 'streaming'
-  | 'finance'
-  | 'ai'
-  | 'productivity'
-  | 'shopping';
-
-export type VerificationType = 'code' | 'link' | 'both';
-export type BlockingLevel = 'low' | 'medium' | 'high';
-
+// Existing use-case URLs remain stable. Compatibility is not inferred from a signup form.
+// Official sources support the notes below; acceptance has not been tested unless stated.
+export type PlatformCategory = 'social' | 'gaming' | 'streaming' | 'finance' | 'ai' | 'productivity' | 'shopping';
 export type Platform = {
-  slug: string;
-  name: string;
-  category: PlatformCategory;
-  initials: string;                    // letter-mark for the icon tile (2-3 chars)
-  oneLiner: string;                    // 1-sentence what this platform is
-  whyEmail: string;                    // why the platform requires email at signup
-  privacyAngle: string;                // why temp-mail specifically helps with THIS platform
-  expectedFromName: string;            // sender that typically arrives
-  expectedFromDomain: string;          // sender domain (no @)
-  expectedSubject: string;             // typical subject line
-  verificationType: VerificationType;
-  typicalWaitTime: string;             // 'seconds' | 'a minute or two' | '5-10 minutes'
-  blockingLevel: BlockingLevel;        // how aggressively this platform fingerprints disposable addresses
-  uniqueTip: string;                   // one platform-specific tip that's genuinely unique
-  relatedSlugs: string[];              // 4 slugs for internal linking
+  slug: string; name: string; category: PlatformCategory; initials: string;
+  oneLiner: string; guidance: string;
+  suitability: 'unverified' | 'blocked' | 'phone-required' | 'permanent-email';
+  source?: { title: string; url: string; note: string };
+  relatedSlugs: string[];
 };
-
 export const CATEGORIES: Record<PlatformCategory, { label: string; blurb: string }> = {
-  social:       { label: 'Social',        blurb: 'Social networks and messaging apps' },
-  gaming:       { label: 'Gaming',        blurb: 'Games, marketplaces, and game launchers' },
-  streaming:    { label: 'Streaming',     blurb: 'Video and audio streaming services' },
-  finance:      { label: 'Finance',       blurb: 'Banking, payments, and crypto' },
-  ai:           { label: 'AI tools',      blurb: 'AI assistants and creative tools' },
-  productivity: { label: 'Productivity',  blurb: 'Work tools and collaboration apps' },
-  shopping:     { label: 'Shopping',      blurb: 'E-commerce and marketplaces' },
+  social: { label: 'Social', blurb: 'Social networks and messaging apps' },
+  gaming: { label: 'Gaming', blurb: 'Games, marketplaces, and game launchers' },
+  streaming: { label: 'Streaming', blurb: 'Video and audio streaming services' },
+  finance: { label: 'Finance', blurb: 'Why payment accounts need permanent email' },
+  ai: { label: 'AI tools', blurb: 'AI assistants and creative tools' },
+  productivity: { label: 'Productivity', blurb: 'Work tools and collaboration apps' },
+  shopping: { label: 'Shopping', blurb: 'Orders and account recovery' },
 };
-
+export const suitabilityLabels = {
+  unverified: 'Acceptance unverified',
+  blocked: 'Disposable email blocked',
+  'phone-required': 'Email does not replace phone',
+  'permanent-email': 'Use permanent email',
+};
 export const platforms: Platform[] = [
-  // ── Social ─────────────────────────────────────────────────────────────
   {
-    slug: 'discord',
-    name: 'Discord',
-    category: 'social',
-    initials: 'DC',
-    oneLiner: 'Voice, video and text chat for gaming and online communities.',
-    whyEmail: 'Discord requires email verification to create a new account and to unlock most server features. Without a verified email you can\'t send DMs, join most servers, or use voice channels in many communities.',
-    privacyAngle: 'Discord scans accounts for spam patterns and sells data to advertising partners. A disposable address keeps your real inbox out of that pipeline and lets you join one-off servers without ongoing notifications.',
-    expectedFromName: 'Discord',
-    expectedFromDomain: 'discord.com',
-    expectedSubject: 'Verify Email Address for Discord',
-    verificationType: 'code',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'medium',
-    uniqueTip: 'Discord flags accounts that share an IP with many other accounts — using a temporary address alone won\'t help if you\'re registering many accounts from the same network. Use a VPN if you\'re hitting captchas repeatedly.',
-    relatedSlugs: ['reddit', 'telegram', 'steam', 'twitch'],
+    "slug": "discord",
+    "name": "Discord",
+    "category": "social",
+    "initials": "DC",
+    "oneLiner": "Voice, video and text chat for gaming and online communities.",
+    "guidance": "Keep a lasting email address on a Discord account you want to retain. A temporary inbox cannot replace phone verification or other server requirements. If you only need a one-time message, check that the service permits disposable addresses first.",
+    "suitability": "unverified",
+    "source": {
+      "title": "Discord account verification requirements",
+      "url": "https://support.discord.com/hc/en-us/articles/6181726888215-How-to-Verify-Your-Discord-Account",
+      "note": "Discord documents both email and phone verification. A server can require account verification; email alone may not satisfy every requirement."
+    },
+    "relatedSlugs": [
+      "reddit",
+      "telegram",
+      "steam",
+      "twitch"
+    ]
   },
   {
-    slug: 'reddit',
-    name: 'Reddit',
-    category: 'social',
-    initials: 'RD',
-    oneLiner: 'The front page of the internet — communities for every interest.',
-    whyEmail: 'Reddit lets you create an account without verifying email, but you can\'t recover the account, post to certain subreddits, or use Reddit Premium without one. Many subreddits also require verified email for first-time posting.',
-    privacyAngle: 'Reddit\'s ad targeting is based on the subreddits you visit, and your email is part of that profile. A throwaway address lets you participate in sensitive communities (health, finance, legal) without linking them to your main identity.',
-    expectedFromName: 'Reddit',
-    expectedFromDomain: 'reddit.com',
-    expectedSubject: 'Verify your Reddit email address',
-    verificationType: 'link',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'low',
-    uniqueTip: 'Reddit allows accounts without verified email, so you can skip verification entirely for read-only or low-stakes accounts. Only verify when a subreddit requires it.',
-    relatedSlugs: ['discord', 'twitter', 'telegram', 'tiktok'],
+    "slug": "reddit",
+    "name": "Reddit",
+    "category": "social",
+    "initials": "RD",
+    "oneLiner": "The front page of the internet — communities for every interest.",
+    "guidance": "Use an email address you can keep for a Reddit account whose posts, moderation roles, or community access matter to you. An expiring inbox is a poor recovery address even if a signup form accepts it.",
+    "suitability": "unverified",
+    "relatedSlugs": [
+      "discord",
+      "twitter",
+      "telegram",
+      "tiktok"
+    ]
   },
   {
-    slug: 'twitter',
-    name: 'Twitter / X',
-    category: 'social',
-    initials: 'X',
-    oneLiner: 'Public conversation platform — formerly Twitter, now X.',
-    whyEmail: 'X requires email or phone verification to create an account. Phone verification has become aggressive since the 2023 ownership change, but email-only signup is still possible with the right flow.',
-    privacyAngle: 'X has expanded data collection significantly and uses it to train Grok and serve ads. A disposable email avoids cross-linking your X usage with your real identity for downstream training and ad-targeting.',
-    expectedFromName: 'X',
-    expectedFromDomain: 'x.com',
-    expectedSubject: 'Your X confirmation code',
-    verificationType: 'code',
-    typicalWaitTime: 'under a minute',
-    blockingLevel: 'high',
-    uniqueTip: 'X actively blocks many disposable-mail domains. If your code never arrives, the receiving domain is likely on their blocklist — hit "New address" to get one from a different domain in the rotation.',
-    relatedSlugs: ['reddit', 'discord', 'instagram', 'tiktok'],
+    "slug": "twitter",
+    "name": "Twitter / X",
+    "category": "social",
+    "initials": "X",
+    "oneLiner": "Public conversation platform — formerly Twitter, now X.",
+    "guidance": "For a Twitter / X profile you intend to keep, choose a permanent email or forwarding alias. A temporary address will stop receiving future login and recovery messages after expiry.",
+    "suitability": "unverified",
+    "relatedSlugs": [
+      "reddit",
+      "discord",
+      "instagram",
+      "tiktok"
+    ]
   },
   {
-    slug: 'tiktok',
-    name: 'TikTok',
-    category: 'social',
-    initials: 'TT',
-    oneLiner: 'Short-form video platform.',
-    whyEmail: 'TikTok accepts phone or email signup. Email is the privacy-preserving option — phone numbers are harder to revoke than email addresses.',
-    privacyAngle: 'TikTok\'s data sharing has been the subject of legislative scrutiny in the US and EU. A disposable email is the lightest-weight way to evaluate the app without committing your real contact details.',
-    expectedFromName: 'TikTok',
-    expectedFromDomain: 'tiktok.com',
-    expectedSubject: 'Verification code',
-    verificationType: 'code',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'high',
-    uniqueTip: 'TikTok\'s anti-abuse stack often requires you to also complete an in-app captcha before the verification email is sent. If you don\'t see the captcha, scroll up — it\'s sometimes hidden above the email field.',
-    relatedSlugs: ['instagram', 'twitter', 'youtube', 'spotify'],
+    "slug": "tiktok",
+    "name": "TikTok",
+    "category": "social",
+    "initials": "TT",
+    "oneLiner": "Short-form video platform.",
+    "guidance": "Use lasting contact details for a TikTok account that holds videos, followers, or purchases. InboxForNow can receive email only; it cannot receive SMS or satisfy phone verification.",
+    "suitability": "unverified",
+    "relatedSlugs": [
+      "instagram",
+      "twitter",
+      "youtube",
+      "spotify"
+    ]
   },
   {
-    slug: 'instagram',
-    name: 'Instagram',
-    category: 'social',
-    initials: 'IG',
-    oneLiner: 'Photo and video sharing owned by Meta.',
-    whyEmail: 'Instagram requires email or phone for signup. Once you\'re in, an unverified email limits password recovery and certain shopping features.',
-    privacyAngle: 'Instagram shares data across the Meta family of apps (Facebook, WhatsApp, Threads). A disposable address is the cleanest way to test the app without cross-linking your real identity into Meta\'s graph.',
-    expectedFromName: 'Instagram',
-    expectedFromDomain: 'mail.instagram.com',
-    expectedSubject: 'Confirm your Instagram email',
-    verificationType: 'code',
-    typicalWaitTime: 'a few seconds to a minute',
-    blockingLevel: 'high',
-    uniqueTip: 'Instagram\'s signup form sometimes asks for your real name and birthdate. Use a plausible name — they sometimes lock accounts created with obvious placeholder names (e.g. "Test User").',
-    relatedSlugs: ['tiktok', 'twitter', 'reddit', 'youtube'],
+    "slug": "instagram",
+    "name": "Instagram",
+    "category": "social",
+    "initials": "IG",
+    "oneLiner": "Photo and video sharing owned by Meta.",
+    "guidance": "Keep a permanent recovery address for an Instagram profile, especially one used for a business or a portfolio. Reducing signup email clutter is not worth losing access to your photos or followers.",
+    "suitability": "unverified",
+    "relatedSlugs": [
+      "tiktok",
+      "twitter",
+      "reddit",
+      "youtube"
+    ]
   },
   {
-    slug: 'telegram',
-    name: 'Telegram',
-    category: 'social',
-    initials: 'TG',
-    oneLiner: 'Cloud-based messaging with strong group features.',
-    whyEmail: 'Telegram\'s primary signup is phone-based, but they do send email for certain account-recovery and login-from-new-device flows once you opt into a recovery email.',
-    privacyAngle: 'Telegram\'s privacy posture is strong overall, but a recovery email still exposes a pivot point. A disposable address lets you set up two-factor recovery without exposing your primary inbox to the platform.',
-    expectedFromName: 'Telegram',
-    expectedFromDomain: 'telegram.org',
-    expectedSubject: 'Telegram login code',
-    verificationType: 'code',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'low',
-    uniqueTip: 'Telegram only sends emails for specific 2FA recovery flows, not primary signup. If you don\'t see one arrive, double-check whether the flow you\'re in actually requires an email step.',
-    relatedSlugs: ['discord', 'reddit', 'twitter', 'slack'],
+    "slug": "telegram",
+    "name": "Telegram",
+    "category": "social",
+    "initials": "TG",
+    "oneLiner": "Cloud-based messaging with strong group features.",
+    "guidance": "Telegram links accounts to phone numbers. A temporary email address does not replace a phone number you control. Use a permanent email for any recovery email you choose to configure.",
+    "suitability": "phone-required",
+    "source": {
+      "title": "Telegram account and phone number FAQ",
+      "url": "https://telegram.org/faq",
+      "note": "Telegram describes each phone number as a separate account and advises keeping control of the connected phone number."
+    },
+    "relatedSlugs": [
+      "discord",
+      "reddit",
+      "twitter",
+      "slack"
+    ]
   },
   {
-    slug: 'youtube',
-    name: 'YouTube',
-    category: 'social',
-    initials: 'YT',
-    oneLiner: 'Video platform — requires a Google account.',
-    whyEmail: 'YouTube uses Google account email. You can create a Google account with a disposable address for one-off uploads, comments, or test accounts.',
-    privacyAngle: 'Google\'s graph spans YouTube, Search, Maps, Gmail and Android. A disposable Google account isolated to one specific use case keeps everything else (search history, location, etc) out of that profile.',
-    expectedFromName: 'Google',
-    expectedFromDomain: 'accounts.google.com',
-    expectedSubject: 'Verify your email for Google',
-    verificationType: 'code',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'high',
-    uniqueTip: 'Google often pairs email verification with phone verification for "suspicious" accounts. A clean IP (avoid VPN) and a residential-feeling user agent helps your signup get the email-only path.',
-    relatedSlugs: ['tiktok', 'instagram', 'spotify', 'netflix'],
-  },
-
-  // ── Gaming ─────────────────────────────────────────────────────────────
-  {
-    slug: 'steam',
-    name: 'Steam',
-    category: 'gaming',
-    initials: 'ST',
-    oneLiner: 'The largest PC game marketplace and launcher.',
-    whyEmail: 'Steam requires email verification to create an account, claim free games, and use the community features. Email is also the primary password-recovery channel.',
-    privacyAngle: 'Steam keeps a permanent record of every game you\'ve played, what time, and for how long. A disposable account is useful for testing free promotional games, region-locked titles, or sharing keys with friends without crossing wires.',
-    expectedFromName: 'Steam',
-    expectedFromDomain: 'steampowered.com',
-    expectedSubject: 'Confirm your email address for Steam',
-    verificationType: 'link',
-    typicalWaitTime: 'under a minute',
-    blockingLevel: 'medium',
-    uniqueTip: 'Steam locks new accounts to F2P games for a short period until you spend $5. A disposable account works for testing demos and free games but won\'t become a "real" account without a purchase.',
-    relatedSlugs: ['epic-games', 'roblox', 'twitch', 'discord'],
+    "slug": "youtube",
+    "name": "YouTube",
+    "category": "social",
+    "initials": "YT",
+    "oneLiner": "Video platform — requires a Google account.",
+    "guidance": "Use a lasting Google Account for a YouTube channel or subscription. If a Google signup uses a non-Google email, that address must receive the verification message. A temporary inbox is not a Gmail account.",
+    "suitability": "unverified",
+    "source": {
+      "title": "Verify a Google Account",
+      "url": "https://support.google.com/accounts/answer/63950",
+      "note": "Google sends a verification code to the non-Google email used when setting up a Google Account."
+    },
+    "relatedSlugs": [
+      "tiktok",
+      "instagram",
+      "spotify",
+      "netflix"
+    ]
   },
   {
-    slug: 'epic-games',
-    name: 'Epic Games',
-    category: 'gaming',
-    initials: 'EG',
-    oneLiner: 'Game store and launcher behind Fortnite and Unreal Engine.',
-    whyEmail: 'Epic requires email to register and to claim their weekly free game promotion. Without verification, you can\'t add titles to your library.',
-    privacyAngle: 'Epic\'s aggressive free-game program is famously effective at building accounts that sit dormant for years. A disposable address lets you grab a free game without committing your real identity to a dormant account.',
-    expectedFromName: 'Epic Games',
-    expectedFromDomain: 'epicgames.com',
-    expectedSubject: 'Verify your email',
-    verificationType: 'code',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'medium',
-    uniqueTip: 'Epic\'s weekly free games are tied permanently to the account that claimed them — you can\'t transfer them. So if you use a disposable address, save the recovery details before the inbox burns.',
-    relatedSlugs: ['steam', 'roblox', 'twitch', 'discord'],
+    "slug": "steam",
+    "name": "Steam",
+    "category": "gaming",
+    "initials": "ST",
+    "oneLiner": "The largest PC game marketplace and launcher.",
+    "guidance": "Use a lasting address for a Steam account with games, purchases, or items. An inbox that expires cannot receive future account recovery messages. Keep disposable mail for unrelated one-time tasks.",
+    "suitability": "unverified",
+    "relatedSlugs": [
+      "epic-games",
+      "roblox",
+      "twitch",
+      "discord"
+    ]
   },
   {
-    slug: 'roblox',
-    name: 'Roblox',
-    category: 'gaming',
-    initials: 'RX',
-    oneLiner: 'User-generated game platform popular with younger players.',
-    whyEmail: 'Roblox doesn\'t require email at signup, but most account-recovery flows do. Without email you can permanently lose access if you forget the password.',
-    privacyAngle: 'Roblox\'s data practices for young users have been controversial. A disposable email is useful for parental setup of secondary accounts or testing experiences.',
-    expectedFromName: 'Roblox',
-    expectedFromDomain: 'roblox.com',
-    expectedSubject: 'Roblox Email Verification',
-    verificationType: 'link',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'medium',
-    uniqueTip: 'Roblox doesn\'t REQUIRE email at signup, but the recovery flow without one is brutal. Add a disposable address now so you have at least one recovery option later.',
-    relatedSlugs: ['steam', 'epic-games', 'twitch', 'discord'],
+    "slug": "epic-games",
+    "name": "Epic Games",
+    "category": "gaming",
+    "initials": "EG",
+    "oneLiner": "Game store and launcher behind Fortnite and Unreal Engine.",
+    "guidance": "Use permanent contact details for an Epic Games account that holds games or purchases. Do not connect an expiring inbox to an account you plan to keep or need to recover later.",
+    "suitability": "unverified",
+    "relatedSlugs": [
+      "steam",
+      "roblox",
+      "twitch",
+      "discord"
+    ]
   },
   {
-    slug: 'twitch',
-    name: 'Twitch',
-    category: 'gaming',
-    initials: 'TV',
-    oneLiner: 'Live streaming platform for games, music, and creators.',
-    whyEmail: 'Twitch requires verified email to subscribe, follow many channels, and use chat in moderated streams. The verification email arrives in seconds.',
-    privacyAngle: 'Twitch is owned by Amazon — your usage is folded into the Amazon advertising profile. A disposable address keeps your viewing habits out of that graph.',
-    expectedFromName: 'Twitch',
-    expectedFromDomain: 'twitch.tv',
-    expectedSubject: 'Verify your email address',
-    verificationType: 'link',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'low',
-    uniqueTip: 'Twitch is one of the friendliest platforms for disposable email — they rarely block known disposable domains. Good first platform to test the workflow.',
-    relatedSlugs: ['steam', 'roblox', 'discord', 'youtube'],
-  },
-
-  // ── Streaming ──────────────────────────────────────────────────────────
-  {
-    slug: 'netflix',
-    name: 'Netflix',
-    category: 'streaming',
-    initials: 'NF',
-    oneLiner: 'Subscription video streaming.',
-    whyEmail: 'Netflix sends magic-link sign-in emails and account-activity notifications. Email is also the account\'s primary identifier — losing it means losing the account.',
-    privacyAngle: 'Netflix\'s viewing data feeds its recommendation algorithm and its negotiations with content providers. A disposable address is useful for promotional trial periods or testing region-specific catalogs.',
-    expectedFromName: 'Netflix',
-    expectedFromDomain: 'mailer.netflix.com',
-    expectedSubject: 'Your Netflix sign-in link',
-    verificationType: 'link',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'high',
-    uniqueTip: 'Netflix aggressively detects shared accounts via IP and device fingerprinting. A new email is necessary but not sufficient — if you\'re testing a trial, use a clean device or browser profile too.',
-    relatedSlugs: ['spotify', 'youtube', 'twitch', 'discord'],
+    "slug": "roblox",
+    "name": "Roblox",
+    "category": "gaming",
+    "initials": "RX",
+    "oneLiner": "User-generated game platform popular with younger players.",
+    "guidance": "Choose a lasting recovery address for a Roblox account with creations, progress, or purchases. A disposable inbox can expire before you need the next account message.",
+    "suitability": "unverified",
+    "relatedSlugs": [
+      "steam",
+      "epic-games",
+      "twitch",
+      "discord"
+    ]
   },
   {
-    slug: 'spotify',
-    name: 'Spotify',
-    category: 'streaming',
-    initials: 'SP',
-    oneLiner: 'Music and podcast streaming.',
-    whyEmail: 'Spotify accepts email or Facebook signup. Email-only signup lets you skip the social graph linkage that comes with Facebook auth.',
-    privacyAngle: 'Spotify\'s "Wrapped" feature shows just how much listening data they retain per account. A disposable address is useful for one-off trials or testing region-locked content.',
-    expectedFromName: 'Spotify',
-    expectedFromDomain: 'spotify.com',
-    expectedSubject: 'Confirm your account',
-    verificationType: 'link',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'medium',
-    uniqueTip: 'Spotify\'s 1-month free trial is one of the more abuse-able promos online. Spotify quietly tracks payment-card hashes so a new card matters as much as a new email if you\'re cycling trials.',
-    relatedSlugs: ['netflix', 'youtube', 'twitch', 'tiktok'],
-  },
-
-  // ── Finance ────────────────────────────────────────────────────────────
-  {
-    slug: 'paypal',
-    name: 'PayPal',
-    category: 'finance',
-    initials: 'PP',
-    oneLiner: 'Online payments and money transfer.',
-    whyEmail: 'PayPal is built around email — your address IS your account identifier. Every transaction sends a receipt.',
-    privacyAngle: 'A disposable PayPal isn\'t generally feasible (linking a real bank account ties it to your identity anyway) but is useful for one-time inbound receipts where you don\'t want a particular sender to know your primary email.',
-    expectedFromName: 'PayPal',
-    expectedFromDomain: 'paypal.com',
-    expectedSubject: 'Please confirm your email address',
-    verificationType: 'link',
-    typicalWaitTime: 'under a minute',
-    blockingLevel: 'high',
-    uniqueTip: 'PayPal blocks most well-known disposable mail domains because of fraud abuse. If you\'re trying to test PayPal\'s flow, expect to need 2-3 New Address regenerations before one is accepted.',
-    relatedSlugs: ['venmo', 'stripe', 'amazon', 'paypal'],
+    "slug": "twitch",
+    "name": "Twitch",
+    "category": "gaming",
+    "initials": "TV",
+    "oneLiner": "Live streaming platform for games, music, and creators.",
+    "guidance": "For a Twitch channel, subscription, or community identity you want to keep, use permanent email. An expiring inbox is unsuitable for ongoing account notices and recovery.",
+    "suitability": "unverified",
+    "relatedSlugs": [
+      "steam",
+      "roblox",
+      "discord",
+      "youtube"
+    ]
   },
   {
-    slug: 'venmo',
-    name: 'Venmo',
-    category: 'finance',
-    initials: 'VM',
-    oneLiner: 'Mobile payments owned by PayPal — popular in the US.',
-    whyEmail: 'Venmo requires phone for signup and email for recovery + receipts. The email step is unavoidable for full account access.',
-    privacyAngle: 'Venmo\'s default privacy is "public" — friends and even strangers can see your transactions unless you change the setting. A disposable email helps if you\'re abandoning an account and don\'t want years of receipts in your real inbox.',
-    expectedFromName: 'Venmo',
-    expectedFromDomain: 'venmo.com',
-    expectedSubject: 'Confirm your email',
-    verificationType: 'link',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'high',
-    uniqueTip: 'Set Venmo\'s default transaction privacy to "Private" before you send your first payment. Once a transaction is public, it stays in Venmo\'s public feed even after you change the setting.',
-    relatedSlugs: ['paypal', 'stripe', 'amazon', 'instagram'],
+    "slug": "netflix",
+    "name": "Netflix",
+    "category": "streaming",
+    "initials": "NF",
+    "oneLiner": "Subscription video streaming.",
+    "guidance": "Use permanent email for a Netflix subscription so you can receive future account and billing messages. A temporary address does not change subscription eligibility or payment requirements.",
+    "suitability": "unverified",
+    "relatedSlugs": [
+      "spotify",
+      "youtube",
+      "twitch",
+      "discord"
+    ]
   },
   {
-    slug: 'stripe',
-    name: 'Stripe',
-    category: 'finance',
-    initials: 'SR',
-    oneLiner: 'Payments infrastructure for businesses and developers.',
-    whyEmail: 'Stripe sends magic-link login emails and verification codes for sensitive operations. Email is the primary 2FA fallback.',
-    privacyAngle: 'A disposable Stripe is useful for developers testing flows — set up a real Stripe later with a sane email once you\'re building production.',
-    expectedFromName: 'Stripe',
-    expectedFromDomain: 'stripe.com',
-    expectedSubject: 'Your Stripe verification code',
-    verificationType: 'code',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'medium',
-    uniqueTip: 'Stripe lets you create test-mode accounts without identity verification. Pair a disposable email with test-mode for full safety while you\'re prototyping.',
-    relatedSlugs: ['paypal', 'venmo', 'github', 'notion'],
-  },
-
-  // ── AI ─────────────────────────────────────────────────────────────────
-  {
-    slug: 'chatgpt',
-    name: 'ChatGPT',
-    category: 'ai',
-    initials: 'CG',
-    oneLiner: 'OpenAI\'s flagship chatbot product.',
-    whyEmail: 'ChatGPT requires email and (often) phone verification at signup, plus email confirmation for billing changes.',
-    privacyAngle: 'OpenAI uses conversation content to improve models unless you turn it off in settings. A disposable account is useful for one-off questions you don\'t want associated with your real identity in training data.',
-    expectedFromName: 'OpenAI',
-    expectedFromDomain: 'openai.com',
-    expectedSubject: 'Verify your email address',
-    verificationType: 'link',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'high',
-    uniqueTip: 'OpenAI blocks accounts created from disposable domains in some regions. If the email arrives but the account is later flagged, the disposable domain was probably the trigger — try once with a clean email if the account matters.',
-    relatedSlugs: ['claude', 'gemini', 'notion', 'github'],
+    "slug": "spotify",
+    "name": "Spotify",
+    "category": "streaming",
+    "initials": "SP",
+    "oneLiner": "Music and podcast streaming.",
+    "guidance": "Keep a lasting email address for a Spotify account with playlists or a paid subscription. Disposable email is better suited to one-time messages that do not require later account recovery.",
+    "suitability": "unverified",
+    "relatedSlugs": [
+      "netflix",
+      "youtube",
+      "twitch",
+      "tiktok"
+    ]
   },
   {
-    slug: 'claude',
-    name: 'Claude',
-    category: 'ai',
-    initials: 'CL',
-    oneLiner: 'Anthropic\'s AI assistant.',
-    whyEmail: 'Claude requires email for signup and uses email for verification codes plus billing change notifications.',
-    privacyAngle: 'Anthropic\'s default policy doesn\'t train on conversations from API/paid users, but the consumer product still retains conversations. A disposable address is useful for one-off testing.',
-    expectedFromName: 'Anthropic',
-    expectedFromDomain: 'anthropic.com',
-    expectedSubject: 'Your Anthropic verification code',
-    verificationType: 'code',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'medium',
-    uniqueTip: 'Anthropic is less aggressive than OpenAI about blocking disposable domains, but they do track repeat signups via device fingerprinting. Use the same disposable address for the whole session rather than regenerating between login attempts.',
-    relatedSlugs: ['chatgpt', 'gemini', 'github', 'notion'],
+    "slug": "paypal",
+    "name": "PayPal",
+    "category": "finance",
+    "initials": "PP",
+    "oneLiner": "Online payments and money transfer.",
+    "guidance": "We recommend permanent email for PayPal. Payment accounts need a reliable contact and recovery channel, and an inbox that expires is unsuitable for financial records or account access.",
+    "suitability": "permanent-email",
+    "relatedSlugs": [
+      "venmo",
+      "stripe",
+      "amazon",
+      "paypal"
+    ]
   },
   {
-    slug: 'gemini',
-    name: 'Gemini',
-    category: 'ai',
-    initials: 'GM',
-    oneLiner: 'Google\'s flagship AI assistant.',
-    whyEmail: 'Gemini uses a Google account email — see the YouTube section for the broader Google account flow.',
-    privacyAngle: 'Gemini conversations feed into Google\'s product ecosystem unless you explicitly disable activity tracking. A disposable Google account isolates the AI usage from your search and YouTube graphs.',
-    expectedFromName: 'Google',
-    expectedFromDomain: 'accounts.google.com',
-    expectedSubject: 'Verify your email for Google',
-    verificationType: 'code',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'high',
-    uniqueTip: 'Gemini is gated by a Google account so all the Google blocking patterns apply. Pair your disposable address with a fresh browser profile to avoid Google associating it with your main account.',
-    relatedSlugs: ['chatgpt', 'claude', 'youtube', 'github'],
-  },
-
-  // ── Productivity ───────────────────────────────────────────────────────
-  {
-    slug: 'notion',
-    name: 'Notion',
-    category: 'productivity',
-    initials: 'NT',
-    oneLiner: 'All-in-one workspace for notes, docs, and project tracking.',
-    whyEmail: 'Notion sends magic-link sign-in emails and uses email for workspace invitations.',
-    privacyAngle: 'A disposable Notion is useful for evaluating the product or signing up to view a public workspace shared by someone else — without committing your real address.',
-    expectedFromName: 'Notion',
-    expectedFromDomain: 'notion.so',
-    expectedSubject: 'Sign in to Notion',
-    verificationType: 'link',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'low',
-    uniqueTip: 'Notion\'s magic-link emails expire quickly — usually within an hour. Don\'t request the link until you\'re ready to click it.',
-    relatedSlugs: ['github', 'slack', 'stripe', 'discord'],
+    "slug": "venmo",
+    "name": "Venmo",
+    "category": "finance",
+    "initials": "VM",
+    "oneLiner": "Mobile payments owned by PayPal — popular in the US.",
+    "guidance": "We recommend permanent email for Venmo. Do not depend on a temporary inbox for payment notices, transaction records, or future recovery of a financial account.",
+    "suitability": "permanent-email",
+    "relatedSlugs": [
+      "paypal",
+      "stripe",
+      "amazon",
+      "instagram"
+    ]
   },
   {
-    slug: 'github',
-    name: 'GitHub',
-    category: 'productivity',
-    initials: 'GH',
-    oneLiner: 'Code hosting and collaboration platform owned by Microsoft.',
-    whyEmail: 'GitHub requires verified email for signup, for code-push notifications, and for SSH key registration.',
-    privacyAngle: 'GitHub\'s "noreply" address feature already provides some pseudonymity for commits, but the underlying account email is visible to GitHub itself. A disposable address adds another layer for one-off test repositories.',
-    expectedFromName: 'GitHub',
-    expectedFromDomain: 'github.com',
-    expectedSubject: '[GitHub] Please verify your email address',
-    verificationType: 'code',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'low',
-    uniqueTip: 'After verifying, enable GitHub\'s "Keep my email addresses private" setting so your disposable address doesn\'t leak into commit metadata.',
-    relatedSlugs: ['notion', 'slack', 'stripe', 'discord'],
+    "slug": "stripe",
+    "name": "Stripe",
+    "category": "finance",
+    "initials": "SR",
+    "oneLiner": "Payments infrastructure for businesses and developers.",
+    "guidance": "We recommend permanent email for a Stripe business account. For testing your own application, a disposable inbox can receive test notifications when your test setup permits it; do not use it as the account owner email.",
+    "suitability": "permanent-email",
+    "relatedSlugs": [
+      "paypal",
+      "venmo",
+      "github",
+      "notion"
+    ]
   },
   {
-    slug: 'slack',
-    name: 'Slack',
-    category: 'productivity',
-    initials: 'SL',
-    oneLiner: 'Team messaging owned by Salesforce.',
-    whyEmail: 'Slack uses magic-link sign-in for personal accounts. Joining a workspace is gated on email-domain matching for most paid teams.',
-    privacyAngle: 'A disposable Slack is useful for joining community workspaces (open-source projects, conferences, classes) that you don\'t want lingering in your real inbox forever.',
-    expectedFromName: 'Slack',
-    expectedFromDomain: 'slack.com',
-    expectedSubject: 'Your magic sign-in link',
-    verificationType: 'link',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'low',
-    uniqueTip: 'Slack magic links expire after 15 minutes and can only be used once. If you generate two links by accident, the older one is invalidated — always use the most recent.',
-    relatedSlugs: ['notion', 'github', 'discord', 'stripe'],
+    "slug": "chatgpt",
+    "name": "ChatGPT",
+    "category": "ai",
+    "initials": "CG",
+    "oneLiner": "OpenAI's flagship chatbot product.",
+    "guidance": "Use an email address you can keep for a ChatGPT account, especially one with saved conversations or a subscription. If you lose access to an account inbox, login troubleshooting may not restore email access.",
+    "suitability": "unverified",
+    "source": {
+      "title": "ChatGPT login troubleshooting",
+      "url": "https://help.openai.com/en/articles/7426629-why-cant-i-log-in-to-chatgpt",
+      "note": "OpenAI warns that self-service troubleshooting cannot solve loss of access to the inbox used for account emails."
+    },
+    "relatedSlugs": [
+      "claude",
+      "gemini",
+      "notion",
+      "github"
+    ]
   },
-
-  // ── Shopping ───────────────────────────────────────────────────────────
   {
-    slug: 'amazon',
-    name: 'Amazon',
-    category: 'shopping',
-    initials: 'AZ',
-    oneLiner: 'Online marketplace.',
-    whyEmail: 'Amazon sends order confirmations, shipping updates, and security-sensitive notifications. Email is the primary account identifier.',
-    privacyAngle: 'A disposable Amazon is useful for evaluating Prime trials, reading product reviews without committing to a permanent account, or making a one-off purchase you don\'t want stored in your order history.',
-    expectedFromName: 'Amazon',
-    expectedFromDomain: 'amazon.com',
-    expectedSubject: 'Your Amazon verification code',
-    verificationType: 'code',
-    typicalWaitTime: 'a few seconds',
-    blockingLevel: 'high',
-    uniqueTip: 'Amazon ties your account to credit-card hash and shipping address, not just email. A disposable email helps with the email-marketing pipeline but won\'t let you cycle Prime trials.',
-    relatedSlugs: ['paypal', 'stripe', 'venmo', 'netflix'],
+    "slug": "claude",
+    "name": "Claude",
+    "category": "ai",
+    "initials": "CL",
+    "oneLiner": "Anthropic's AI assistant.",
+    "guidance": "Use a lasting address for a Claude account whose conversations or subscription you want to keep. An expiring inbox is unsuitable whenever you may need another email to sign in later.",
+    "suitability": "unverified",
+    "relatedSlugs": [
+      "chatgpt",
+      "gemini",
+      "github",
+      "notion"
+    ]
   },
+  {
+    "slug": "gemini",
+    "name": "Gemini",
+    "category": "ai",
+    "initials": "GM",
+    "oneLiner": "Google's flagship AI assistant.",
+    "guidance": "Use a lasting Google Account for Gemini. Google can verify a non-Google signup email by sending it a code, but a temporary address is not a Gmail inbox and is unsuitable for long-term recovery.",
+    "suitability": "unverified",
+    "source": {
+      "title": "Verify a Google Account",
+      "url": "https://support.google.com/accounts/answer/63950",
+      "note": "Google sends a verification code to the non-Google email used when setting up a Google Account."
+    },
+    "relatedSlugs": [
+      "chatgpt",
+      "claude",
+      "youtube",
+      "github"
+    ]
+  },
+  {
+    "slug": "notion",
+    "name": "Notion",
+    "category": "productivity",
+    "initials": "NT",
+    "oneLiner": "All-in-one workspace for notes, docs, and project tracking.",
+    "guidance": "Choose a lasting email for a Notion workspace containing notes, documents, or team information. Avoid connecting important workspace access to an inbox with a short expiry timer.",
+    "suitability": "unverified",
+    "relatedSlugs": [
+      "github",
+      "slack",
+      "stripe",
+      "discord"
+    ]
+  },
+  {
+    "slug": "github",
+    "name": "GitHub",
+    "category": "productivity",
+    "initials": "GH",
+    "oneLiner": "Code hosting and collaboration platform owned by Microsoft.",
+    "guidance": "GitHub explicitly says disposable email addresses cannot be verified. Use a lasting account email and GitHub’s noreply address for private commits. A noreply address does not receive account mail.",
+    "suitability": "blocked",
+    "source": {
+      "title": "GitHub email verification restrictions",
+      "url": "https://docs.github.com/en/account-and-profile/reference/email-addresses-reference",
+      "note": "GitHub explicitly excludes disposable email services from verification and points users to its noreply address for commit privacy."
+    },
+    "relatedSlugs": [
+      "notion",
+      "slack",
+      "stripe",
+      "discord"
+    ]
+  },
+  {
+    "slug": "slack",
+    "name": "Slack",
+    "category": "productivity",
+    "initials": "SL",
+    "oneLiner": "Team messaging owned by Salesforce.",
+    "guidance": "Use a lasting email address for ongoing Slack workspace access. A temporary inbox cannot receive future sign-in or recovery messages once it expires. Ask the workspace owner about permitted account email domains.",
+    "suitability": "unverified",
+    "relatedSlugs": [
+      "notion",
+      "github",
+      "discord",
+      "stripe"
+    ]
+  },
+  {
+    "slug": "amazon",
+    "name": "Amazon",
+    "category": "shopping",
+    "initials": "AZ",
+    "oneLiner": "Online marketplace.",
+    "guidance": "Use permanent email for an Amazon account you use for orders. Receipts, delivery updates, returns, and future account recovery can outlast the temporary inbox timer.",
+    "suitability": "unverified",
+    "relatedSlugs": [
+      "paypal",
+      "stripe",
+      "venmo",
+      "netflix"
+    ]
+  }
 ];
-
-// Index by slug for fast lookup
 export const platformMap = Object.fromEntries(platforms.map((p) => [p.slug, p]));
-
 export function platformsByCategory(category: PlatformCategory): Platform[] {
   return platforms.filter((p) => p.category === category);
 }
-
 export function getRelated(p: Platform): Platform[] {
   return p.relatedSlugs.map((s) => platformMap[s]).filter(Boolean);
 }

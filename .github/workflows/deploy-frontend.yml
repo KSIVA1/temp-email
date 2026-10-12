@@ -9,6 +9,11 @@ on:
       - 'astro.config.mjs'
       - 'package.json'
       - 'package-lock.json'
+      - 'scripts/inbox-session.test.mjs'
+      - 'scripts/address-qr.test.mjs'
+      - 'scripts/seo-check.mjs'
+      - 'scripts/seo-goal.test.mjs'
+      - 'scripts/lib/**'
       - '.github/workflows/deploy-frontend.yml'
 
 concurrency:
@@ -37,6 +42,12 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Verify SEO output
+        run: npm run check:seo
+
+      - name: Verify inbox session continuity
+        run: npm run test:inbox
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1

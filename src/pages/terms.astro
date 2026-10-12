@@ -2,8 +2,8 @@
 import Layout from '~/layouts/Layout.astro';
 import Header from '~/components/Header.astro';
 
-const lastUpdated = '2026-05-23';
-const lastUpdatedDisplay = 'May 23, 2026';
+const lastUpdated = '2026-10-09';
+const lastUpdatedDisplay = 'October 9, 2026';
 
 const faqs = [
   {
@@ -16,7 +16,7 @@ const faqs = [
   },
   {
     q: 'What happens if a receiving domain stops working?',
-    a: 'Receiving domains rotate as platforms blacklist them. If your verification email doesn\'t arrive, generate a new address — it will likely pull from a different domain in the active pool.',
+    a: 'If a domain is unavailable, a new address may still use the same receiving domain. Generating another address does not guarantee delivery or acceptance. Use a supported permanent address when necessary.',
   },
   {
     q: 'Is there a guarantee that an inbox will receive mail?',
@@ -24,24 +24,14 @@ const faqs = [
   },
   {
     q: 'Can I rely on receiving password-reset emails after the inbox expires?',
-    a: 'No. The inbox is hard-deleted when the timer ends, so any later mail sent to that address bounces. If long-term recovery matters, copy your credentials before the timer ends or use a real email.',
+    a: 'No. The inbox is hard-deleted when the timer ends, so any later mail sent to that address bounces. Saving credentials does not guarantee later access if email verification is required. Use permanent email or a lasting forwarding alias when account recovery matters.',
   },
 ];
 
-const faqJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faqs.map((f) => ({
-    '@type': 'Question',
-    name: f.q,
-    acceptedAnswer: { '@type': 'Answer', text: f.a },
-  })),
-};
 ---
 <Layout
   title="Terms of Service — InboxForNow"
   description="Terms for using InboxForNow: receive-only inboxes, no fraud or harassment, no warranty. Read before using the temporary email service."
-  additionalJsonLd={[faqJsonLd]}
 >
   <Header />
   <main class="legal">

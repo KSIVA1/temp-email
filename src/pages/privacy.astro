@@ -2,8 +2,8 @@
 import Layout from '~/layouts/Layout.astro';
 import Header from '~/components/Header.astro';
 
-const lastUpdated = '2026-05-23';
-const lastUpdatedDisplay = 'May 23, 2026';
+const lastUpdated = '2026-10-11';
+const lastUpdatedDisplay = 'October 11, 2026';
 
 const faqs = [
   {
@@ -16,7 +16,7 @@ const faqs = [
   },
   {
     q: 'Do you set tracking cookies or run third-party analytics?',
-    a: 'No tracking cookies. We use Cloudflare Web Analytics, which is cookieless and does not fingerprint visitors. The app uses localStorage on your device to remember your theme and small UI preferences — that data never leaves your browser.',
+    a: 'No tracking cookies. We use Cloudflare Web Analytics, which is cookieless and does not fingerprint visitors. The app uses localStorage for your theme, UI preferences and recent address records. Session storage holds the active inbox identifier for this tab; it is sent to our API to reconnect to your mailbox. Message bodies are not saved in either browser store.',
   },
   {
     q: 'Can the InboxForNow team read mail sent to my temporary inbox?',
@@ -28,20 +28,10 @@ const faqs = [
   },
 ];
 
-const faqJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faqs.map((f) => ({
-    '@type': 'Question',
-    name: f.q,
-    acceptedAnswer: { '@type': 'Answer', text: f.a },
-  })),
-};
 ---
 <Layout
   title="Privacy Policy — InboxForNow"
   description="How InboxForNow handles your data: no IP logging, no tracking cookies, hard-deletion on expiry. Cloudflare is our only sub-processor."
-  additionalJsonLd={[faqJsonLd]}
 >
   <Header />
   <main class="legal">
@@ -51,11 +41,14 @@ const faqJsonLd = {
       <p class="legal__meta">Last updated <time datetime={lastUpdated}>{lastUpdatedDisplay}</time></p>
       <p>InboxForNow provides temporary, receive-only email inboxes. We do not ask for an account and we do not require your real email address.</p>
       <h2>What we store</h2>
-      <p>We store generated inbox addresses and received email content only until the inbox timer expires or you delete the inbox. Expired inboxes and messages are hard-deleted by scheduled cleanup that runs every 5 minutes.</p>
+      <p>We store generated inbox addresses and received email content while an inbox is active. Access ends when the timer expires or you delete the inbox. Expired inboxes and messages are hard-deleted by scheduled cleanup that runs every 5 minutes.</p>
       <h2>What we do not log</h2>
-      <p>We do not intentionally log visitor IP addresses, sell personal data, or use third-party tracking cookies. The app uses localStorage to remember your theme and lightweight preferences on your device.</p>
+      <p>We do not intentionally log visitor IP addresses, sell personal data, or use third-party tracking cookies. The app uses localStorage to remember your theme, lightweight preferences, and recent address records on your device.</p>
+      <h2>Keeping your inbox in this tab</h2>
+      <p>The active inbox identifier is saved in sessionStorage so this tab can reconnect after a reload or a visit to a guide. The identifier is sent to our API to retrieve that mailbox; it is not placed in the page URL. The server rechecks expiry, and browser storage cannot extend the inbox timer. We clear the selected identifier when the app observes expiry or deletion. Browser session restore may retain tab storage. Anyone who controls the tab or its inbox identifier may read the active mailbox.</p>
+      <p>Message bodies are held in the page while you use it, not saved in localStorage or sessionStorage. If browser storage is blocked, the tool still works in memory but cannot retain the inbox selection through reloads.</p>
       <h2>Email content</h2>
-      <p>Email HTML is sanitized before display. Attachments are dropped. Email content is not retained beyond the inbox TTL.</p>
+      <p>Email HTML is sanitized before display. Attachments are dropped. Access ends at the inbox deadline; scheduled cleanup removes expired content.</p>
       <h2>Sub-processors</h2>
       <p>InboxForNow runs on Cloudflare, including Cloudflare Pages, Workers, D1, Email Routing, Turnstile, and Web Analytics. Cloudflare processes traffic and infrastructure events needed to operate the service.</p>
       <h2>Contact</h2>

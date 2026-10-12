@@ -1,0 +1,63 @@
+---
+const faqs = [
+  { q: 'What is temporary email?', a: 'Temporary email, also called temp mail or disposable email, is a short-lived address for receiving messages without giving out your everyday email. InboxForNow creates a receive-only inbox in your browser without an account.' },
+  { q: 'How long does this temporary inbox last?', a: 'A new inbox starts with 10 minutes. Use the extension buttons before it expires; the maximum remaining timer is 24 hours. When the timer ends, access stops. Scheduled cleanup removes expired inboxes and messages every 5 minutes.' },
+  { q: 'Can I send or reply to emails?', a: 'No. InboxForNow only receives email. It does not provide sending, replies, forwarding to your main inbox, or SMS verification. Attachments are dropped.' },
+  { q: 'Will every website accept this address?', a: 'No. Websites may reject disposable email domains, require a phone number, or use a different login method. A new address may use the same domain. Check the platform guides for known restrictions and use a supported permanent address when required.' },
+  { q: 'Why has my verification email not arrived?', a: 'Check that you copied the live address correctly, the inbox is still active, and the page has a connection. Sender delays, domain restrictions, or mail delivery failures can prevent a message from arriving. Delivery has no fixed time guarantee.' },
+  { q: 'Is temporary email the same as an email alias?', a: 'An expiring inbox receives messages only while it is active. A forwarding alias normally routes mail to a lasting inbox and can remain available for later messages. Use a permanent address or lasting alias for accounts that need recovery.' },
+  { q: 'Can I recover an expired inbox?', a: 'No. Expired inboxes are not an archive. Save any information you need before expiry, and do not attach an important account to an address that will stop receiving its recovery emails.' },
+  { q: 'Will reloading change my temporary email address?', a: 'This tab reconnects to the same active inbox after a reload when browser session storage is available. It checks the server’s original expiry time; reloading does not extend the timer. New address selects a different inbox. If storage is blocked or the inbox has expired or been deleted, the same session cannot be restored.' },
+];
+---
+<section class="guide" aria-labelledby="guide-heading">
+  <header>
+    <span class="label">A little less inbox clutter</span>
+    <h2 id="guide-heading">Temp mail for the messages you need once</h2>
+    <p>A temporary email address gives a one-time message somewhere to land. Use InboxForNow for a permitted download, a short-lived registration, or testing the emails your own application sends. Keep a permanent address for anything you will need tomorrow.</p>
+  </header>
+  <div class="guide__columns">
+    <section aria-labelledby="how-heading">
+      <h3 id="how-heading">How to use your disposable inbox</h3>
+      <ol>
+        <li><strong>Copy the live address.</strong> Wait for the inbox to connect, then use the Copy button above. No account or personal email is required.</li>
+        <li><strong>Request your message.</strong> Paste the address into a form that permits temporary email, or send a test message from your own application. Keep this tab open.</li>
+        <li><strong>Read it before expiry.</strong> Messages appear after delivery. Copy a code or open an expected link, then delete the inbox when finished. Extend the timer first if you need more time.</li>
+      </ol>
+    </section>
+    <section aria-labelledby="choose-heading">
+      <h3 id="choose-heading">Choose the right kind of address</h3>
+      <p><strong>Temporary inbox:</strong> one-time messages and testing signup confirmations, verification emails, or password resets in an application you control.</p>
+      <p><strong>Permanent email or forwarding alias:</strong> banking, payments, subscriptions, workspaces, purchases, and accounts you want to recover later.</p>
+      <p>A disposable address helps keep your everyday inbox out of a form. It does not make an account anonymous or change a platform’s verification requirements. See the <a href="/privacy/">privacy policy</a> for storage and infrastructure details.</p>
+    </section>
+  </div>
+  <section aria-labelledby="practical-guides-heading">
+    <h3 id="practical-guides-heading">Get a message, solve a delivery problem, test your app</h3>
+    <p><a href="/guides/email-not-arriving/">Verification email not arriving?</a> Follow a symptom-by-symptom checklist before requesting another code.</p>
+    <p><a href="/guides/testing-signup-emails/">Test signup emails with a temporary inbox</a> using a repeatable checklist for codes, links, expiry, and HTML rendering.</p>
+    <p><a href="/about/">How InboxForNow works</a> explains the inbox lifecycle, what is stored, and the service’s limits.</p>
+  </section>
+  <section aria-labelledby="temp-mail-faq-heading">
+    <h3 id="temp-mail-faq-heading">Temporary email questions</h3>
+    <div class="guide__faqs">
+      {faqs.map(({ q, a }) => <details><summary>{q}</summary><p>{a}</p></details>)}
+    </div>
+    <p>Check the <a href="/use-case/">platform guides</a> before using disposable email for a particular service, and read the <a href="/terms/">terms of use</a>.</p>
+  </section>
+</section>
+<style>
+  .guide { margin-top: clamp(3rem, 6vw, 5rem); padding-top: var(--sp-8); border-top: 1px solid var(--border); display: grid; gap: var(--sp-7); }
+  .guide header { max-width: 75ch; }
+  .guide h2 { font-size: var(--fs-h2); margin: var(--sp-2) 0 var(--sp-3); }
+  .guide h3 { font-size: var(--fs-h3); margin: 0 0 var(--sp-3); }
+  .guide p, .guide li { color: var(--text-2); font-size: var(--fs-small); line-height: 1.65; }
+  .guide strong { color: var(--text); }
+  .guide__columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: var(--sp-7); }
+  .guide ol { padding-left: 1.4rem; margin: 0; }
+  .guide li + li { margin-top: var(--sp-3); }
+  .guide__faqs { display: grid; gap: var(--sp-2); max-width: 85ch; }
+  .guide details { border: 1px solid var(--border); border-radius: var(--r-md); padding: var(--sp-4); background: var(--surface); }
+  .guide summary { cursor: pointer; color: var(--text); font-size: var(--fs-small); font-weight: 600; }
+  .guide details p { margin: var(--sp-3) 0 0; }
+</style>

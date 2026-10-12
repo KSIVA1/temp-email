@@ -1,12 +1,12 @@
 ---
 import Layout from '~/layouts/Layout.astro';
 import Header from '~/components/Header.astro';
-import { platforms, platformsByCategory, CATEGORIES, type PlatformCategory } from '~/data/platforms';
+import { platforms, platformsByCategory, CATEGORIES, suitabilityLabels, type PlatformCategory } from '~/data/platforms';
 
 const orderedCats: PlatformCategory[] = ['social', 'gaming', 'streaming', 'finance', 'ai', 'productivity', 'shopping'];
 
-const title = `Temporary email for ${platforms.length}+ platforms — InboxForNow`;
-const description = `Disposable inbox addresses tuned for Discord, Reddit, Twitter, Steam, ChatGPT, GitHub & ${platforms.length - 6} more services. Free, instant, no signup, no tracking.`;
+const title = 'Temporary Email Platform Guides — InboxForNow';
+const description = 'Check temporary email limits for Discord, GitHub, ChatGPT and other platforms. Compare account recovery risks and when to choose permanent email instead.';
 
 const itemListJsonLd = {
   '@context': 'https://schema.org',
@@ -41,14 +41,14 @@ const collectionPageJsonLd = {
   about: { '@id': 'https://inboxfornow.com/#organization' },
 };
 ---
-<Layout title={title} description={description} additionalJsonLd={[breadcrumbJsonLd, collectionPageJsonLd]}>
+<Layout title={title} description={description} additionalJsonLd={[breadcrumbJsonLd, collectionPageJsonLd, itemListJsonLd]}>
   <Header />
   <main class="page" id="top">
     <div class="page__inner">
       <header class="dir-hero">
         <span class="label"><span class="label__dot" aria-hidden="true"></span>Platforms · {platforms.length} and growing</span>
-        <h1>Temporary email for every platform with a signup gate.</h1>
-        <p>Pick a service to see a working inbox plus platform-specific tips on how the verification flow works, what to expect, and what to watch for.</p>
+        <h1>Where temporary email fits — and where it doesn’t.</h1>
+        <p>Pick a platform to review email limitations and recovery risks. These guides do not certify compatibility: GitHub blocks disposable email verification, and other services may reject our receiving domain.</p>
       </header>
 
       {orderedCats.map((cat) => {
@@ -68,13 +68,7 @@ const collectionPageJsonLd = {
                     <span class="dir-card__body">
                       <span class="dir-card__name">Temp mail for {p.name}</span>
                       <span class="dir-card__meta">
-                        <span class={`dir-card__chip dir-card__chip--${p.blockingLevel}`}>
-                          {p.blockingLevel === 'low' ? 'easy' : p.blockingLevel === 'medium' ? 'medium' : 'tough'}
-                        </span>
-                        <span class="dir-card__type">
-                          {p.verificationType === 'code' ? 'Code' : p.verificationType === 'link' ? 'Magic link' : 'Code or link'}
-                          {' · '}{p.typicalWaitTime}
-                        </span>
+                        <span class="dir-card__type">{suitabilityLabels[p.suitability]}</span>
                       </span>
                     </span>
                     <svg class="dir-card__arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -103,7 +97,7 @@ const collectionPageJsonLd = {
     </div>
   </main>
 
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(itemListJsonLd)} />
+
 
   <style>
     .page { padding: clamp(2rem, 1.2rem + 3vw, 4rem) clamp(1rem, 0.5rem + 2vw, 2.2rem) clamp(2rem, 3vw, 4rem); }

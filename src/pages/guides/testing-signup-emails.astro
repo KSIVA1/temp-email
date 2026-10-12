@@ -1,0 +1,55 @@
+---
+import GuideLayout from '~/layouts/GuideLayout.astro';
+const sections = [{id:'setup',title:'Set up one test'},{id:'fixture',title:'Use a simple fixture'},{id:'checklist',title:'Run the checklist'},{id:'rendering',title:'Check rendering limits'},{id:'record',title:'Record the result'}];
+const fixture = '<p>Verification code: 418229</p>\n<p><a href="https://example.com/verify?token=TEST_ONLY">Verify your test account</a></p>';
+---
+<GuideLayout title="Test Signup Emails with a Temporary Inbox · InboxForNow" heading="Test signup emails with a temporary inbox" description="Use a fresh InboxForNow address to manually check your own signup emails, verification codes, links, resend behavior, and expired-session handling." sections={sections}>
+  <section id="setup">
+    <h2>Set up a small, repeatable test</h2>
+    <p>A disposable inbox is useful for a manual smoke test of an application you control. Each new address separates a test from your personal inbox. It is not a replacement for an email provider’s delivery logs, a staging mail catcher, or testing across real email clients.</p>
+    <ol>
+      <li><a href="/">Open InboxForNow</a>, wait for the inbox to connect, and copy the generated address. Do not invent an address on the receiving domain: only created, unexpired inboxes can receive messages.</li>
+      <li>Use your application’s staging environment and a synthetic test user. Send from a provider and domain you control. Remove real personal information, production credentials, and payment details from the fixture.</li>
+      <li>Give the message a unique subject, for example <code>signup-smoke-01</code>. Record the recipient and send time so you can match the provider event with the inbox message.</li>
+      <li>Keep this tab open. Extend the initial 10-minute timer before expiry if your queue takes longer. Reloading this tab reconnects to the same active inbox when browser session storage is available; it does not reset the timer. New address deliberately selects a different mailbox.</li>
+    </ol>
+  </section>
+  <section id="fixture">
+    <h2>Begin with a plain, readable fixture</h2>
+    <p>Send both a plain-text body and a small HTML body through your own application’s normal mail path. A text code and one link are enough to distinguish a delivery problem from a template problem.</p>
+    <pre><code>{fixture}</code></pre>
+    <p>Replace the example link with a staging verification URL that you control. The code and token above are sample data, not credentials. Check that the code displayed in the message matches the code your application expects; automatic code detection is a convenience and can choose the wrong number in a complex message.</p>
+  </section>
+  <section id="checklist">
+    <h2>A manual signup email QA checklist</h2>
+    <p>Tick each item as you test. These checkboxes are local to this page and reset when it reloads.</p>
+    <ul class="checklist">
+      <li><label><input type="checkbox" /><span><strong>Recipient:</strong> the email goes to the exact live address copied from this session.</span></label></li>
+      <li><label><input type="checkbox" /><span><strong>Identity:</strong> the sender name, subject, and message purpose are understandable without images.</span></label></li>
+      <li><label><input type="checkbox" /><span><strong>Code:</strong> the visible code matches the expected test value and can be entered in your app.</span></label></li>
+      <li><label><input type="checkbox" /><span><strong>Link:</strong> the expected link reaches your staging domain and completes the intended action.</span></label></li>
+      <li><label><input type="checkbox" /><span><strong>Resend:</strong> a second request produces the expected message, and your application handles old and new tokens according to its own policy.</span></label></li>
+      <li><label><input type="checkbox" /><span><strong>Repeat click:</strong> using a consumed verification token produces a clear result instead of silently creating an inconsistent account state.</span></label></li>
+      <li><label><input type="checkbox" /><span><strong>Expiry:</strong> an expired verification token receives a clear message and a path to request another one.</span></label></li>
+      <li><label><input type="checkbox" /><span><strong>Failure:</strong> a rejected or suppressed recipient produces an actionable result in your app and an identifiable provider event.</span></label></li>
+    </ul>
+    <p>Token expiry and inbox expiry are different. Your application controls its verification token; InboxForNow controls access to the temporary mailbox. Use a fresh inbox for each independent run.</p>
+  </section>
+  <section id="rendering">
+    <h2>Know what this inbox intentionally removes</h2>
+    <div class="table-wrap"><table><thead><tr><th scope="col">Email content</th><th scope="col">InboxForNow behavior</th></tr></thead><tbody>
+      <tr><td>Text and basic HTML</td><td>Received text is displayed; supported HTML is sanitized before storage.</td></tr>
+      <tr><td>Images, scripts, styles, embedded forms</td><td>Removed from the received HTML. Image-only instructions are not a usable fixture here.</td></tr>
+      <tr><td>HTTP and HTTPS links</td><td>Rewritten through a link-opening page. Check the destination before continuing.</td></tr>
+      <tr><td>Attachments</td><td>Not exposed in the inbox. Test attachment behavior with a suitable mail client or staging catcher.</td></tr>
+      <tr><td>Reply and outbound mail</td><td>Unsupported. Use a sender you control to test reply handling.</td></tr>
+    </tbody></table></div>
+    <p class="note">This is a functional receiving test, not a full email-design preview. Test responsive layouts, accessibility, dark mode, attachment support, and client-specific CSS in the mail clients your users actually use.</p>
+  </section>
+  <section id="record">
+    <h2>Keep a small test record</h2>
+    <p>Record the application version, environment, recipient, subject, request time, provider event, inbox arrival observation, and pass/fail result. Save only synthetic test evidence before expiry, then delete the test inbox when finished. Do not use a temporary inbox as a log archive.</p>
+    <p>If a message does not arrive, use the <a href="/guides/email-not-arriving/">delivery troubleshooting guide</a> to separate address rejection, sender queues, expired sessions, and browser retrieval errors.</p>
+    <p>The service behavior in this guide was reviewed against the receiving code and automated tests on October 11, 2026. Those tests cover mailbox lifetime, sanitization, code extraction, link rewriting, and cleanup in a controlled test environment. They do not establish real-world delivery latency, inbox placement, or third-party signup compatibility.</p>
+  </section>
+</GuideLayout>

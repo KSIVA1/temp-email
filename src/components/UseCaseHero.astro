@@ -1,6 +1,6 @@
 ---
 import type { Platform } from '~/data/platforms';
-import { CATEGORIES } from '~/data/platforms';
+import { CATEGORIES, suitabilityLabels } from '~/data/platforms';
 
 interface Props { platform: Platform; }
 const { platform } = Astro.props;
@@ -13,15 +13,13 @@ const cat = CATEGORIES[platform.category];
       <span class="uc-hero__category">{cat.label}</span>
       <span class="uc-hero__separator">·</span>
       <span class="uc-hero__type">
-        {platform.verificationType === 'code' ? 'Verification code' :
-         platform.verificationType === 'link' ? 'Magic link' :
-         'Code or link'} · arrives in {platform.typicalWaitTime}
+        {suitabilityLabels[platform.suitability]}
       </span>
     </div>
   </div>
 
   <h1 class="uc-hero__h">Temporary email for {platform.name}</h1>
-  <p class="uc-hero__sub">{platform.oneLiner} {platform.privacyAngle}</p>
+  <p class="uc-hero__sub">{platform.oneLiner} {platform.guidance}</p>
 </header>
 
 <style>

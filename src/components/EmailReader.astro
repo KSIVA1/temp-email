@@ -2,9 +2,9 @@
 // Reader: clean slide-over on desktop, bottom sheet on mobile.
 // No postal motifs. Strong type hierarchy. Sanitized HTML body.
 ---
-<aside id="reader" class="reader" aria-hidden="true" aria-labelledby="reader-subject">
+<aside id="reader" class="reader" aria-hidden="true" aria-labelledby="reader-subject" inert data-nosnippet>
   <div class="reader__scrim" data-reader-close></div>
-  <article class="reader__panel" role="dialog" aria-modal="true">
+  <div class="reader__panel" role="dialog" aria-modal="true" aria-labelledby="reader-subject" tabindex="-1">
 
     <header class="reader__head">
       <button class="reader__back" type="button" data-reader-close aria-label="Close message">
@@ -40,7 +40,7 @@
       <span>Sanitized · scripts and tracking pixels removed before this page rendered</span>
     </div>
 
-    <h2 id="reader-subject" class="reader__subject">Verify your Discord account</h2>
+    <h2 id="reader-subject" class="reader__subject">Your message</h2>
 
     <div id="reader-otp" class="reader__otp" hidden></div>
 
@@ -48,17 +48,17 @@
       <div class="reader__meta-row">
         <dt>From</dt>
         <dd>
-          <span id="reader-from-name" class="reader__from-name">Discord</span>
-          <span id="reader-from-email" class="reader__from-email">noreply@discord.com</span>
+          <span id="reader-from-name" class="reader__from-name"></span>
+          <span id="reader-from-email" class="reader__from-email"></span>
         </dd>
       </div>
       <div class="reader__meta-row">
         <dt>To</dt>
-        <dd id="reader-to" class="reader__to">fox9821@veqla.com</dd>
+        <dd id="reader-to" class="reader__to"></dd>
       </div>
       <div class="reader__meta-row">
         <dt>Received</dt>
-        <dd id="reader-stamp-date" class="reader__date">Thu, May 21 · 11:24</dd>
+        <dd id="reader-stamp-date" class="reader__date"></dd>
       </div>
     </dl>
 
@@ -73,7 +73,7 @@
         timer runs out.
       </p>
     </footer>
-  </article>
+  </div>
 </aside>
 
 <style>

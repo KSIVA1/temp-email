@@ -1,0 +1,170 @@
+# InboxForNow active SEO worklog
+
+## Objective and daily operating rule
+
+The user revised the objective on October 11, 2026: reach the first organic Google results page in the USA for **temporary email**, **temp mail**, and **disposable email**. Verify all three on two consecutive daily checks including today, using the localized browser evidence and validator in [the runbook](seo-monitoring.md). This supersedes the initial audit's number-one target. Do not promise a position or a deadline.
+
+Every daily run must investigate a specific open priority, in addition to crawl and ranking checks. Record the evidence, decision, validation, published outcome and next action below. Implement a useful, justified change when available. An unchanged rank is not a diagnosis. If data is missing, advance independent work; if a change has no good basis, record why and avoid churn. Keep original measurements, assess experiments after 7 and 28 days, and preserve unrelated local edits.
+
+## Prioritized backlog
+
+| Priority | Work | Evidence needed / next action |
+|---|---|---|
+| P0 when available | Restore indexing and performance measurement | GSC authorization expired October 9. User recovery is documented; do not start interactive OAuth unattended or repeat the same request daily. Once restored, inspect selected canonicals, sitemap processing and primary landing-page indexing before choosing changes. No June cache is current evidence. |
+| Complete October 11 | Fix first-visit inbox states and continuity | Reproduced lost inboxes on reload and made-up addresses after API failure. Implemented server-validated tab retention, honest loading/error states and stale-response isolation. See the continuation entry below. |
+| Complete October 11 | Replace the decorative QR output with a functional code | Replaced pseudorandom SVG output with a local address encoder. Independent decoding verified both generated output and actual browser screenshots in two themes and at phone width. See the continuation below. |
+| P1 | Review existing platform content for unique value | Discord, GitHub and ChatGPT completed October 11: distinct verification guidance, GitHub account/commit-email instructions with locally verified commands, and current ChatGPT login/email-change requirements. Assess discovery after a crawl interval, then prioritize other existing pages from current query/page evidence when available. Do not add templated platforms or claim disposable-domain acceptance without testing. |
+| P1 | Inspect original guides' discovery | New guides published October 11. Inspect discovery after a reasonable crawl interval, first planned review October 18. Use GSC when available; a site-search result supports discovery, not a complete index count. Investigate blocked resources or canonical conflicts immediately. |
+| P2 | Measure page loading and interaction | October 11 public PSI lab baseline: performance 96 mobile/100 desktop; no field data. Resolved contrast/role findings, with accessibility 96→100 in a fresh audit. Post-fix performance 97/100 is a single-run observation, not a causal claim. Preserve reports and seek field evidence when available. Manual dialog-keyboard review completed October 11: focus entry, both Tab loops, Escape restoration, deletion fallback and expiry checked with synthetic mail; correction published as 08bc36e2. |
+| P2 | Research relevant discovery and citation opportunities | October 11 review excluded free-for-dev (explicitly rejects new temporary-email generators), deprioritized a promotional list, and recorded one small relevant list without submitting. Corrected the project's own public README and empty repository metadata. Evaluate useful editorial relevance rather than counting links. No paid links, third-party messages or listing submissions without explicit authorization. |
+| P2 | Review receiving reliability evidence | October 11 public DNS/API review passed the three configured receiving MX hosts and existing API checks. Daily monitor now records MX configuration with correct unavailable/error distinctions. Catch-all API reads were denied by the token, so the rule remains unverified. No SMTP delivery was tested. Any live test must use a sender controlled by the user and synthetic data. |
+| P1 | Preserve deployed SEO work in reproducible source | October 12 fresh install/build matched all 69 deployed-build files byte-for-byte. Reviewed source publication and repository deployment verification are recorded below. Keep future deployments on the source containing the published fixes. |
+
+## October 11, 2026 — active improvement pass
+
+**Baseline:** All three primary queries were absent from the first result page in today's signed-out Google US English desktop checks, with the visible IP location in Frisco, Texas. Positions remain null. October 10 and October 11 morning crawl snapshots both passed all 27 previous sitemap URLs. GSC is still unavailable; no current impressions, clicks, or index coverage were inferred.
+
+**Investigation:** A separate signed-out `site:inboxfornow.com` browser check showed the revised homepage title and new explanatory text. This supports discovery of the October 9 homepage update. Several platform results still showed old copy. Original DOM and screenshot: `.seo-cache/daily/2026-10-11/site-discovery-1027.*`. This does not prove full indexing, a penalty, or a primary-query position. The initial research and current Google guidance favor useful original product information over mass page creation.
+
+**Changes:**
+
+- Published a practical missing-email troubleshooting guide and a manual signup-email testing guide with a working local checklist, example synthetic fixture, and explicit receiving/rendering limits. Claims were reviewed against the Worker and its automated tests.
+- Added a guide directory and a transparent About page explaining the inbox lifecycle and how guides are reviewed. Linked these pages from the homepage and site navigation; placed practical help before the platform directory.
+- Made onboarding optional so the first visit opens directly onto the inbox. Kept manual tour access.
+- Self-hosted the existing Geist typography as variable WOFF2 fonts with `font-display: swap` and a local Latin preload. Removed the external Google Fonts stylesheet and corresponding CSP hosts. This removes an external loading dependency; no Core Web Vitals gain is claimed.
+- Tracked actual editorial dates in the sitemap, including October 9 existing-page changes and October 11 new content. Rebuilds do not advance dates.
+- Expanded daily checks to robots access, declared local assets, and read-only API health/domain availability. Updated the completion validator to require verified first-page observations, preserving nulls for absence and gaps.
+
+**Pre-publication validation:** Static build passed (33 HTML pages); SEO checks passed (31 sitemap URLs and 488 internal links). Goal tests cover both days, missing days, stale observations, failure and year boundaries. Worker tests passed: 4 files, 16 tests. Browser preview verified a real generated inbox, no automatic tour, manual tour access, local font declarations, theme switching and checklist interaction. At a measured 390px viewport the guide had a 390px document width, with no horizontal page overflow. Preview console had no errors or warnings.
+
+**Publication:** Cloudflare Pages deployment **232c44ad.inboxfornow.pages.dev** is live on inboxfornow.com. Post-deployment snapshot `snapshot-104149.json` passed 31 sitemap pages, robots access, 10 declared assets and both API availability checks. GSC remains the same authorization gap. Production browser checks passed for guides, local fonts, the checklist and real inbox creation, with no console errors/warnings. Original proof is under `.seo-cache/research/2026-10-11/published-guides.*`. The first new domain probe used an incorrect path; it was corrected to `/api/domains/active` and both original/rerun snapshots were preserved. See [the research report](research/2026-10-11-seo-improvement.md) for limitations. Source changes remain reviewable in the local checkout; no Git push or merge was performed.
+
+**Daily follow-up:** Updated the existing `inboxfornow-daily-seo` heartbeat in place. It remains active at 9:00 AM America/Chicago, now requiring a focused backlog investigation, justified published improvements and a dated worklog as well as evidence collection. The ranking validator continues to report false; the goal is not complete.
+
+**Next at the end of this pass:** Investigate first-visit inbox loading and session continuity (completed in the continuation below), then improve an existing platform page using current primary sources. Assess this deployment on October 18 (7 days) and November 8 (28 days), respecting Search Console processing lag and sample size. Daily rank/crawl checks continue in the meantime.
+
+## October 11, 2026 — continuation: inbox reliability
+
+**Evidence and decision:** The previous turn made concrete progress by publishing the guides and other changes. The next investigation reproduced a changed production address after reload and found that API errors generated a non-working address locally. Correcting this advances the tool's usefulness without pretending that it proves a Google ranking improvement. [Detailed report](research/2026-10-11-inbox-continuity.md).
+
+**Implemented:** Retain the selected identifier in tab session storage, revalidate with the existing mailbox endpoint, preserve it across transient errors, and select a different inbox only after successful explicit replacement or confirmed expiry/deletion. Show honest pending/error states with disabled mailbox controls until ready. Clear messages at expiry and ignore stale mailbox responses. Update public help/privacy text and appropriate editorial dates.
+
+**Validation:** Build, SEO checks and 13 session tests passed. Strict TypeScript checks passed. Controlled browser tests covered failed creation, retry, reload, guide navigation, extension, expiry, failed replacement and a delayed response from a replaced inbox. The local API fixture sends no email. The production build uses the real API, with no fixture endpoint in the output.
+
+**Published:** Cloudflare Pages **920e21c8.inboxfornow.pages.dev** is live. Production browser verification retained the same address through reload and guide navigation, with a decreasing original timer and no console warnings/errors. Snapshot `snapshot-105908.json` passed 31 pages, robots, 10 local assets and both API probes. GSC remains the known gap. Proof: `.seo-cache/research/2026-10-11/live-inbox-continuity.*`. The earlier deployment and evidence are preserved.
+
+**Next:** Investigate the decorative QR feature, then improve one existing platform guide with current primary evidence. Rankings remain unachieved; the daily automation and goal remain active. Do not repeat the primary Google queries several times in the same day merely to seek a different result.
+
+## October 11, 2026 — continuation: verified address QR
+
+**Evidence and decision:** The previous turn published the inbox continuity fix. Source and production-SVG inspection then confirmed that the QR control displayed a decorative pattern rather than encoded data. The existing SVG failed independent decoding. This is a specific product defect, not an inferred ranking cause. [Report and sources](research/2026-10-11-qr-verification.md).
+
+**Implemented:** Generate an address-only QR locally with a real encoder, loaded when requested. Preserve black-on-white contrast and a quiet zone across themes; update an open panel after address changes and clear it at expiry. Clarify that scanning the address does not transfer mailbox access. Exclude the transient address-status text from search snippets.
+
+**Validation:** All 19 inbox/QR tests, strict TypeScript checks, build and SEO checks passed. Actual rendered desktop dark/light and phone screenshots independently decoded to the selected address. A browser address change produced a new QR that decoded to the new address. No horizontal page overflow at 390px, and no browser warnings or errors.
+
+**Published:** Final Cloudflare Pages deployment **b3c6a70a.inboxfornow.pages.dev** includes the verified QR code and bundled third-party notices. The actual production screenshot independently decoded to its selected address, with no browser errors/warnings. Post-QR snapshot `snapshot-111202.json` passed 31 pages, robots access, 10 declared assets and both API probes; the known GSC gap is unchanged. Proof: `.seo-cache/research/2026-10-11/qr-live*` and `qr-decode.json`.
+
+**Next:** Review one existing platform guide for unique, current and useful information. Preserve the October 18 and November 8 assessment dates. Today's primary-query observations remain unchanged, so the goal is incomplete and the automation remains active.
+
+## October 11, 2026 — continuation: useful Discord verification guidance
+
+**Evidence and decision:** The Discord page repeated the general platform steps. Current Discord documentation distinguishes missing email, mobile-number safety checks and server verification levels. Replaced the repeated steps with a specific guide addressing those separate needs. Official sources support the workflow; they do not prove acceptance of our domain. [Research and sources](research/2026-10-11-discord-guide.md).
+
+**Implemented:** Added three decision links, desktop/mobile resend instructions, a concise server-requirement comparison, accurate receiving/expiry limits, and a link to the missing-email checklist. Added shortcuts above the inbox and a visible source-review date/byline. Kept the existing title, canonical and URL, and retained the unverified acceptance label. No new platform pages, external scripts or dependencies were added.
+
+**Validation:** Build, SEO checks and diff checks passed: 33 HTML files, 31 sitemap URLs and 490 internal links. Browser preview verified desktop cards and phone section navigation with no horizontal overflow at 390px. Local preview showed an unavailable API; production created a real working inbox and reported no console errors or warnings. This does not establish third-party delivery.
+
+**Published:** Cloudflare Pages **6c6fbe7f.inboxfornow.pages.dev** is live. Production browser confirmed the new guide, matching canonical and desktop section links. Snapshot `snapshot-112710.json` passed all 31 pages, robots access, 10 assets and both service probes. The GSC authorization gap is unchanged. Original proof is saved as `.seo-cache/research/2026-10-11/discord-live*`, with preview desktop/phone evidence retained separately. Source changes remain local and reviewable; no Git push or merge was performed.
+
+**Next:** Measure a specific loading/interaction bottleneck or investigate independent discovery opportunities, using evidence before changing code. Review today's published content on October 18 and November 8. Today's original primary rankings remain first-page absence and the validator reports `goalVerified: false`; the daily automation and first-page goal remain active.
+
+## October 11, 2026 — continuation: measured loading and readability
+
+**Evidence and decision:** The public PageSpeed web interface completed current mobile/desktop tests despite the API's saved quota error. Baseline performance was 96 mobile and 100 desktop, with no field data. The specific actionable findings were insufficient contrast in operating/status labels and an incompatible element for the message dialog role. The report's 10.5 KiB legacy-JavaScript estimate belonged to Cloudflare's beacon. There was no evidence for a broad loading rewrite. [Full report and original lab links](research/2026-10-11-loading-and-readability.md).
+
+**Implemented:** Adjusted shared muted-text colors in both themes and the light timer foreground; changed the dialog panel to a compatible element named by the message subject. No runtime script/dependency changes or editorial date churn.
+
+**Validation:** Build, SEO and diff checks passed. Browser color samples for 17 relevant elements per theme had minimum contrast 5.30:1 light and 5.90:1 dark. Phone width remained 390px without page overflow. These samples and an automated score do not establish full accessibility.
+
+**Published:** Cloudflare Pages **bc973cd6.inboxfornow.pages.dev** is live. A fresh PSI report measured accessibility **100 mobile/desktop**, resolving the contrast and role findings. Performance measured 97 mobile/100 desktop, best practices and SEO 100 on both. Lab LCP was 2.3 seconds on mobile; field data remained unavailable. No ranking effect or causal speed gain is claimed. Live browser confirmed the changed styles/markup and a real inbox with no console warnings/errors. Snapshot `snapshot-113318.json` passed 31 pages, robots, 10 assets and both service probes; GSC remains the known gap. Original lab/preview/production proof is under `.seo-cache/research/2026-10-11/pagespeed-*` and `contrast-*`.
+
+**Next:** Research concrete, relevant discovery/citation opportunities without posting, submitting or messaging third parties. Preserve today's search observations and wait for the planned content-assessment dates. The daily first-page goal and automation remain active; current ranking evidence does not establish completion.
+
+## October 11, 2026 — continuation: discovery research and project presentation
+
+**Evidence and decision:** Reviewed current maintainer documentation and public metadata for three developer/disposable-email lists. free-for-dev explicitly rejects new temporary-email generators; a promotional list offered weak relevance, while one small disposable-email list was topically relevant but had unverified readership. No third-party listing or outreach was performed. A separate concrete gap was found in our own public repository: its README inaccurately called the project a mock frontend with no backend, and its About panel had no description, homepage or topics. [Research and decisions](research/2026-10-11-discovery-opportunities.md).
+
+**Implemented and published:** Replaced obsolete README instructions with the live service's purpose, accurate limits, practical-guide links and current frontend/backend instructions. Published only that file in commit **90d57db** on the existing main branch. Added a factual repository description, live homepage link and five relevant topics. Did not claim an open-source license. Existing application/research changes remain local and reviewable; no unrelated source files were committed or pushed.
+
+**Validation:** All seven README website links returned HTTP 200 and four linked repository paths exist. Diff checks passed. Fetched the remote before publication and confirmed zero ahead/behind with an empty staging area. Verified that the Pages project has no Git source and the workflows exclude README-only pushes, so this documentation change cannot deploy the older branch application over the newer production build. No Actions runs were triggered. Signed-out browser verified the rendered README and updated About metadata; proof is saved as `.seo-cache/research/2026-10-11/readme-live*` and `readme-publication.json`.
+
+**Interpretation and next:** These are accurate navigation and project-discovery improvements, not independent endorsements, obtained third-party backlinks or proof of a ranking effect. Next inspect receiving-domain configuration and available read-only routing evidence; use synthetic data only for any separately justified delivery test. The known GSC gap and today's primary rankings are unchanged. The daily automation and first-page goal remain active.
+
+## October 11, 2026 — continuation: receiving configuration and daily DNS checks
+
+**Evidence and decision:** Active-domain API and public DNS checks found the expected Cloudflare MX records for veqla.com, plus working brand/receiving nameservers and API resolution. The existing token could read the zone but routing/catch-all GET requests returned 403, leaving that rule unverified. This is a measurement limitation, not proof of a broken rule. No mail was sent or user message content read. [Evidence and primary references](research/2026-10-11-receiving-configuration.md).
+
+**Operational improvement:** Added public DNS-over-HTTPS MX checks to the daily monitor. The active-domain list is bounded; names are validated and requests use a fixed resolver without provider credentials. Snapshots record DNS result codes, MX hosts, priorities and TTLs. Findings distinguish absent/missing/null/changed MX records, reduced configured redundancy, and unavailable resolver evidence. Reduced redundancy is not described as a total mail outage.
+
+**Validation:** Eight offline tests passed, including transient/malformed DNS evidence and invalid-name request prevention. The existing infrastructure DNS verification passed. Enhanced live snapshot `snapshot-114732.json` passed all 31 pages, robots, 10 assets, both API checks and the receiving DNS check. The monitor's nonzero exit remains caused by the known GSC authorization gap. Diff checks passed. No frontend deployment or DNS/routing mutation was needed; the active daily heartbeat uses this improved local monitor.
+
+**Next:** Review the message reader's keyboard path with synthetic local messages, since the earlier automated markup correction was not a complete interaction audit. Keep original rank evidence and the October 18/November 8 assessment dates. No ranking improvement is inferred from operational checks; the first-page goal remains incomplete and the daily automation remains active.
+
+## October 11, 2026 — continuation: working message-reader keyboard path
+
+**Evidence and decision:** Synthetic local mail reproduced focus loss on opening a message and Tab moving behind the reader. The earlier automated markup fix did not cover this interaction. Applied the current WAI modal-dialog keyboard pattern. [Report, source and limitations](research/2026-10-11-reader-keyboard.md).
+
+**Implemented:** Added focus entry, dynamic forward/reverse Tab loops, background inertness with restoration, and a closed inert reader. Escape/Back returns to the current message button after list rendering; deletion returns to the Inbox heading. Preserved the existing visual design and editorial dates. Extended only the loopback synthetic fixture for deletion and a body-link test.
+
+**Validation:** Desktop and 390px phone browser checks passed focus entry, wrapping and restoration. Deletion and expiry while open passed their respective focus fallbacks. No horizontal overflow at phone width. All 19 existing inbox/QR tests, strict TypeScript, production build, SEO and diff checks passed. Restored the production API build before publication; fixture data/host were absent from dist.
+
+**Published:** Cloudflare Pages **08bc36e2.inboxfornow.pages.dev** is live. Production confirmed the changed markup, a real generated inbox and no console warnings/errors; no production messages were opened or deleted. Snapshot `snapshot-115424.json` passed 31 pages, robots, 11 assets, both API probes and receiving DNS. The known GSC authorization gap is unchanged. Original browser proof is saved under `.seo-cache/research/2026-10-11/reader-*`.
+
+**Next:** Review one remaining existing platform guide against primary documentation for concrete usefulness; avoid creating additional template pages. Preserve October 18/November 8 assessment dates. Today's original primary rankings remain first-page absence, the validator reports `goalVerified: false`, and the daily automation and first-page goal remain active. No ranking benefit is inferred from keyboard improvements.
+
+## October 11, 2026 — continuation: specific GitHub account and commit-email guidance
+
+**Evidence and decision:** The GitHub page stated the disposable-address restriction but still repeated generic temporary-inbox steps. Current GitHub documentation provides a concrete alternative for commit privacy, separate from lasting account email. Replaced that repeated content on the existing URL. [Research, six primary sources and validation](research/2026-10-11-github-guide.md).
+
+**Implemented:** Added account-email resend steps, GitHub noreply guidance, repository-local configuration and author/committer inspection commands, plus the scope of GitHub’s push-blocking setting. Put the guidance before the inbox, with section shortcuts and source-review byline. Linked the existing application-email testing checklist. Retained title, H1, canonical and the blocked label; updated this page’s description to match its content. No new platform pages or dependencies, and no sitemap date churn.
+
+**Validation:** Executed the commands in an isolated synthetic repository: local setting and new-commit addresses matched, previous commits were unchanged, and the isolated global config stayed byte-identical. No user Git configuration, GitHub login or push was used. Build, SEO and diff checks passed: 33 HTML files, 31 sitemap URLs, 492 internal links. Desktop and 390px phone browser checks passed; code blocks wrap without overflow.
+
+**Published:** Cloudflare Pages **fdb535ed.inboxfornow.pages.dev** is live. Production browser confirmed new content, metadata, section navigation and a real inbox without console warnings/errors. Initial old browser content cleared on explicit reload; the saved proof is from the verified new page. Snapshot `snapshot-120019.json` passed 31 pages, robots, 11 assets, API and receiving-DNS checks. The known GSC gap is unchanged. Original proof is under `.seo-cache/research/2026-10-11/github-*`.
+
+**Next:** Inspect navigation between the original troubleshooting/testing guides and relevant platform guidance for a concrete reader gap. Preserve the October 18 and November 8 assessment dates. Today’s original primary rankings remain first-page absence, `goalVerified: false`; the existing daily automation and first-page goal remain active. This content improvement is not evidence of a ranking gain.
+
+## October 11, 2026 — continuation: connect readers to relevant help
+
+**Evidence and decision:** Built-page link analysis found that 21 existing platform pages lacked a direct path to the troubleshooting checklist despite asking the missing-email question. The testing guide already had appropriate connections. Applied Google’s current guidance on descriptive, contextual HTML links to this concrete reader gap. [Research and before/after evidence](research/2026-10-11-guide-navigation.md).
+
+**Implemented:** Added one checklist link beside the shared missing-email FAQ answer on its 22 existing pages, including Discord which already linked the guide elsewhere. Added two specific Discord/GitHub section links in the troubleshooting guide’s restrictions discussion. The checklist’s incoming-page count rose from five to 26 in built HTML. These are local navigation counts, not Google crawl/index measurements. No additional pages, title changes, dependencies or sitemap-date churn.
+
+**Validation:** Build, SEO and diff checks passed: 33 HTML files, 31 sitemap URLs and 516 internal links. Both new section destinations exist. Desktop keyboard navigation passed from FAQ → checklist; both platform links reached the right sections. Phone width remained 390px without horizontal page overflow. Made sentence spacing explicit after visual review and verified the final rendered text.
+
+**Published:** Final Cloudflare Pages deployment **11727bb4.inboxfornow.pages.dev** is live, following initial deployment e6198e44. Production browser confirmed the FAQ link, checklist links, a real generated inbox and no console warnings/errors. Final snapshot `snapshot-120721.json` passed 31 pages, robots access, 10 declared assets, API probes and receiving DNS. The known GSC gap is unchanged. Original before/after link evidence and browser proof are saved under `.seo-cache/research/2026-10-11/navigation-*`; final screenshot is `navigation-faq-live-final.png`.
+
+**Next:** Review the remaining secondary-target ChatGPT page for specific, current and useful guidance from primary sources. Avoid adding generic links to increase a count. Preserve the October 18 and November 8 assessment dates. Today’s original primary rankings remain first-page absence and `goalVerified: false`; the daily automation and first-page goal remain active. No ranking improvement is inferred from navigation changes.
+
+## October 11, 2026 — continuation: specific ChatGPT account-email guidance
+
+**Evidence and decision:** The existing ChatGPT page recommended lasting email but repeated generic inbox steps. Current official Help Center sources distinguish authentication methods, code/app prompts and eligibility for changing an account email. Replaced repeated content on the existing route using those sources. No ChatGPT account or subscription was accessed or changed. [Research and sources](research/2026-10-11-chatgpt-guide.md).
+
+**Implemented:** Added account-identification guidance, four prompt scenarios, current email-change requirements and explicit limits after loss of inbox access. Added three section shortcuts and a source-review byline. Kept the unverified acceptance label, title, H1, canonical and URL; updated the description to match. No new platform pages, dependencies, signup promises or date churn.
+
+**Validation:** Build, SEO and diff checks passed: 33 HTML files, 31 sitemap URLs and 517 internal links. Desktop and 390px phone preview verified navigation, stacked scenario rows and no horizontal overflow. Production confirmed the new guide, metadata, code-section navigation and a real inbox, with no console warnings/errors.
+
+**Published:** Cloudflare Pages **3b4881dd.inboxfornow.pages.dev** completed successfully. Snapshot `snapshot-121633.json` passed 31 pages, robots, 10 assets, API probes and receiving DNS. The known GSC gap is unchanged. Original preview and production proof are under `.seo-cache/research/2026-10-11/chatgpt-guide-*`.
+
+**Next:** Review reproducibility of the deployed SEO source and deployment checks: source remains local while the public README references the new commands. Inspect the exact diff and separate authorized SEO work from unrelated changes before any version-control publication. Preserve the October 18 and November 8 assessment dates. Today's original primary rankings remain first-page absence and `goalVerified: false`; the daily automation and first-page goal remain active. No ranking gain is inferred from this content change.
+
+## October 12, 2026 — reproducible deployment source
+
+**Daily evidence:** Snapshot `snapshot-090436.json` passed 31 pages, robots, 10 assets, API probes and receiving DNS, with no regression from October 11. Today's signed-out Google US English desktop checks again found no first-page result for any primary query, with the visible IP locality in Frisco, Texas. Preserved three original DOM/screenshot pairs and normalized null ranks; the validator reports `goalVerified: false`. GSC remains the same known gap.
+
+**Investigation and decision:** Remote main did not contain the deployed SEO source or commands referenced by the public README. A future source-based deployment could undo the live fixes. Reviewed the exact source changes and selected only authorized SEO content, product fixes, checks and associated documentation. [Scope and fresh-build evidence](research/2026-10-12-deployment-reproducibility.md).
+
+**Validation before publication:** Fresh lockfile install without private environment or cached dependencies passed. The clean production build matched all 69 deployed-build files byte-for-byte. Build, SEO checks, 19 inbox/QR tests and eight offline DNS tests passed. Existing credential literals were absent from the reviewed scope; ignored evidence and bytecode are excluded. The repository has the required Cloudflare secret names configured. Publication and workflow completion are verified separately below.
+
+**Next:** Complete the scoped source publication and inspect the actual frontend workflow/deployment result. Then review an original troubleshooting scenario against current product behavior; retain the October 18 and November 8 content-assessment dates. The first-page goal and daily automation remain active.

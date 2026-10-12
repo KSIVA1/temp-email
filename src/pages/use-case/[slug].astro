@@ -8,6 +8,9 @@ import EmailReader from '~/components/EmailReader.astro';
 import OnboardingTour from '~/components/OnboardingTour.astro';
 import UseCaseHero from '~/components/UseCaseHero.astro';
 import UseCaseHowItWorks from '~/components/UseCaseHowItWorks.astro';
+import DiscordVerificationGuide from '~/components/DiscordVerificationGuide.astro';
+import GitHubEmailGuide from '~/components/GitHubEmailGuide.astro';
+import ChatGPTEmailGuide from '~/components/ChatGPTEmailGuide.astro';
 import UseCaseFAQs from '~/components/UseCaseFAQs.astro';
 import UseCaseRelated from '~/components/UseCaseRelated.astro';
 import { platforms, type Platform } from '~/data/platforms';
@@ -22,16 +25,25 @@ export const getStaticPaths: GetStaticPaths = () => {
 interface Props { platform: Platform; }
 const { platform } = Astro.props;
 
-const title = `Temp email for ${platform.name} — free disposable inbox`;
-const description = `Free temporary email address for ${platform.name} signups. ${platform.verificationType === 'code' ? 'Codes' : 'Magic links'} arrive in ${platform.typicalWaitTime}. No account, no tracking — your real inbox stays private.`;
+const title = `Temporary Email for ${platform.name} — Limits & Guidance`;
+const description = platform.slug === 'github'
+  ? 'GitHub does not verify disposable email. Learn how to verify a lasting account address, use GitHub noreply for commit privacy, and check your Git email settings.'
+  : platform.slug === 'chatgpt'
+  ? 'Read ChatGPT email-verification and account-access guidance: identify your sign-in method, troubleshoot codes, and understand email-change requirements.'
+  : `Considering temporary email for ${platform.name}? Read the account recovery risks and email limitations before using a free disposable inbox from InboxForNow.`;
 
 const pageUrl = `https://inboxfornow.com/use-case/${platform.slug}/`;
-const imageAlt = `Disposable email inbox for ${platform.name} verification codes — InboxForNow`;
+const imageAlt = platform.slug === 'github'
+  ? 'Temporary email guidance and commit email privacy for GitHub — InboxForNow'
+  : platform.slug === 'chatgpt'
+  ? 'Temporary email limits and account access guidance for ChatGPT — InboxForNow'
+  : `Disposable email inbox for ${platform.name} verification codes — InboxForNow`;
 
 // JSON-LD for the WebPage itself
 const webPageJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebPage',
+  '@id': `${pageUrl}#webpage`,
   name: `Temporary email for ${platform.name}`,
   description,
   url: pageUrl,
@@ -51,21 +63,32 @@ const breadcrumbJsonLd = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://inboxfornow.com/' },
-    { '@type': 'ListItem', position: 2, name: 'All platforms', item: 'https://inboxfornow.com/use-case/' },
+    { '@type': 'ListItem', position: 2, name: 'Platform guides', item: 'https://inboxfornow.com/use-case/' },
     { '@type': 'ListItem', position: 3, name: platform.name, item: pageUrl },
   ],
 };
 
-const kicker  = `For ${platform.name} · live`;
-const heading = `Your ${platform.name} inbox`;
-const sub     = `Generated below. Copy it into ${platform.name}'s signup and the verification will land here.`;
+const kicker  = 'Free disposable inbox';
+const heading = 'Your temporary inbox';
+const sub = 'Use this receive-only inbox for permitted one-time messages. Platform acceptance and delivery are not guaranteed.';
 ---
 <Layout title={title} description={description} imageAlt={imageAlt} additionalJsonLd={[webPageJsonLd, breadcrumbJsonLd]}>
   <Header />
 
   <main class="page" id="top">
     <div class="page__inner">
+      <nav aria-label="Breadcrumb" class="breadcrumb"><a href="/">Home</a> / <a href="/use-case/">Platform guides</a> / <span aria-current="page">{platform.name}</span></nav>
       <UseCaseHero platform={platform} />
+
+      {platform.slug === 'discord' && <nav class="guide-jumps" aria-label="Discord guide sections"><span>Need help with Discord?</span><a href="#discord-verification">Choose your verification step</a><a href="#discord-email">Resend an email</a><a href="#discord-server">Server requirements</a></nav>}
+      {platform.slug === 'github' && <>
+        <nav class="guide-jumps" aria-label="GitHub guide sections"><span>Choose your task</span><a href="#github-account">Verify account email</a><a href="#github-privacy">Protect commit email</a><a href="#github-check">Check a commit</a></nav>
+        <GitHubEmailGuide />
+      </>}
+      {platform.slug === 'chatgpt' && <>
+        <nav class="guide-jumps" aria-label="ChatGPT guide sections"><span>Choose your next step</span><a href="#chatgpt-login">Check sign-in method</a><a href="#chatgpt-code">Troubleshoot a code</a><a href="#chatgpt-change">Change account email</a></nav>
+        <ChatGPTEmailGuide />
+      </>}
 
       <section class="grid">
         <div class="grid__col grid__col--address">
@@ -76,8 +99,8 @@ const sub     = `Generated below. Copy it into ${platform.name}'s signup and the
         </div>
       </section>
 
-      <UseCaseHowItWorks platform={platform} />
-      <UseCaseFAQs platform={platform} />
+      {platform.slug === 'discord' ? <DiscordVerificationGuide /> : !['github', 'chatgpt'].includes(platform.slug) && <UseCaseHowItWorks platform={platform} />}
+      {!['github', 'chatgpt'].includes(platform.slug) && <UseCaseFAQs platform={platform} />}
       <UseCaseRelated platform={platform} />
 
       <footer class="foot">
@@ -110,6 +133,9 @@ const sub     = `Generated below. Copy it into ${platform.name}'s signup and the
   </script>
 
   <style>
+    .guide-jumps { display: flex; flex-wrap: wrap; gap: .6rem 1.3rem; margin: calc(-1 * var(--sp-5)) 0 var(--sp-7); font-size: var(--fs-small); line-height: 1.6; }
+    .guide-jumps span { color: var(--text-2); }
+    .breadcrumb { margin-bottom: var(--sp-5); color: var(--text-2); font-size: var(--fs-small); }
     .page { padding: clamp(2rem, 1.2rem + 3vw, 4rem) clamp(1rem, 0.5rem + 2vw, 2.2rem) clamp(2rem, 3vw, 4rem); }
     .page__inner { max-width: 1320px; margin: 0 auto; }
 

@@ -22,8 +22,8 @@ interface Props {
 
 const {
   kicker  = 'Disposable inbox · live',
-  heading = 'A throwaway inbox,<br/>ready in zero clicks.',
-  sub     = 'Use this address to receive verification codes, magic links and newsletter sign-ups. Hard-deleted when the timer runs out.',
+  heading = 'Free temporary email,<br/>ready when you are.',
+  sub     = 'Get a disposable email address without signing up. Receive one-time messages or test your own emails, with a 10-minute inbox you can extend.',
   hideHero = false,
   headingLevel = 'h1',
 } = Astro.props;
@@ -45,16 +45,16 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
     </>
   )}
 
-  <div class="address__field card" role="group" aria-label="Your temporary email address" data-tour="address">
+  <div class="address__field card" role="group" aria-label="Your temporary email address" data-tour="address" data-nosnippet>
     <div class="address__row">
       <div class="address__value-wrap">
         <span class="label address__field-label">Your address</span>
         <div class="address__value">
-          <span id="addr-local"  class="address__local">fox9821</span><span class="address__at" aria-hidden="true">@</span><span id="addr-domain" class="address__domain">veqla.com</span>
+          <span id="addr-local" class="address__local">Connecting…</span><span id="addr-at" class="address__at" aria-hidden="true" hidden>@</span><span id="addr-domain" class="address__domain"></span>
         </div>
       </div>
 
-      <button id="copy-btn" class="btn btn--primary address__copy" type="button" aria-label="Copy address to clipboard">
+      <button id="copy-btn" class="btn btn--primary address__copy" type="button" aria-label="Copy address to clipboard" disabled>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <rect x="9" y="9" width="11" height="11" rx="2"/>
           <path d="M5 15V6a2 2 0 0 1 2-2h9" stroke-linecap="round"/>
@@ -64,14 +64,14 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
     </div>
 
     <div class="address__actions">
-      <button id="refresh-btn" class="btn btn--ghost btn--tiny" type="button" aria-label="Generate a new address">
+      <button id="refresh-btn" class="btn btn--ghost btn--tiny" type="button" aria-label="Generate a new address" disabled>
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M21 12a9 9 0 1 1-3.51-7.13M21 4v5h-5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         New address
       </button>
 
-      <button id="qr-btn" class="btn btn--ghost btn--tiny" type="button" aria-expanded="false" aria-controls="qr-panel">
+      <button id="qr-btn" class="btn btn--ghost btn--tiny" type="button" aria-expanded="false" aria-controls="qr-panel" disabled>
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <rect x="3" y="3" width="7" height="7" rx="1"/>
           <rect x="14" y="3" width="7" height="7" rx="1"/>
@@ -86,28 +86,32 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
       <div class="address__timer-inline" aria-live="polite" data-tour="timer">
         <span class="address__timer-label">Expires</span>
         <span class="address__clock" id="timer-clock">
-          <span id="timer-mm" class="address__clock-n">09</span><span class="address__clock-c">:</span><span id="timer-ss" class="address__clock-n">58</span>
+          —
         </span>
       </div>
     </div>
 
     <div id="qr-panel" class="address__qr" hidden>
-      <div id="qr-canvas" class="address__qr-canvas" aria-hidden="true"></div>
+      <div id="qr-canvas" class="address__qr-canvas" role="img" aria-label="Temporary email address as a QR code"></div>
       <p class="address__qr-caption">
-        Scan from another device. The address is the same — useful when you're
-        registering on your phone but watching the inbox on a laptop.
+        Scan to read or copy this email address. The code contains the address
+        only; it does not open the mailbox or transfer access. Keep this inbox
+        tab open to receive messages.
       </p>
     </div>
   </div>
 
+  <p id="address-status" class="address__status" role="status" data-nosnippet>Connecting to your inbox…</p>
+  <noscript><p class="address__status">Enable JavaScript to create an inbox and receive messages.</p></noscript>
+
   <div class="address__controls">
     <span class="label address__controls-label">Extend</span>
     <div class="address__extend">
-      <button class="btn btn--tiny btn--ghost" type="button" data-extend="600">+ 10 min</button>
-      <button class="btn btn--tiny btn--ghost" type="button" data-extend="3600">+ 1 hour</button>
-      <button class="btn btn--tiny btn--ghost" type="button" data-extend="86400">+ 24 hours</button>
+      <button class="btn btn--tiny btn--ghost" type="button" data-extend="600" disabled>+ 10 min</button>
+      <button class="btn btn--tiny btn--ghost" type="button" data-extend="3600" disabled>+ 1 hour</button>
+      <button class="btn btn--tiny btn--ghost" type="button" data-extend="86400" disabled>+ 24 hours</button>
     </div>
-    <button class="btn btn--tiny btn--danger-ghost" type="button" id="burn-btn" aria-label="Destroy this inbox now">
+    <button class="btn btn--tiny btn--danger-ghost" type="button" id="burn-btn" aria-label="Destroy this inbox now" disabled>
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
@@ -136,7 +140,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      <span><strong>Hard-deleted</strong> when the timer ends. Not archived. Not logged.</span>
+      <span><strong>Access ends</strong> when the timer expires. Expired mail is removed by cleanup every 5 minutes.</span>
     </li>
   </ul>
 
@@ -173,6 +177,9 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
     margin: -0.25rem 0 0;
     line-height: 1.5;
   }
+
+  .address__status { color: var(--text-2); font-size: var(--fs-small); line-height: 1.5; margin: -.5rem 0 0; }
+  .address :global(button:disabled) { opacity: .45; cursor: not-allowed; }
 
   /* The card containing the address + actions */
   .address__field {
@@ -297,20 +304,19 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
     to   { opacity: 1; transform: translateY(0); }
   }
   .address__qr-canvas {
-    width: 96px;
-    height: 96px;
-    background: var(--bg);
+    width: 160px;
+    height: 160px;
+    background: #fff;
     border: 1px solid var(--border);
     border-radius: var(--r-sm);
-    padding: 6px;
+    padding: 0;
     flex-shrink: 0;
     display: grid;
     place-items: center;
   }
-  .address__qr-canvas svg {
+  .address__qr-canvas :global(svg) {
     width: 100%;
     height: 100%;
-    color: var(--text);
   }
   .address__qr-caption {
     color: var(--text-2);

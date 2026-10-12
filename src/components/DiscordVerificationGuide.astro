@@ -1,0 +1,74 @@
+<section class="discord-guide" id="discord-verification" aria-labelledby="discord-guide-heading">
+  <header>
+    <span class="label"><span class="label__dot label__dot--idle" aria-hidden="true"></span>Discord verification guide</span>
+    <h2 id="discord-guide-heading">Which verification step is stopping you?</h2>
+    <p class="review">By <a href="/about/">InboxForNow</a> · Sources reviewed <time datetime="2026-10-11">October 11, 2026</time></p>
+    <p>Email verification, phone verification and a server’s entry requirements solve different problems. Identify the message Discord shows before requesting another email.</p>
+  </header>
+
+  <div class="decisions">
+    <a href="#discord-email" class="decision"><span class="label">Email</span><h3>No verification email?</h3><p>Check the account address, then use Discord’s resend control.</p><span class="decision__link">Email steps <span aria-hidden="true">↓</span></span></a>
+    <a href="#discord-phone" class="decision"><span class="label">Phone</span><h3>A phone number is required?</h3><p>An email inbox cannot receive the SMS code or replace this step.</p><span class="decision__link">Phone requirements <span aria-hidden="true">↓</span></span></a>
+    <a href="#discord-server" class="decision"><span class="label">Server</span><h3>Verified, but unable to chat?</h3><p>A server may also require waiting periods or phone verification.</p><span class="decision__link">Server requirements <span aria-hidden="true">↓</span></span></a>
+  </div>
+
+  <div class="guide-copy">
+    <section id="discord-email" aria-labelledby="discord-email-heading">
+      <h3 id="discord-email-heading">Resend the Discord verification email</h3>
+      <ol>
+        <li><strong>Check the address on your Discord account.</strong> Compare it with the complete receiving address, including the domain. A new InboxForNow address does not update Discord’s account details.</li>
+        <li><strong>On desktop or browser:</strong> open User Settings using the cog beside your username. In My Account, select “Resend Verification Email”.</li>
+        <li><strong>On mobile:</strong> open User Settings from your avatar, select Account, then use the “Verify” banner.</li>
+        <li><strong>Follow the received email.</strong> If the verification email has expired, request another using the same controls. Discord says its support team cannot send verification emails manually.</li>
+      </ol>
+      <p>These controls are documented in <a href="https://support.discord.com/hc/en-us/articles/213219267-Resending-Verification-Email">Discord’s resend instructions</a>. Interface labels may change.</p>
+      <p>For InboxForNow, keep the selected inbox active and check its remaining time. Reloading this tab attempts to reopen that inbox while it still exists. A resend cannot restore an expired inbox. There is no spam folder or sender-allowlist setting in this tool; if you need those controls, use a lasting mailbox that provides them. See our <a href="/guides/email-not-arriving/">missing-email checklist</a> for receiving checks.</p>
+    </section>
+
+    <section id="discord-phone" aria-labelledby="discord-phone-heading">
+      <h3 id="discord-phone-heading">When Discord asks for a phone number</h3>
+      <p>Discord may require a valid mobile number as an account safety check. Its instructions say the number cannot already be attached to another Discord account. An address from this receive-only email tool does not provide a phone number or receive SMS messages. Follow <a href="https://support.discord.com/hc/en-us/articles/6181726888215-How-to-Verify-Your-Discord-Account">Discord’s account verification instructions</a> for the requirement shown on your account.</p>
+    </section>
+
+    <section id="discord-server" aria-labelledby="discord-server-heading">
+      <h3 id="discord-server-heading">Email verified, but still unable to send messages?</h3>
+      <p>Discord servers can set their own verification level. According to <a href="https://support.discord.com/hc/en-us/articles/216679607-Verification-Levels">Discord’s verification-level documentation</a>:</p>
+      <dl class="levels">
+        <div><dt>Low</dt><dd>A verified email is required.</dd></div>
+        <div><dt>Medium / High</dt><dd>Email verification is combined with waiting periods. High also includes time spent in the server.</dd></div>
+        <div><dt>Highest</dt><dd>A verified phone number is required.</dd></div>
+      </dl>
+      <p>Discord states that a verified phone number supersedes these email and time requirements. If the server still blocks participation, check its instructions or ask its administrator. Receiving another email does not by itself resolve every server restriction.</p>
+    </section>
+
+    <aside class="limits" aria-labelledby="discord-limits-heading">
+      <h3 id="discord-limits-heading">Choose an address you can keep</h3>
+      <p>For an ongoing Discord account, use permanent email or a lasting forwarding alias. InboxForNow cannot receive future recovery messages after the inbox expires. We have not tested whether Discord accepts our current receiving domain. The official instructions above explain verification; they do not establish disposable-address acceptance. Generating more addresses is not a reliable fix for a rejected domain.</p>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .discord-guide { padding: var(--sp-8) 0; border-bottom: 1px solid var(--border); scroll-margin-top: 100px; }
+  header { max-width: 75ch; }
+  h2 { font-size: var(--fs-h2); margin: var(--sp-3) 0; color: var(--text); }
+  h3 { font-size: 1.15rem; line-height: 1.35; color: var(--text); margin: 0 0 .75rem; }
+  p, li, dd { color: var(--text-2); line-height: 1.7; }
+  .review { font-size: var(--fs-small); }
+  .decisions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-4); margin: var(--sp-6) 0; }
+  .decision { display: flex; flex-direction: column; gap: .6rem; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); padding: var(--sp-5); text-decoration: none; }
+  .decision:hover { border-color: var(--border-strong); }
+  .decision h3, .decision p { margin: 0; }
+  .decision__link { margin-top: auto; padding-top: .5rem; color: var(--text); font-size: var(--fs-small); }
+  .guide-copy { max-width: 78ch; }
+  .guide-copy section { margin-top: 2.5rem; scroll-margin-top: 100px; }
+  li + li { margin-top: .8rem; }
+  strong, dt { color: var(--text); }
+  .levels { margin: 1.5rem 0; }
+  .levels div { display: grid; grid-template-columns: 10rem minmax(0, 1fr); gap: 1rem; border-top: 1px solid var(--border); padding: .9rem 0; }
+  dt { font-weight: 600; }
+  dd { margin: 0; }
+  .limits { margin-top: 2.5rem; border-left: 3px solid var(--data); background: var(--surface-2); padding: var(--sp-5); }
+  .limits p { margin: 0; }
+  @media (max-width: 760px) { .decisions { grid-template-columns: 1fr; } .levels div { grid-template-columns: 1fr; gap: .3rem; } }
+</style>
