@@ -18,7 +18,7 @@
     "inboxfornow"
   ],
   "goal": "Verify organic first-page visibility for every primary query in Google US English desktop results on two consecutive daily checks including today. Preserve localized browser evidence and actual organic order; resultPage must be 1. Search Console averages and general web-search ordering are not exact rank evidence.",
-  "measurementStatus": "Search Console OAuth expired during the 2026-10-09 audit. Browser Google US English desktop checks are available; the initial three searches did not show InboxForNow on the first result page. Record first-page absence with a null rank, never an invented lower position.",
+  "measurementStatus": "The Search Console API OAuth token still returns RefreshError. On October 12, current read-only Search Console reports became available through the existing signed-in Chrome session, separately from the API. Record report windows and last-update dates; never treat delayed indexing summaries as post-fix data. Signed-out Google US English desktop checks continue separately, with null ranks for first-page absence.",
   "assumption": "Default targets selected from the project and the user's SEO request; revise if the user supplies different keywords or a market.",
   "goalUpdatedAt": "2026-10-11",
   "goalReason": "User explicitly changed the objective from number one to first-page visibility and requested active improvement work every day."

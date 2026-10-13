@@ -29,6 +29,14 @@ python3 -m venv .seo-cache/venv
 
 Expired authorization is a known measurement gap. Report the necessary user action once, continue crawl and browser checks, and do not treat the old June cache as current data. Do not repeatedly run interactive authorization during scheduled checks.
 
+### Existing browser session fallback, verified October 12
+
+The API token remains expired, but the user's existing signed-in Chrome session can read the `sc-domain:inboxfornow.com` Search Console property. When that authorized session is available through supported browser tools, use its read-only reports as a supplement. Do not start a fresh login, OAuth grant, account switch to an unverified owner, or permission change unattended. If unavailable, retain the API gap and continue independent work. Keep this authenticated data work separate from signed-out localized ranking checks.
+
+Save original report DOM/screenshots in the ignored evidence cache and write a separate dated `gsc-browser.json`; do not overwrite an API failure snapshot as though OAuth had recovered. Record filters, actual chart dates and last-update dates. October 12's page-indexing summary was dated October 8; it predates the fixes. URL Inspection independently confirmed a successful October 12 homepage crawl and matching Google-selected canonical. Missing query rows and incomplete link reports are not proof of zero impressions or zero backlinks. Keep private analytics and query exports out of the public Git repository.
+
+The updated 31-URL sitemap was submitted once October 12 after the report showed its last read on October 6 with 27 URLs. Verify subsequent processing rather than resubmitting unchanged content daily. Before any URL indexing request, check the dated worklog and saved evidence. Requests do not guarantee indexing, and repetition does not improve queue priority.
+
 ## Exact ranking evidence
 
 Use the supported browser tool to check each primary query with `https://www.google.com/search?q=<query>&gl=us&hl=en&pws=0`, signed out, at a desktop viewport. Inspect the visible Google location footer. Record the actual locality; the first run showed **Phillips Creek Ranch, Frisco, TX, from the IP address**. The US parameter alone does not prove the IP's country. Results are an observation from that locality and device, not a universal US ranking.
