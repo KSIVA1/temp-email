@@ -70,10 +70,18 @@ for (const [url, status, tag] of [
   ['https://inboxfornow.com/r/?u=https://example.com/', 200, 'noindex, follow'],
   ['https://inboxfornow.com/404.html', 200, 'noindex, follow'],
   ['https://inboxfornow.com/missing/', 404, 'noindex, follow'],
+  ['https://inboxfornow.com/fixtures/email-qa/signup-plain.eml', 200, 'noindex, follow'],
 ]) {
   const response = await worker.fetch(new Request(url), { ASSETS: { fetch: async () => new Response('page', { status }) } });
   assert.equal(response.status, status);
   assert.equal(response.headers.get('X-Robots-Tag'), tag, url);
+}
+for (const file of ['signup-plain.eml', 'signup-alternative.eml', 'signup-rendering-limits.eml']) {
+  const raw = await readFile(join('dist/fixtures/email-qa', file));
+  assert.deepEqual(raw, await readFile(join('public/fixtures/email-qa', file)), 'Publish the exact tested fixture');
+  const response = await worker.fetch(new Request(`https://inboxfornow.com/fixtures/email-qa/${file}`), { ASSETS: { fetch: async () => new Response(raw) } });
+  assert.equal(response.headers.get('Content-Type'), 'message/rfc822');
+  assert.equal(response.headers.get('Content-Disposition'), 'attachment');
 }
 const redirect = await worker.fetch(new Request('https://www.inboxfornow.com/privacy/?utm_source=audit'), {});
 assert.equal(redirect.status, 301);

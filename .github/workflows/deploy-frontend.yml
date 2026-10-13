@@ -11,6 +11,7 @@ on:
       - 'package-lock.json'
       - 'scripts/inbox-session.test.mjs'
       - 'scripts/address-qr.test.mjs'
+      - 'scripts/email-fixtures.test.ts'
       - 'scripts/seo-check.mjs'
       - 'scripts/seo-goal.test.mjs'
       - 'scripts/lib/**'
@@ -48,6 +49,12 @@ jobs:
 
       - name: Verify inbox session continuity
         run: npm run test:inbox
+
+      - name: Install mail-processing test dependencies
+        run: npm ci --prefix workers/inboxfornow-api
+
+      - name: Verify published email examples against the receiving handler
+        run: npm run test:mail-fixtures
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v4

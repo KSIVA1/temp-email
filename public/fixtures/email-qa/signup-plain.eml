@@ -1,0 +1,11 @@
+From: QA Fixture <sender@example.com>
+To: test-recipient@example.com
+Subject: signup-smoke-plain
+Date: Tue, 13 Oct 2026 00:00:00 +0000
+Message-ID: <signup-smoke-plain@example.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+Verification code: 418229
+Synthetic user: <test-user>

@@ -1,0 +1,2 @@
+# Preserve RFC email line endings in downloaded synthetic messages.
+public/fixtures/email-qa/*.eml text eol=crlf

@@ -1,0 +1,23 @@
+From: QA Fixture <sender@example.com>
+To: test-recipient@example.com
+Subject: signup-smoke-rendering
+Date: Tue, 13 Oct 2026 00:00:00 +0000
+Message-ID: <signup-smoke-rendering@example.com>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="ifn-qa-mixed"
+
+--ifn-qa-mixed
+Content-Type: text/html; charset=utf-8
+
+<style>.otp { color: red; }</style>
+<p style="color:red">Verification code: <strong class="otp">418229</strong></p>
+<img src="https://example.com/pixel.png" alt="Synthetic image">
+<script>void 0;</script>
+<form action="https://example.com/unused"><p>Synthetic form content</p></form>
+<p>Read this without images.</p>
+--ifn-qa-mixed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: attachment; filename="synthetic-note.txt"
+
+SYNTHETIC_ATTACHMENT_ONLY
+--ifn-qa-mixed--

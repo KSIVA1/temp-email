@@ -1,6 +1,8 @@
 ---
 import GuideLayout from '~/layouts/GuideLayout.astro';
-const sections = [{id:'setup',title:'Set up one test'},{id:'fixture',title:'Use a simple fixture'},{id:'checklist',title:'Run the checklist'},{id:'rendering',title:'Check rendering limits'},{id:'record',title:'Record the result'}];
+import { emailQaCases } from '~/data/email-qa';
+const sections = [{id:'setup',title:'Set up one test'},{id:'fixture',title:'Use a simple fixture'},{id:'downloads',title:'Download tested examples'},{id:'checklist',title:'Run the checklist'},{id:'rendering',title:'Check rendering limits'},{id:'record',title:'Record the result'}];
+const reproduction = 'npm ci --prefix workers/inboxfornow-api\nnpm run test:mail-fixtures';
 const fixture = '<p>Verification code: 418229</p>\n<p><a href="https://example.com/verify?token=TEST_ONLY">Verify your test account</a></p>';
 ---
 <GuideLayout title="Test Signup Emails with a Temporary Inbox · InboxForNow" heading="Test signup emails with a temporary inbox" description="Use a fresh InboxForNow address to manually check your own signup emails, verification codes, links, resend behavior, and expired-session handling." sections={sections}>
@@ -19,6 +21,25 @@ const fixture = '<p>Verification code: 418229</p>\n<p><a href="https://example.c
     <p>Send both a plain-text body and a small HTML body through your own application’s normal mail path. A text code and one link are enough to distinguish a delivery problem from a template problem.</p>
     <pre><code>{fixture}</code></pre>
     <p>Replace the example link with a staging verification URL that you control. The code and token above are sample data, not credentials. Check that the code displayed in the message matches the code your application expects; automatic code detection is a convenience and can choose the wrong number in a complex message.</p>
+  </section>
+  <section id="downloads">
+    <h2>Download three tested email examples</h2>
+    <p>These small <code>.eml</code> files contain synthetic messages in standard email format. Use them to compare plain text, HTML alternatives and content this inbox removes. Each includes the sample code <code>418229</code> and a distinct subject so you can identify the case.</p>
+    <p><strong>Before sending:</strong> replace <code>test-recipient@example.com</code> with the exact live inbox address. Use your own verified sender and replace example links with your staging URL. Your sending tool must also set the envelope recipient; editing the <code>To</code> header alone does not route an email. Send through your own application's mail path, or import the files into a local mail catcher. InboxForNow has no file-upload or outbound-send feature.</p>
+    {emailQaCases.map((example, index) => <div class="qa-example">
+      <h3>{index + 1}. {example.title}</h3>
+      <p><a href={`/fixtures/email-qa/${example.file}`} download={example.file}>Download {example.file}</a></p>
+      <p><strong>Subject:</strong> <code>{example.subject}</code><br /><strong>Observed result:</strong> {example.result}</p>
+      <details>
+        <summary>See the processed HTML for this example</summary>
+        <pre><code>{example.html}</code></pre>
+      </details>
+    </div>)}
+    <h3>What we verified</h3>
+    <p>On October 13, 2026, each exact download was processed by InboxForNow's receiving handler using its MIME parser and a local test database, then retrieved through the message API. All three matched the code, subject, processed HTML and message preview documented in the <a href="https://github.com/KSIVA1/temp-email/blob/main/src/data/email-qa.ts">expected results</a>. The rendering case includes a real MIME attachment with synthetic text; that text was absent from both the stored message and API response.</p>
+    <p>You can reproduce the checks from the <a href="https://github.com/KSIVA1/temp-email/blob/main/scripts/email-fixtures.test.ts">fixture test source</a>:</p>
+    <pre><code>{reproduction}</code></pre>
+    <p class="note">These are local processing results. They do not test SMTP delivery, sender authentication, inbox placement, latency, or how Gmail, Outlook and other clients render the message. The example link and sample code do not verify a real account.</p>
   </section>
   <section id="checklist">
     <h2>A manual signup email QA checklist</h2>
@@ -50,6 +71,12 @@ const fixture = '<p>Verification code: 418229</p>\n<p><a href="https://example.c
     <h2>Keep a small test record</h2>
     <p>Record the application version, environment, recipient, subject, request time, provider event, inbox arrival observation, and pass/fail result. Save only synthetic test evidence before expiry, then delete the test inbox when finished. Do not use a temporary inbox as a log archive.</p>
     <p>If a message does not arrive, use the <a href="/guides/email-not-arriving/">delivery troubleshooting guide</a> to separate address rejection, sender queues, expired sessions, and browser retrieval errors.</p>
-    <p>The service behavior in this guide was reviewed against the receiving code and automated tests on October 11, 2026. Those tests cover mailbox lifetime, sanitization, code extraction, link rewriting, and cleanup in a controlled test environment. They do not establish real-world delivery latency, inbox placement, or third-party signup compatibility.</p>
+    <p>The service behavior in this guide was reviewed against the receiving code and automated tests on October 11, 2026; the downloadable examples were added and tested on October 13. Those tests cover mailbox lifetime, sanitization, code extraction, link rewriting, and cleanup in a controlled test environment. They do not establish real-world delivery latency, inbox placement, or third-party signup compatibility.</p>
   </section>
 </GuideLayout>
+<style>
+  .qa-example { border-top: 1px solid var(--border); padding: .5rem 0 1.5rem; }
+  summary { cursor: pointer; color: var(--text); line-height: 1.6; }
+  details[open] summary { margin-bottom: 1rem; }
+  .qa-example pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+</style>

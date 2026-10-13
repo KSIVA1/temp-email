@@ -1,0 +1,19 @@
+From: QA Fixture <sender@example.com>
+To: test-recipient@example.com
+Subject: signup-smoke-alternative
+Date: Tue, 13 Oct 2026 00:00:00 +0000
+Message-ID: <signup-smoke-alternative@example.com>
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="ifn-qa-alternative"
+
+--ifn-qa-alternative
+Content-Type: text/plain; charset=utf-8
+
+Plain-text alternative. Verification code: 418229
+https://example.com/verify?token=TEST_ONLY
+--ifn-qa-alternative
+Content-Type: text/html; charset=utf-8
+
+<p>Verification code: 418229</p>
+<p><a href="https://example.com/verify?token=TEST_ONLY">Verify your test account</a></p>
+--ifn-qa-alternative--

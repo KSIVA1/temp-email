@@ -1,6 +1,7 @@
 ---
 import Layout from './Layout.astro';
 import Header from '~/components/Header.astro';
+import { editorialDates } from '~/data/editorial-dates';
 interface Props {
   title: string;
   heading: string;
@@ -11,10 +12,12 @@ interface Props {
 }
 const { title, heading, description, label = 'InboxForNow field guide', sections = [], article = true } = Astro.props;
 const url = new URL(Astro.url.pathname, Astro.site).href;
+const reviewedAt = editorialDates[Astro.url.pathname] || '2026-10-11';
+const reviewedLabel = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${reviewedAt}T12:00:00Z`));
 const schema = {
   '@context': 'https://schema.org', '@type': article ? 'Article' : 'WebPage',
   '@id': `${url}#content`, url, headline: heading, name: heading, description,
-  inLanguage: 'en', datePublished: '2026-10-11', dateModified: '2026-10-11',
+  inLanguage: 'en', datePublished: '2026-10-11', dateModified: reviewedAt,
   author: { '@type': 'Organization', name: 'InboxForNow', url: 'https://inboxfornow.com/about/' },
   publisher: { '@id': 'https://inboxfornow.com/#organization' },
   mainEntityOfPage: url,
@@ -36,7 +39,7 @@ const breadcrumb = {
       <span class="label"><span class="label__dot" aria-hidden="true"></span>{label}</span>
       <h1>{heading}</h1>
       <p class="dek">{description}</p>
-      <p class="byline">By <a href="/about/">InboxForNow</a> · Reviewed <time datetime="2026-10-11">October 11, 2026</time></p>
+      <p class="byline">By <a href="/about/">InboxForNow</a> · Reviewed <time datetime={reviewedAt}>{reviewedLabel}</time></p>
     </header>
     <div class="reading-layout">
       {sections.length > 0 && <aside><nav aria-label="On this page"><span class="label">On this page</span><ol>{sections.map(s => <li><a href={`#${s.id}`}>{s.title}</a></li>)}</ol></nav></aside>}
