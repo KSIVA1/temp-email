@@ -35,7 +35,7 @@ The API token remains expired, but the user's existing signed-in Chrome session 
 
 Save original report DOM/screenshots in the ignored evidence cache and write a separate dated `gsc-browser.json`; do not overwrite an API failure snapshot as though OAuth had recovered. Record filters, actual chart dates and last-update dates. October 12's page-indexing summary was dated October 8; it predates the fixes. URL Inspection independently confirmed a successful October 12 homepage crawl and matching Google-selected canonical. Missing query rows and incomplete link reports are not proof of zero impressions or zero backlinks. Keep private analytics and query exports out of the public Git repository.
 
-The updated 31-URL sitemap was submitted once October 12 after the report showed its last read on October 6 with 27 URLs. Verify subsequent processing rather than resubmitting unchanged content daily. Before any URL indexing request, check the dated worklog and saved evidence. Requests do not guarantee indexing, and repetition does not improve queue priority.
+The updated 31-URL sitemap was submitted once October 12 after the report showed its last read on October 6 with 27 URLs. On October 13, the browser report confirmed a successful October 12 read with all 31 pages discovered. Both original guides requested once October 12 are now confirmed indexed with successful October 12 crawls and matching canonicals. Before any URL indexing request, check the dated worklog and saved evidence. Requests do not guarantee indexing, and repetition does not improve queue priority. Do not repeat those requests or resubmit unchanged content daily.
 
 ## Exact ranking evidence
 
@@ -87,4 +87,4 @@ The goal is now first-page visibility for all three primary queries, replacing t
 
 Priorities include indexing/discovery, product usefulness and reliability, original tested guides, internal navigation, and measured loading issues. Expired GSC authorization is not a reason to stop independent work. Preserve prior experiments and assess them at 7 and 28 days rather than rewriting the same titles every day. Research authority/discovery opportunities without buying links, posting, or contacting third parties.
 
-Sitemap modification dates now come from src/data/editorial-dates.ts, recording substantive changes made October 9 and October 11. Update only the routes whose visible content materially changes, never all dates on a rebuild.
+Sitemap modification dates come from src/data/editorial-dates.ts, recording substantive changes rather than rebuild times. The shared guide byline/schema reads the same dates. Update only the routes whose visible content materially changes, never all dates on a rebuild. The daily asset parser includes local links with a download attribute, so the October 13 email-QA fixtures receive ongoing availability checks. The frontend workflow also runs their processing checks before deployment.

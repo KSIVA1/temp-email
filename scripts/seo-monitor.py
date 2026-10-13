@@ -39,6 +39,7 @@ class Head(HTMLParser):
         if tag == 'meta' and a.get('name', '').lower() == 'robots': self.robots.append(a.get('content', ''))
         if tag == 'h1': self.h1_count += 1
         resource = a.get('href') if tag == 'link' and a.get('rel') in ('stylesheet', 'preload') else a.get('src') if tag == 'script' else None
+        if tag == 'a' and 'download' in a: resource = a.get('href')
         if resource and resource.startswith('/') and not resource.startswith('//'): self.resources.append(resource)
 
 def get(url):
