@@ -7,6 +7,7 @@ export const editorialDates: Record<string, string> = {
   '/use-case/': '2026-10-13',
   // These pages embed the inbox tool, whose visible lifecycle changed today.
   ...Object.fromEntries(platforms.map(p => [`/use-case/${p.slug}/`, '2026-10-11'])),
+  '/use-case/steam/': '2026-10-14',
   '/use-case/venmo/': '2026-10-13',
   '/privacy/': '2026-10-11',
   '/terms/': '2026-10-09',

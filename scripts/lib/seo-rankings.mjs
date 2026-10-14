@@ -11,6 +11,8 @@ export function searchUrlValid(value, query) {
   try { const u=new URL(value);return u.protocol==='https:'&&u.hostname==='www.google.com'&&u.pathname==='/search'&&u.searchParams.get('q')===query&&u.searchParams.get('gl')==='us'&&u.searchParams.get('hl')==='en'&&u.searchParams.get('pws')==='0'; } catch {return false;}
 }
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+// DOM snapshots escape apostrophes in quoted labels and may fold whitespace.
+const renderedText = value => value.replace(/''/g, "'").replace(/\s+/g, ' ');
 export function evidenceVerifier(root) {
   const cache=realpathSync(resolve(root,'.seo-cache/daily'));
   const read=artifact=>{
@@ -41,7 +43,7 @@ export function evidenceVerifier(root) {
         if(!dom.includes(p.locationEvidence)||!dom.includes(record.query)||!dom.includes('Sign in'))return false;
         if(i===0&&Number(new URL(p.searchUrl).searchParams.get('start')??0)!==0)return false;
         if(i>0) {const prior=o.pages[i-1];if(!prior.nextSearchUrl||!dom.includes('Previous')||new URL(prior.nextSearchUrl).searchParams.get('start')!==new URL(p.searchUrl).searchParams.get('start'))return false;}
-        if(p.results.some(r=>typeof r.title!=='string'||!r.title||!/^https:\/\//.test(r.url)||!dom.includes(r.title)))return false;
+        if(p.results.some(r=>typeof r.title!=='string'||!r.title||!/^https:\/\//.test(r.url)||!renderedText(dom).includes(renderedText(r.title))))return false;
         total+=p.results.length;
       }
       if(total!==record.checkedThroughRank||!same(o.results,o.pages.flatMap(p=>p.results)))return false;

@@ -12,6 +12,7 @@ import DiscordVerificationGuide from '~/components/DiscordVerificationGuide.astr
 import GitHubEmailGuide from '~/components/GitHubEmailGuide.astro';
 import ChatGPTEmailGuide from '~/components/ChatGPTEmailGuide.astro';
 import VenmoEmailGuide from '~/components/VenmoEmailGuide.astro';
+import SteamEmailGuide from '~/components/SteamEmailGuide.astro';
 import UseCaseFAQs from '~/components/UseCaseFAQs.astro';
 import UseCaseRelated from '~/components/UseCaseRelated.astro';
 import { platforms, type Platform } from '~/data/platforms';
@@ -26,6 +27,8 @@ export const getStaticPaths: GetStaticPaths = () => {
 interface Props { platform: Platform; }
 const { platform } = Astro.props;
 
+const guideOnly = ['venmo', 'steam'].includes(platform.slug);
+
 const title = `Temporary Email for ${platform.name} — Limits & Guidance`;
 const description = platform.slug === 'github'
   ? 'GitHub does not verify disposable email. Learn how to verify a lasting account address, use GitHub noreply for commit privacy, and check your Git email settings.'
@@ -33,6 +36,8 @@ const description = platform.slug === 'github'
   ? 'Read ChatGPT email-verification and account-access guidance: identify your sign-in method, troubleshoot codes, and understand email-change requirements.'
   : platform.slug === 'venmo'
   ? 'Use lasting email for Venmo. Understand verification links, SMS prompts, registered-address errors and what an expired temporary inbox cannot recover.'
+  : platform.slug === 'steam'
+  ? 'Read Steam Guard email and mobile-code guidance, missing-message checks and the recovery limits of an expired temporary inbox.'
   : `Considering temporary email for ${platform.name}? Read the account recovery risks and email limitations before using a free disposable inbox from InboxForNow.`;
 
 const pageUrl = `https://inboxfornow.com/use-case/${platform.slug}/`;
@@ -42,6 +47,8 @@ const imageAlt = platform.slug === 'github'
   ? 'Temporary email limits and account access guidance for ChatGPT — InboxForNow'
   : platform.slug === 'venmo'
   ? 'Venmo email verification and temporary inbox limits — InboxForNow'
+  : platform.slug === 'steam'
+  ? 'Steam Guard email and temporary inbox limits — InboxForNow'
   : `Disposable email inbox for ${platform.name} verification codes — InboxForNow`;
 
 // JSON-LD for the WebPage itself
@@ -78,7 +85,7 @@ const heading = 'Your temporary inbox';
 const sub = 'Use this receive-only inbox for permitted one-time messages. Platform acceptance and delivery are not guaranteed.';
 ---
 <Layout title={title} description={description} imageAlt={imageAlt} additionalJsonLd={[webPageJsonLd, breadcrumbJsonLd]}>
-  <Header inboxControls={platform.slug !== 'venmo'} />
+  <Header inboxControls={!guideOnly} />
 
   <main class="page" id="top">
     <div class="page__inner">
@@ -96,8 +103,9 @@ const sub = 'Use this receive-only inbox for permitted one-time messages. Platfo
       </>}
 
       {platform.slug === 'venmo' && <VenmoEmailGuide />}
+      {platform.slug === 'steam' && <SteamEmailGuide />}
 
-      {platform.slug !== 'venmo' && <section class="grid">
+      {!guideOnly && <section class="grid">
         <div class="grid__col grid__col--address">
           <AddressCard kicker={kicker} heading={heading} sub={sub} headingLevel="h2" />
         </div>
@@ -106,8 +114,8 @@ const sub = 'Use this receive-only inbox for permitted one-time messages. Platfo
         </div>
       </section>}
 
-      {platform.slug === 'discord' ? <DiscordVerificationGuide /> : !['github', 'chatgpt', 'venmo'].includes(platform.slug) && <UseCaseHowItWorks platform={platform} />}
-      {!['github', 'chatgpt', 'venmo'].includes(platform.slug) && <UseCaseFAQs platform={platform} />}
+      {platform.slug === 'discord' ? <DiscordVerificationGuide /> : !['github', 'chatgpt', 'venmo', 'steam'].includes(platform.slug) && <UseCaseHowItWorks platform={platform} />}
+      {!['github', 'chatgpt', 'venmo', 'steam'].includes(platform.slug) && <UseCaseFAQs platform={platform} />}
       <UseCaseRelated platform={platform} />
 
       <footer class="foot">
@@ -117,7 +125,7 @@ const sub = 'Use this receive-only inbox for permitted one-time messages. Platfo
             <a href="/use-case/">All platforms</a>
             <a href="/privacy/">Privacy</a>
             <a href="/terms/">Terms</a>
-            {platform.slug !== 'venmo' && <a href="#" data-tour-replay>Show me how</a>}
+            {!guideOnly && <a href="#" data-tour-replay>Show me how</a>}
           </nav>
           <div class="foot__base">
             <span>© <span id="year">2026</span> InboxForNow</span>
@@ -131,7 +139,7 @@ const sub = 'Use this receive-only inbox for permitted one-time messages. Platfo
     </div>
   </main>
 
-  {platform.slug !== 'venmo' && <><EmailReader /><OnboardingTour /></>}
+  {!guideOnly && <><EmailReader /><OnboardingTour /></>}
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>

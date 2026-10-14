@@ -38,3 +38,16 @@ test('manual completion review is tied to every exact daily snapshot and current
  assert.equal(verifyEvidenceReview(config,progress,{...review,days:days.slice(1)},snapshots,now),false);
  snapshots[0].fileSha256=hash('modified');assert.equal(verifyEvidenceReview(config,progress,review,snapshots,now),false);
 });
+
+test('snapshot label escaping preserves actual result text without accepting changed titles',t=>{
+  const f=fixture(t,{counts:[1],found:false}),page=f.source.observations[0].pages[0];
+  page.results[0].title="Don't lose your inbox";
+  f.source.observations[0].results=page.results;
+  const dom="synthetic query\nSign in\nFrisco, TX - From your IP address\nheading 'Don''t lose your  inbox'";
+  page.domSha256=hash(dom);writeFileSync(join(f.root,page.domEvidence),dom);
+  let raw=JSON.stringify(f.source);f.r.evidence.sha256=hash(raw);writeFileSync(join(f.root,f.r.evidence.path),raw);
+  assert.deepEqual(validateRankingSnapshot(config,f.s,now,f.verify),[]);
+  page.results[0].title="Don't lose your account";
+  raw=JSON.stringify(f.source);f.r.evidence.sha256=hash(raw);writeFileSync(join(f.root,f.r.evidence.path),raw);
+  assert.ok(validateRankingSnapshot(config,f.s,now,f.verify).length);
+});

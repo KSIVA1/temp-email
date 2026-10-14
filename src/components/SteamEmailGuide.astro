@@ -1,0 +1,36 @@
+<section class="steam-guide" aria-labelledby="steam-email">
+  <p class="byline">By <a href="/about/">InboxForNow</a> · Sources reviewed <time datetime="2026-10-14">October 14, 2026</time></p>
+  <h2 id="steam-email">Should you use temporary email for Steam?</h2>
+  <p>Use a lasting address for a Steam account you want to keep. A game library can outlive a disposable inbox by years. InboxForNow cannot reopen an expired mailbox, and we have not tested whether Steam accepts our receiving domain. A successful one-time delivery would not prove future access.</p>
+  <h2 id="steam-guard">Find the prompt before requesting another message</h2>
+  <p>Steam’s <a href="https://help.steampowered.com/en/faqs/view/06B0-26E6-2CF8-254C">Steam Guard guide</a> distinguishes codes delivered by email from codes in the Steam Mobile app. A mobile-authenticator prompt cannot be completed by receiving email here.</p>
+  <details>
+    <summary>Steam Guard asks for an email code</summary>
+    <p>Open the address already registered to the Steam account. Check its spam folder. Steam’s <a href="https://help.steampowered.com/en/wizard/HelpWithSteamGuardCode">missing-code checklist</a> also recommends trusting its support and noreply senders, allowing up to 30 minutes for delivery, then signing in again for a new code.</p>
+    <p>InboxForNow begins with a 10-minute lifetime. If you are doing a permitted receiving test, extend that inbox before its timer runs out. Extending it does not change the email address registered with Steam or guarantee delivery.</p>
+  </details>
+  <details>
+    <summary>The prompt refers to the Steam Mobile app</summary>
+    <p>Follow the authenticator instructions in Steam’s own app and help. Creating another email inbox does not replace that authentication method. The Steam Guard guide explains how the two methods differ.</p>
+  </details>
+  <details>
+    <summary>A newer code arrived after an older one</summary>
+    <p>Steam’s guide says to use the most recent code. Compare the message timestamps before entering one. Do not publish a real code, account name or recovery message in a screenshot or test report.</p>
+  </details>
+  <details>
+    <summary>The registered temporary inbox has expired</summary>
+    <p>That inbox and its messages cannot be restored here. Use <a href="https://help.steampowered.com/en/wizard/HelpWithLoginInfo?issueid=409&amp;reset=2">Steam’s account-email help</a> for the account you already own. A different temporary address does not recover access to the previous mailbox or transfer your library.</p>
+  </details>
+  <p class="note">Testing emails from your own game or application? Use the <a href="/guides/testing-signup-emails/">reproducible synthetic email examples</a> and the <a href="/guides/email-not-arriving/">receiving checklist</a>. Those examples test our processing code; they are not a Steam signup, purchase or delivery test.</p>
+  <p>Steam’s code-help page and broader FAQ give different waiting/escalation intervals. Follow the page for the prompt you have; neither interval is an InboxForNow delivery promise.</p>
+</section>
+<style>
+  .steam-guide { max-width: 78ch; margin: 2rem 0 3rem; }
+  h2 { font-size: clamp(1.45rem, 3vw, 1.9rem); margin: 2rem 0 1rem; scroll-margin-top: 100px; }
+  p { color: var(--text-2); line-height: 1.75; }
+  .byline { font-size: var(--fs-small); }
+  details { padding: 1.1rem 0; border-top: 1px solid var(--border); }
+  summary { cursor: pointer; font-weight: 600; line-height: 1.6; }
+  details p { margin-bottom: .2rem; }
+  .note { padding: 1rem 1.3rem; border-left: 3px solid var(--data); background: var(--surface-2); }
+</style>
