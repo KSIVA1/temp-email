@@ -1441,6 +1441,8 @@ async function bootInbox() {
 }
 
 function boot() {
+  // Shared platform pages can render account guidance without an inbox.
+  if (!document.getElementById('addr-local')) return;
   state.history = loadHistory();
   state.settings = loadSettings();
 

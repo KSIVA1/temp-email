@@ -177,7 +177,7 @@ def service(authorize=False):
     return build('searchconsole', 'v1', credentials=creds, cache_discovery=False)
 
 def analytics(svc, start, end, dimensions=None, query=None):
-    filters = [{'dimension':'country','operator':'equals','expression':CONFIG['country']},
+    filters = [{'dimension':'country','operator':'equals','expression':CONFIG.get('gscCountry', 'usa')},
                {'dimension':'device','operator':'equals','expression':CONFIG['device'].upper()}]
     if query is not None: filters.append({'dimension':'query','operator':'equals','expression':query})
     body = {'startDate':start.isoformat(), 'endDate':end.isoformat(), 'type':'web', 'dataState':'final',
@@ -187,9 +187,9 @@ def analytics(svc, start, end, dimensions=None, query=None):
 def collect_gsc(svc, today):
     end = today - timedelta(days=3)
     periods = {}
-    for label, start, stop in [('7d',end-timedelta(days=6),end), ('28d',end-timedelta(days=27),end), ('previous28d',end-timedelta(days=55),end-timedelta(days=28))]:
+    for label, start, stop in [('7d',end-timedelta(days=6),end), ('previous7d',end-timedelta(days=13),end-timedelta(days=7)), ('28d',end-timedelta(days=27),end), ('previous28d',end-timedelta(days=55),end-timedelta(days=28))]:
         rows = analytics(svc,start,stop)
-        periods[label] = {'start':start.isoformat(),'end':stop.isoformat(),'metrics':rows[0] if rows else None}
+        periods[label] = {'start':start.isoformat(),'end':stop.isoformat(),'metrics':rows[0] if rows else None, 'queries':analytics(svc,start,stop,['query']), 'pages':analytics(svc,start,stop,['page'])}
     queries = []
     for q in CONFIG['primaryQueries'] + CONFIG['secondaryQueries']:
         rows = analytics(svc,end-timedelta(days=6),end,query=q)

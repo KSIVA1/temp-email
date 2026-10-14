@@ -2,7 +2,8 @@
 import importlib.util
 from pathlib import Path
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
+from datetime import date
 
 spec = importlib.util.spec_from_file_location('seo_monitor', Path(__file__).with_name('seo-monitor.py'))
 monitor = importlib.util.module_from_spec(spec)
@@ -57,5 +58,27 @@ class ReceivingDnsTests(unittest.TestCase):
             for name in ['https://example.com/', 'veqla.com?type=A', '-bad.example', 'bad..example', None]:
                 self.assertEqual(monitor.inspect_receiving_dns(name)['status'], 'unavailable')
             request.assert_not_called()
+
+class SearchConsoleWindowTests(unittest.TestCase):
+    def test_complete_calendar_windows_are_paired_and_keep_query_page_exports(self):
+        svc = MagicMock()
+        svc.urlInspection.return_value.index.return_value.inspect.return_value.execute.return_value = {}
+        with patch.object(monitor, 'analytics', return_value=[]):
+            result = monitor.collect_gsc(svc, date(2026, 10, 13))
+        periods = result['periods']
+        self.assertEqual((periods['7d']['start'], periods['7d']['end']), ('2026-10-04', '2026-10-10'))
+        self.assertEqual((periods['previous7d']['start'], periods['previous7d']['end']), ('2026-09-27', '2026-10-03'))
+        self.assertEqual((periods['28d']['start'], periods['28d']['end']), ('2026-09-13', '2026-10-10'))
+        self.assertEqual((periods['previous28d']['start'], periods['previous28d']['end']), ('2026-08-16', '2026-09-12'))
+        self.assertTrue(all(p['queries'] == [] and p['pages'] == [] for p in periods.values()))
+
+    def test_api_uses_google_country_code_and_final_data_separately_from_dashboard_locale(self):
+        svc = MagicMock()
+        svc.searchanalytics.return_value.query.return_value.execute.return_value = {}
+        monitor.analytics(svc, date(2026, 10, 4), date(2026, 10, 10), ['query'])
+        body = svc.searchanalytics.return_value.query.call_args.kwargs['body']
+        self.assertEqual(body['dataState'], 'final')
+        self.assertEqual(body['dimensionFilterGroups'][0]['filters'][0]['expression'], 'usa')
+        self.assertEqual(body['dimensionFilterGroups'][0]['filters'][1]['expression'], 'DESKTOP')
 
 if __name__ == '__main__': unittest.main()

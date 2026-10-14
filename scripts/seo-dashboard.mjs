@@ -1,0 +1,15 @@
+import { readFileSync,writeFileSync,mkdirSync } from 'node:fs';
+import { resolve,relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { loadSnapshots,evidenceVerifier,rankingProgress } from './lib/seo-rankings.mjs';
+import { buildDashboard } from './lib/seo-dashboard.mjs';
+const root=fileURLToPath(new URL('../',import.meta.url)),config=JSON.parse(readFileSync(resolve(root,'docs/seo-targets.json'),'utf8'));
+const {snapshots,issues}=loadSnapshots(root,config),verify=evidenceVerifier(root),now=new Date();
+const model=buildDashboard(config,snapshots,now,verify);model.issues.push(...issues);model.progress=rankingProgress(config,snapshots,now,verify);
+const out=resolve(root,'output/seo-dashboard');mkdirSync(out,{recursive:true});
+for(const target of model.targets)for(const point of target.history)if(point.evidence)point.evidence=relative(out,resolve(root,point.evidence)).split('\\').join('/');
+const embed=JSON.stringify(model).replace(/[<>&\u2028\u2029]/g,c=>'\\u'+c.charCodeAt(0).toString(16).padStart(4,'0'));
+writeFileSync(resolve(out,'index.html'),readFileSync(resolve(root,'scripts/templates/seo-dashboard.html'),'utf8').replace('__SEO_DATA__',()=>embed));
+writeFileSync(resolve(out,'data.json'),JSON.stringify(model,null,2)+'\n');
+const csv=[['Day','Category','Query','Target URL','Status','Exact organic rank','Actual result page','Rank within page','Pages checked','Organic results checked','Observed at','Evidence','Gap reason'],...model.targets.flatMap(t=>t.history.map(p=>[p.day,t.category,t.query,config.site+t.path,p.status,p.rank??'',p.resultPage??'',p.rankWithinPage??'',p.checkedThroughPage??'',p.checkedThroughRank??'',p.observedAt??'',p.evidence??'',p.reason??'']))].map(row=>row.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\n');
+writeFileSync(resolve(out,'history.csv'),csv+'\n');console.log(JSON.stringify({dashboard:resolve(out,'index.html'),queries:model.targets.length,dates:model.calendar.length,evidenceIssues:model.issues},null,2));process.exitCode=model.issues.length?1:0;

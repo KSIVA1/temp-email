@@ -51,6 +51,11 @@ const collectionPageJsonLd = {
         <p>Pick a platform to review email limitations and recovery risks. These guides do not certify compatibility: GitHub blocks disposable email verification, and other services may reject our receiving domain.</p>
       </header>
 
+      <nav class="category-nav" aria-label="Browse platform categories">
+        {orderedCats.map(cat => <a href={`#cat-${cat}`}>{CATEGORIES[cat].label}</a>)}
+      </nav>
+      <p class="directory-help">Testing your own application's emails? Start with the <a href="/guides/testing-signup-emails/">tested email examples and QA checklist</a>. For a missing message, use the <a href="/guides/email-not-arriving/">delivery troubleshooting guide</a>.</p>
+
       {orderedCats.map((cat) => {
         const list = platformsByCategory(cat);
         if (!list.length) return null;
@@ -100,6 +105,9 @@ const collectionPageJsonLd = {
 
 
   <style>
+    .category-nav { display: flex; flex-wrap: wrap; gap: .7rem 1.2rem; margin-bottom: 1.2rem; line-height: 1.6; }
+    .directory-help { max-width: 75ch; color: var(--text-2); line-height: 1.75; margin-bottom: 2rem; }
+    .dir-cat h2 { scroll-margin-top: 100px; }
     .page { padding: clamp(2rem, 1.2rem + 3vw, 4rem) clamp(1rem, 0.5rem + 2vw, 2.2rem) clamp(2rem, 3vw, 4rem); }
     .page__inner { max-width: 1100px; margin: 0 auto; }
 

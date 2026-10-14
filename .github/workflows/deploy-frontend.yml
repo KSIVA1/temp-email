@@ -13,7 +13,8 @@ on:
       - 'scripts/address-qr.test.mjs'
       - 'scripts/email-fixtures.test.ts'
       - 'scripts/seo-check.mjs'
-      - 'scripts/seo-goal.test.mjs'
+      - 'scripts/seo-rankings.test.mjs'
+      - 'scripts/seo-dashboard.test.mjs'
       - 'scripts/lib/**'
       - '.github/workflows/deploy-frontend.yml'
 

@@ -1,0 +1,16 @@
+# Private local ranking dashboard
+
+Open `/Users/sivakogilathota/dev/ideas/temp-email/output/seo-dashboard/index.html` directly from disk. Its data and UI are embedded; it requires no server, sign-in, CDN or network request. Opening or refreshing it does not collect Google rankings. Regenerate after collecting evidence:
+
+```sh
+npm run seo:rankings
+npm run seo:dashboard
+```
+
+The folder also contains `data.json` and `history.csv`. Keep all three together for the local data/CSV links. Original-evidence links resolve relative to this repository's ignored `.seo-cache/daily` folder. Generated dashboard/evidence files are private, ignored and excluded from the static website build.
+
+The dashboard covers every configured target and category, with intended canonical pages, actual previous-calendar-day comparisons, date selection, query/page search, 7-day/28-day/all-history chart windows, sparklines and CSV export. It displays actual page and position within it independently of overall organic rank. Absence through page 4 is distinct from incomplete depth and unknown checks; no null result is plotted as zero, eleven or forty-one. Numeric segments join consecutive measured dates only. Expanded depth is coverage improvement, not rank movement. Historical first-page-only records remain incomplete; new targets have no invented backfill.
+
+The generator verifies original source JSON, DOM and screenshots against SHA-256 hashes. Invalid evidence loses its numeric rank and link and is reported as a gap. Fingerprints prevent older target scopes from qualifying for today's milestone; same-query/same-destination history remains visible with its original fingerprint. See [the runbook](seo-monitoring.md) for collecting real evidence and the manual completion review.
+
+Browser QA used a loopback-only static preview, native filters/calendar/window controls, real CSV download and 390px responsive checks. A separate clearly labeled synthetic UI fixture tested numeric segments, calendar gaps and safe text rendering; it was removed afterward and never entered the ranking history. The delivered HTML has no external assets or network runtime. If a browser tool blocks disk URLs, respect that restriction and provide the absolute file link for the user to open/refresh.

@@ -1,7 +1,7 @@
 {
   "domain": "inboxfornow.com",
   "searchEngine": "Google",
-  "country": "usa",
+  "country": "US",
   "language": "en",
   "device": "desktop",
   "timezone": "America/Chicago",
@@ -11,15 +11,145 @@
     "disposable email"
   ],
   "secondaryQueries": [
+    "temporary email for testing",
+    "test signup emails",
+    "temporary email not receiving emails",
     "temp mail discord",
-    "temporary email for discord",
-    "temp email for github",
+    "temp mail steam",
+    "temp mail spotify",
+    "can you use temp mail for venmo",
     "temp email for chatgpt",
-    "inboxfornow"
+    "temp email for github",
+    "temp mail notion",
+    "temporary email for amazon"
   ],
-  "goal": "Verify organic first-page visibility for every primary query in Google US English desktop results on two consecutive daily checks including today. Preserve localized browser evidence and actual organic order; resultPage must be 1. Search Console averages and general web-search ordering are not exact rank evidence.",
+  "goal": "Every priority query must have verified actual page-one organic placement, rank at most 10, on seven consecutive compatible daily checks including today; manually review originals before completion. First-place progress is separate.",
   "measurementStatus": "The Search Console API OAuth token still returns RefreshError. On October 12, current read-only Search Console reports became available through the existing signed-in Chrome session, separately from the API. Record report windows and last-update dates; never treat delayed indexing summaries as post-fix data. Signed-out Google US English desktop checks continue separately, with null ranks for first-page absence.",
   "assumption": "Default targets selected from the project and the user's SEO request; revise if the user supplies different keywords or a market.",
-  "goalUpdatedAt": "2026-10-11",
-  "goalReason": "User explicitly changed the objective from number one to first-page visibility and requested active improvement work every day."
+  "goalUpdatedAt": "2026-10-13",
+  "goalReason": "User applied the expanded handoff workflow: all meaningful categories, actual pages 1\u20134, private dashboard and daily reporting. Adopt its seven-day evidence confirmation.",
+  "site": "https://inboxfornow.com",
+  "engine": "Google",
+  "gscCountry": "usa",
+  "primaryDevice": "desktop",
+  "measurementTimeZone": "America/Chicago",
+  "confirmationDays": 7,
+  "maxOrganicRank": 10,
+  "selectedOn": "2026-10-13",
+  "siteName": "InboxForNow",
+  "successCriteria": "Every priority query must have verified actual page-one organic placement, rank at most 10, on seven consecutive compatible daily checks including today; manually review originals before completion. First-place progress is separate.",
+  "targets": [
+    {
+      "query": "temporary email",
+      "path": "/",
+      "category": "Temporary inbox",
+      "priority": true,
+      "reason": "Broad tool intent; preserve original primary objective.",
+      "selectedOn": "2026-10-13"
+    },
+    {
+      "query": "temp mail",
+      "path": "/",
+      "category": "Temporary inbox",
+      "priority": true,
+      "reason": "Broad tool intent and established comparison set.",
+      "selectedOn": "2026-10-13"
+    },
+    {
+      "query": "disposable email",
+      "path": "/",
+      "category": "Temporary inbox",
+      "priority": true,
+      "reason": "Broad receive-only disposable-inbox intent.",
+      "selectedOn": "2026-10-13"
+    },
+    {
+      "query": "temporary email for testing",
+      "path": "/guides/testing-signup-emails/",
+      "category": "Email testing",
+      "priority": true,
+      "reason": "Actual manual receiving workflow and downloadable tested MIME fixtures.",
+      "selectedOn": "2026-10-13"
+    },
+    {
+      "query": "test signup emails",
+      "path": "/guides/testing-signup-emails/",
+      "category": "Email testing",
+      "priority": true,
+      "reason": "Reusable QA checklist, explicit local test outputs and limits.",
+      "selectedOn": "2026-10-13"
+    },
+    {
+      "query": "temporary email not receiving emails",
+      "path": "/guides/email-not-arriving/",
+      "category": "Troubleshooting",
+      "priority": true,
+      "reason": "Concrete recipient, queue, expiry and retrieval diagnosis.",
+      "selectedOn": "2026-10-13"
+    },
+    {
+      "query": "temp mail discord",
+      "path": "/use-case/discord/",
+      "category": "Social",
+      "priority": true,
+      "reason": "Previously observed US query family; official verification guidance, acceptance unverified.",
+      "selectedOn": "2026-10-13"
+    },
+    {
+      "query": "temp mail steam",
+      "path": "/use-case/steam/",
+      "category": "Gaming",
+      "priority": true,
+      "reason": "Existing gaming account guide; assess verification intent without promising acceptance.",
+      "selectedOn": "2026-10-13"
+    },
+    {
+      "query": "temp mail spotify",
+      "path": "/use-case/spotify/",
+      "category": "Streaming",
+      "priority": true,
+      "reason": "Existing streaming guide, lasting account recovery recommendation.",
+      "selectedOn": "2026-10-13"
+    },
+    {
+      "query": "can you use temp mail for venmo",
+      "path": "/use-case/venmo/",
+      "category": "Finance",
+      "priority": true,
+      "reason": "Answer suitability and lasting-address needs; do not promote payment accounts with expiring email.",
+      "selectedOn": "2026-10-13"
+    },
+    {
+      "query": "temp email for chatgpt",
+      "path": "/use-case/chatgpt/",
+      "category": "AI tools",
+      "priority": true,
+      "reason": "Previously observed query family and specific sign-in/verification guidance.",
+      "selectedOn": "2026-10-13"
+    },
+    {
+      "query": "temp email for github",
+      "path": "/use-case/github/",
+      "category": "Productivity",
+      "priority": true,
+      "reason": "Previously observed query family; blocked disposable verification plus tested noreply alternative.",
+      "selectedOn": "2026-10-13"
+    },
+    {
+      "query": "temp mail notion",
+      "path": "/use-case/notion/",
+      "category": "Productivity",
+      "priority": true,
+      "reason": "Existing collaboration guide; recovery limitations and unverified acceptance.",
+      "selectedOn": "2026-10-13"
+    },
+    {
+      "query": "temporary email for amazon",
+      "path": "/use-case/amazon/",
+      "category": "Shopping",
+      "priority": true,
+      "reason": "Existing shopping account guide; orders and recovery need lasting access.",
+      "selectedOn": "2026-10-13"
+    }
+  ]
 }

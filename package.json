@@ -17,12 +17,14 @@
     "infra:email-routing": "bash infra/scripts/setup-email-routing.sh",
     "infra:verify-dns": "node infra/scripts/verify-dns.mjs",
     "infra:deploy-worker": "bash infra/scripts/deploy-worker.sh",
-    "check:seo": "node --experimental-strip-types scripts/seo-check.mjs && node --test scripts/seo-goal.test.mjs",
+    "check:seo": "node --experimental-strip-types scripts/seo-check.mjs && npm run test:seo",
     "test:inbox": "node --experimental-strip-types --test scripts/inbox-session.test.mjs scripts/address-qr.test.mjs",
     "test:mail-fixtures": "npm --prefix workers/inboxfornow-api test -- --root ../.. --config workers/inboxfornow-api/vitest.config.ts scripts/email-fixtures.test.ts",
     "seo:monitor": ".seo-cache/venv/bin/python scripts/seo-monitor.py",
     "seo:authorize": ".seo-cache/venv/bin/python scripts/seo-monitor.py --authorize",
-    "seo:rankings": "node scripts/seo-rankings.mjs"
+    "seo:rankings": "node scripts/seo-rankings.mjs",
+    "seo:dashboard": "node scripts/seo-dashboard.mjs",
+    "test:seo": "node --test scripts/seo-rankings.test.mjs scripts/seo-dashboard.test.mjs"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",

@@ -28,3 +28,6 @@ yarn-error.log*
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+# Private generated SEO dashboard (never deployed)
+output/seo-dashboard/
