@@ -1,0 +1,40 @@
+<section class="spotify-guide" aria-labelledby="spotify-email">
+  <p class="byline">By <a href="/about/">InboxForNow</a> · Sources reviewed <time datetime="2026-10-15">October 15, 2026</time></p>
+  <h2 id="spotify-email">Can you use temporary email for Spotify?</h2>
+  <p>Keep a lasting address for playlists and subscriptions you want to keep. We have not tested Spotify signup or delivery to our domain. Even if a message arrives today, an expired InboxForNow mailbox cannot receive a later password reset.</p>
+  <nav aria-label="Spotify email help"><a href="#spotify-login">Find your login method</a><a href="#spotify-reset">Missing reset email</a><a href="#spotify-change">Update an address</a></nav>
+  <h2 id="spotify-login">Start with the account you already have</h2>
+  <p>Spotify’s <a href="https://support.spotify.com/us/article/cannot-remember-login/">login help</a> distinguishes email, phone, Apple and Google signup. Use the method connected to your account. A new temporary inbox does not locate an existing account or move its playlists.</p>
+  <details>
+    <summary>I used Apple and hid my email address</summary>
+    <p>Apple’s forwarding address is different from an expiring InboxForNow address. Spotify’s <a href="https://support.spotify.com/us/article/apple-login-help/">Apple login instructions</a> explain how to find the address shared with Spotify. Use that address if creating a Spotify password through password reset.</p>
+  </details>
+  <h2 id="spotify-reset">Choose the password-reset problem</h2>
+  <details>
+    <summary>No reset email arrived</summary>
+    <p>Confirm that you entered the address linked to that Spotify account, then check spam and other filtered folders. Spotify sends reset messages to a registered address. Creating a different inbox here will not redirect that message.</p>
+    <p>Follow <a href="https://support.spotify.com/us/article/reset-password/">Spotify’s password-reset checklist</a>. If you already made repeated requests, wait before trying again. For an InboxForNow receiving test, the <a href="/guides/email-not-arriving/">delivery checklist</a> separates address, expiry and connection problems.</p>
+  </details>
+  <details>
+    <summary>The reset link is invalid</summary>
+    <p>Spotify recommends requesting another reset and opening its emailed link in a private browser window. Follow that advice on your own account; never share the reset URL or include it in a public test report.</p>
+  </details>
+  <details>
+    <summary>The registered temporary inbox has expired</summary>
+    <p>We cannot restore its messages or reopen the old address. Spotify’s reset guide requires access to the associated email and describes the options when access is lost. Try an existing connected login method if you have one, then use Spotify’s help. A new inbox does not recover the old mailbox.</p>
+  </details>
+  <h2 id="spotify-change">Still signed in? Review the registered address</h2>
+  <p>Spotify’s <a href="https://support.spotify.com/us/article/change-email-address/">change-email instructions</a> describe editing personal information, entering a new address, confirming the password and saving the profile. Choose an address you can keep accessing. Changing the Spotify profile is separate from changing or extending an inbox here.</p>
+  <p class="note">Testing email from your own application? Our <a href="/guides/testing-signup-emails/">downloadable synthetic email examples</a> exercise receiving and message processing. They do not establish Spotify compatibility, trial eligibility or delivery performance.</p>
+</section>
+<style>
+  .spotify-guide { max-width: 78ch; margin: 2rem 0 3rem; }
+  h2 { font-size: clamp(1.45rem, 3vw, 1.9rem); margin: 2rem 0 1rem; scroll-margin-top: 100px; }
+  p { color: var(--text-2); line-height: 1.75; }
+  .byline { font-size: var(--fs-small); }
+  nav { display:flex; flex-wrap:wrap; gap:.7rem 1.5rem; margin:1.5rem 0; }
+  details { padding: 1.1rem 0; border-top: 1px solid var(--border); }
+  summary { cursor: pointer; font-weight: 600; line-height: 1.6; }
+  details p { margin-bottom: .2rem; }
+  .note { padding: 1rem 1.3rem; border-left: 3px solid var(--data); background: var(--surface-2); }
+</style>
