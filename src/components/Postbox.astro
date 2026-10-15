@@ -18,6 +18,11 @@ const showSponsored = import.meta.env.PUBLIC_SHOW_SPONSORED === 'true';
     </p>
   </div>
 
+  <div class="postbox__check">
+    <button id="check-mail-btn" class="btn btn--ghost btn--tiny" type="button" disabled>Check now</button>
+    <span id="last-mail-check">No successful check yet</span>
+  </div>
+
   <ul id="mail-list" class="mail">
     {/* JS populates */}
   </ul>
@@ -93,6 +98,7 @@ const showSponsored = import.meta.env.PUBLIC_SHOW_SPONSORED === 'true';
 </section>
 
 <style>
+  .postbox__check { display: flex; align-items: center; flex-wrap: wrap; gap: .7rem; margin: .7rem 0 1rem; font-size: var(--fs-small); color: var(--text-2); }
   .postbox {
     display: flex;
     flex-direction: column;

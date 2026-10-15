@@ -70,6 +70,7 @@ let lastMessageTs = 0;
 let consecutiveErrors = 0;
 let connectionBusy = false;
 let pollingInboxId = '';
+let lastSuccessfulCheck = 0;
 const inboxSession = createInboxSession({
   storage: (() => { try { return sessionStorage; } catch { return undefined; } })(),
   readInbox: async id => (await apiFetch(`/api/inbox/${encodeURIComponent(id)}`)).json(),
@@ -211,6 +212,7 @@ function renderAddress() {
     : 'Inbox unavailable. Retry to get a working address.';
   for (const button of document.querySelectorAll<HTMLButtonElement>('#copy-btn, #qr-btn, #burn-btn, [data-extend]')) button.disabled = connectionBusy || !live;
   $<HTMLButtonElement>('#refresh-btn').disabled = connectionBusy;
+  renderMailCheck();
   document.querySelectorAll<HTMLButtonElement>('[data-api-retry]').forEach(button => { button.disabled = connectionBusy; });
   $<HTMLDivElement>('#reader-to').textContent = fullAddress();
   if (!live) {
@@ -262,6 +264,7 @@ async function connectInbox(replace = false, showToast = false) {
       state.mail = [];
       state.unread = 0;
       lastMessageTs = 0;
+      lastSuccessfulCheck = 0;
       updateTitleBadge();
       closeReader();
     }
@@ -558,19 +561,34 @@ function stopPolling() {
   pollTimer = 0;
 }
 
-async function pollMessages() {
+function renderMailCheck() {
+  const button = $opt<HTMLButtonElement>('#check-mail-btn');
+  const label = $opt<HTMLSpanElement>('#last-mail-check');
+  if (!button || !label) return;
+  const checking = Boolean(state.inboxId && pollingInboxId === state.inboxId);
+  button.disabled = connectionBusy || checking || !state.inboxId || state.expiresAt <= Date.now();
+  button.textContent = checking ? 'Checking…' : 'Check now';
+  label.textContent = lastSuccessfulCheck
+    ? `Last successful check: ${new Date(lastSuccessfulCheck).toLocaleTimeString()}`
+    : 'No successful check yet';
+}
+
+async function pollMessages(manual = false) {
   const inboxId = state.inboxId;
-  if (!inboxId || pollingInboxId === inboxId || state.expiresAt <= Date.now()) return;
+  if (connectionBusy || !inboxId || pollingInboxId === inboxId || state.expiresAt <= Date.now()) return;
   pollingInboxId = inboxId;
+  renderMailCheck();
   try {
     const res = await apiFetch(`/api/inbox/${inboxId}/messages?since=${lastMessageTs}`);
     const body = await res.json() as { messages?: ApiMessage[] };
     if (inboxId !== state.inboxId || state.expiresAt <= Date.now()) return;
     consecutiveErrors = 0;
     clearApiError();
+    lastSuccessfulCheck = Date.now();
     const incoming = (body.messages || [])
       .filter((m) => !state.mail.some((existing) => existing.id === m.id))
       .sort((a, b) => a.receivedAt - b.receivedAt);
+    if (manual && incoming.length === 0) toast({ message: 'Checked this inbox. No new messages.' });
     for (const apiMessage of incoming) {
       const mail: Mail = { ...apiMessage, read: false };
       lastMessageTs = Math.max(lastMessageTs, mail.receivedAt);
@@ -589,11 +607,12 @@ async function pollMessages() {
     if (inboxId !== state.inboxId) return;
     if (err instanceof ApiError && err.status === 404) { expireCurrentInbox(); return; }
     consecutiveErrors++;
-    if (consecutiveErrors >= 2) {
+    if (manual || consecutiveErrors >= 2) {
       handleApiError(err instanceof Error ? err : undefined);
     }
   } finally {
     if (pollingInboxId === inboxId) pollingInboxId = '';
+    renderMailCheck();
   }
 }
 
@@ -1283,6 +1302,7 @@ function bindExpiredModal() {
 // ── Boot ──────────────────────────────────────────────────────────────────
 
 function bindEvents() {
+  $opt<HTMLButtonElement>('#check-mail-btn')?.addEventListener('click', () => { void pollMessages(true); });
   $<HTMLButtonElement>('#copy-btn').addEventListener('click', copyAddress);
   $<HTMLButtonElement>('#refresh-btn').addEventListener('click', () => void regenerate().catch(() => handleApiError('Could not generate a new address. Tap to retry.')));
   $<HTMLButtonElement>('#qr-btn').addEventListener('click', toggleQr);

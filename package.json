@@ -23,7 +23,7 @@
     "seo:monitor": ".seo-cache/venv/bin/python scripts/seo-monitor.py",
     "seo:authorize": ".seo-cache/venv/bin/python scripts/seo-monitor.py --authorize",
     "seo:rankings": "node scripts/seo-rankings.mjs",
-    "seo:dashboard": "node scripts/seo-dashboard.mjs",
+    "seo:dashboard": "node scripts/seo-dashboard.mjs && node scripts/seo-competitors.mjs",
     "test:seo": "node --test scripts/seo-rankings.test.mjs scripts/seo-dashboard.test.mjs"
   },
   "dependencies": {
