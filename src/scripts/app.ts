@@ -164,6 +164,9 @@ function detectOTP(html: string): string | null {
     .replace(/<style[\s\S]*?<\/style>/gi, '')
     .replace(/&nbsp;/g, ' ')
     .replace(/<[^>]+>/g, ' ')
+    // Link tokens and request IDs are not user-entered verification codes.
+    .replace(/\bhttps?:\/\/[^\s<]+/gi, ' ')
+    .replace(/\b[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}\b/gi, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 

@@ -12,6 +12,8 @@ on:
       - 'scripts/inbox-session.test.mjs'
       - 'scripts/address-qr.test.mjs'
       - 'scripts/email-fixtures.test.ts'
+      - 'scripts/email-journey.test.ts'
+      - 'scripts/examples/**'
       - 'scripts/seo-check.mjs'
       - 'scripts/seo-rankings.test.mjs'
       - 'scripts/seo-dashboard.test.mjs'

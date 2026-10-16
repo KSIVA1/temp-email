@@ -7,6 +7,14 @@ describe('mail sanitization', () => {
     expect(detectOTP('<p>Use code 938421 to continue</p>')).toBe('938421');
   });
 
+  it('does not copy request UUID fragments or visible URL tokens as verification codes', () => {
+    expect(detectOTP('<p>Request: 12345678-1234-1234-1234-123456789012</p><a href="/r?u=test">Complete verify</a>')).toBeNull();
+    expect(detectOTP('<p>Reset your password: https://example.com/reset?token=654321</p>')).toBeNull();
+    expect(detectOTP('<p>Request: 12345678-1234-1234-1234-123456789012</p><p>Your verification code is 274 016</p>')).toBe('274016');
+    expect(detectOTP('<p>Your code is AB12CD</p>')).toBe('AB12CD');
+    expect(detectOTP('<p>938421</p>')).toBe('938421');
+  });
+
   it('keeps safe tags while stripping scripts, styles, images, forms, and unsafe links', () => {
     const sanitized = sanitizeMessageHtml('<h1>Hi</h1><style>*{}</style><p><strong>Code</strong></p><form></form><iframe></iframe><img src=x><a href="javascript:alert(1)">bad</a><a href="https://example.com/path?q=1">good</a>');
 

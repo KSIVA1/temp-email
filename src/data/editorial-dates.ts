@@ -14,6 +14,6 @@ export const editorialDates: Record<string, string> = {
   '/terms/': '2026-10-09',
   '/guides/': '2026-10-11',
   '/guides/email-not-arriving/': '2026-10-11',
-  '/guides/testing-signup-emails/': '2026-10-13',
+  '/guides/testing-signup-emails/': '2026-10-16',
   '/about/': '2026-10-11',
 };

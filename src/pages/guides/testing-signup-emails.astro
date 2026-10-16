@@ -1,7 +1,7 @@
 ---
 import GuideLayout from '~/layouts/GuideLayout.astro';
 import { emailQaCases } from '~/data/email-qa';
-const sections = [{id:'setup',title:'Set up one test'},{id:'fixture',title:'Use a simple fixture'},{id:'downloads',title:'Download tested examples'},{id:'checklist',title:'Run the checklist'},{id:'rendering',title:'Check rendering limits'},{id:'record',title:'Record the result'}];
+const sections = [{id:'setup',title:'Set up one test'},{id:'fixture',title:'Use a simple fixture'},{id:'downloads',title:'Download tested examples'},{id:'journey',title:'Test the account journey'},{id:'checklist',title:'Run the checklist'},{id:'rendering',title:'Check rendering limits'},{id:'record',title:'Record the result'}];
 const reproduction = 'npm ci --prefix workers/inboxfornow-api\nnpm run test:mail-fixtures';
 const fixture = '<p>Verification code: 418229</p>\n<p><a href="https://example.com/verify?token=TEST_ONLY">Verify your test account</a></p>';
 ---
@@ -40,6 +40,18 @@ const fixture = '<p>Verification code: 418229</p>\n<p><a href="https://example.c
     <p>You can reproduce the checks from the <a href="https://github.com/KSIVA1/temp-email/blob/main/scripts/email-fixtures.test.ts">fixture test source</a>:</p>
     <pre><code>{reproduction}</code></pre>
     <p class="note">These are local processing results. They do not test SMTP delivery, sender authentication, inbox placement, latency, or how Gmail, Outlook and other clients render the message. The example link and sample code do not verify a real account.</p>
+  </section>
+  <section id="journey">
+    <h2>Go beyond receiving the message</h2>
+    <p>A message arriving does not prove that signup or password reset works. Our original <a href="https://github.com/KSIVA1/temp-email/blob/main/scripts/examples/email-journey-app.mjs">local teaching application</a> and <a href="https://github.com/KSIVA1/temp-email/blob/main/scripts/email-journey.test.ts">journey tests</a> connect a loopback HTTP account flow to InboxForNow’s actual receiving handler and message-retrieval API, using a local test database. All accounts and messages are synthetic.</p>
+    <p>From a checkout of this repository, run the same <code>npm run test:mail-fixtures</code> command above. On October 16, 2026, the three journey cases passed alongside the three MIME fixture cases:</p>
+    <div class="table-wrap"><table><thead><tr><th scope="col">Case</th><th scope="col">What the test verifies</th></tr></thead><tbody>
+      <tr><td>Signup and password reset</td><td>Login fails before verification. The current verification message activates the expected account. A newer reset request invalidates the older token; a consumed token cannot be replayed. The old password fails and the replacement password signs into that same account.</td></tr>
+      <tr><td>Independent token expiry</td><td>The teaching app’s five-minute token expires while the ten-minute test inbox remains readable. A received message is not proof that its action link is still valid.</td></tr>
+      <tr><td>Concurrent accounts and missing mail</td><td>Two accounts receive and use their own messages. A bounded lookup for an unsent request fails instead of choosing an older message.</td></tr>
+    </tbody></table></div>
+    <p>Each response gives the test a request identifier; the email subject carries that identifier. Retrieval matches the exact subject in the correct inbox, then checks the processed link’s destination origin and action path before using its token. The final assertion checks account identity, not just a successful message fetch.</p>
+    <p class="note">The local application calls the receiving handler directly. These tests do not send SMTP mail, exercise the production website’s browser UI, measure delivery speed or establish a public automation API contract. The teaching application is not a production authentication service. When testing your own application, use its staging flow and normal sending provider, and assert its actual resend, expiry and one-time-use rules.</p>
   </section>
   <section id="checklist">
     <h2>A manual signup email QA checklist</h2>
