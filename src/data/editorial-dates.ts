@@ -7,6 +7,7 @@ export const editorialDates: Record<string, string> = {
   '/use-case/': '2026-10-13',
   // Inbox pages gained manual receiving checks and successful-check feedback.
   ...Object.fromEntries(platforms.map(p => [`/use-case/${p.slug}/`, '2026-10-14'])),
+  '/use-case/notion/': '2026-10-17',
   '/use-case/spotify/': '2026-10-15',
   '/use-case/steam/': '2026-10-14',
   '/use-case/venmo/': '2026-10-13',

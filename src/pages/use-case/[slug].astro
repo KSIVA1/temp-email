@@ -14,6 +14,7 @@ import ChatGPTEmailGuide from '~/components/ChatGPTEmailGuide.astro';
 import VenmoEmailGuide from '~/components/VenmoEmailGuide.astro';
 import SteamEmailGuide from '~/components/SteamEmailGuide.astro';
 import SpotifyEmailGuide from '~/components/SpotifyEmailGuide.astro';
+import NotionEmailGuide from '~/components/NotionEmailGuide.astro';
 import UseCaseFAQs from '~/components/UseCaseFAQs.astro';
 import UseCaseRelated from '~/components/UseCaseRelated.astro';
 import { platforms, type Platform } from '~/data/platforms';
@@ -28,10 +29,12 @@ export const getStaticPaths: GetStaticPaths = () => {
 interface Props { platform: Platform; }
 const { platform } = Astro.props;
 
-const guideOnly = ['venmo', 'steam', 'spotify'].includes(platform.slug);
+const guideOnly = ['venmo', 'steam', 'spotify', 'notion'].includes(platform.slug);
 
 const title = `Temporary Email for ${platform.name} — Limits & Guidance`;
-const description = platform.slug === 'github'
+const description = platform.slug === 'notion'
+  ? 'Read Notion login, verified-email and lost-access guidance, including password-dependent recovery limits when a temporary inbox expires.'
+  : platform.slug === 'github'
   ? 'GitHub does not verify disposable email. Learn how to verify a lasting account address, use GitHub noreply for commit privacy, and check your Git email settings.'
   : platform.slug === 'chatgpt'
   ? 'Read ChatGPT email-verification and account-access guidance: identify your sign-in method, troubleshoot codes, and understand email-change requirements.'
@@ -110,6 +113,7 @@ const sub = 'Use this receive-only inbox for permitted one-time messages. Platfo
       {platform.slug === 'venmo' && <VenmoEmailGuide />}
       {platform.slug === 'steam' && <SteamEmailGuide />}
       {platform.slug === 'spotify' && <SpotifyEmailGuide />}
+      {platform.slug === 'notion' && <NotionEmailGuide />}
 
       {!guideOnly && <section class="grid">
         <div class="grid__col grid__col--address">
@@ -120,8 +124,8 @@ const sub = 'Use this receive-only inbox for permitted one-time messages. Platfo
         </div>
       </section>}
 
-      {platform.slug === 'discord' ? <DiscordVerificationGuide /> : !['github', 'chatgpt', 'venmo', 'steam', 'spotify'].includes(platform.slug) && <UseCaseHowItWorks platform={platform} />}
-      {!['github', 'chatgpt', 'venmo', 'steam', 'spotify'].includes(platform.slug) && <UseCaseFAQs platform={platform} />}
+      {platform.slug === 'discord' ? <DiscordVerificationGuide /> : !['github', 'chatgpt', 'venmo', 'steam', 'spotify', 'notion'].includes(platform.slug) && <UseCaseHowItWorks platform={platform} />}
+      {!['github', 'chatgpt', 'venmo', 'steam', 'spotify', 'notion'].includes(platform.slug) && <UseCaseFAQs platform={platform} />}
       <UseCaseRelated platform={platform} />
 
       <footer class="foot">

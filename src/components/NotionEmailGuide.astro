@@ -1,0 +1,40 @@
+<section class="notion-guide" aria-labelledby="notion-email">
+  <p class="byline">By <a href="/about/">InboxForNow</a> · Sources reviewed <time datetime="2026-10-17">October 17, 2026</time></p>
+  <h2 id="notion-email">Can you use temporary email for Notion?</h2>
+  <p>Use a lasting address for a workspace you want to keep. We have not tested Notion signup or delivery to our domains. An expiring inbox is a poor place for future login codes and account notices.</p>
+  <nav aria-label="Notion email help"><a href="#notion-login">Find your login method</a><a href="#notion-lost-email">Lost email access</a><a href="#notion-emails">Keep a reachable address</a></nav>
+  <h2 id="notion-login">Start with your existing account</h2>
+  <p>Notion’s <a href="https://www.notion.com/help/log-in-and-out">login guide</a> lists email codes, passwords, passkeys, Google, Apple and workspace SSO. Use the method attached to your account. A different inbox here does not reconnect your old pages.</p>
+  <details>
+    <summary>I used Apple’s Hide My Email</summary>
+    <p>Notion explains that this option creates a separate account with a forwarding address. That relay is different from a temporary InboxForNow mailbox. Check the account and sign-in method before creating another workspace.</p>
+  </details>
+  <h2 id="notion-lost-email">What access do you still have?</h2>
+  <details>
+    <summary>I can sign in and already have a Notion password</summary>
+    <p>Notion’s <a href="https://www.notion.com/help/cant-log-in">lost-email instructions</a> describe changing the address from settings when a password is set. Add and verify a reachable address in <strong>Manage emails</strong>, then make it primary. This changes the Notion account; it does not reopen the old inbox.</p>
+  </details>
+  <details>
+    <summary>I used email codes and the inbox has expired</summary>
+    <p>Without a Notion password, an email change may require verification at the old address. Notion says that losing access can prevent completing that change in settings. InboxForNow cannot restore expired messages or receive new codes at the old mailbox. Follow Notion’s login help for your remaining options.</p>
+  </details>
+  <details>
+    <summary>I forgot the password or a message is missing</summary>
+    <p>Notion sends its password-reset link by email. Confirm the account address and your remaining access before requesting a reset; another temporary inbox will not redirect it. Our <a href="/guides/email-not-arriving/">receiving checklist</a> helps distinguish an active inbox’s connection problem from expiry.</p>
+  </details>
+  <h2 id="notion-emails">Keep a reachable address on the same identity</h2>
+  <p>Notion’s <a href="https://www.notion.com/help/secondary-emails">secondary-email guide</a> explains that verified addresses can log in, receive shares and resolve mentions to one account. In settings, open your profile and <strong>Manage emails</strong>, add the lasting address, and verify its code. Account notifications follow the primary address.</p>
+  <p>An address already attached to another Notion account cannot be added directly. Avoid deleting an account just to clear an email error: review Notion’s <a href="https://www.notion.com/help/account-settings">account settings guidance</a> and preserve your workspace access first. Enterprise policies may restrict permitted addresses; the secondary-email guide describes those limits.</p>
+  <p class="note">Testing your own app’s email flow? Use our <a href="/guides/testing-signup-emails/">original signup/reset examples</a>. Their local test results do not establish Notion compatibility or account recovery.</p>
+</section>
+<style>
+  .notion-guide { max-width: 78ch; margin: 2rem 0 3rem; }
+  h2 { font-size: clamp(1.45rem, 3vw, 1.9rem); margin: 2rem 0 1rem; scroll-margin-top: 100px; }
+  p { color: var(--text-2); line-height: 1.75; }
+  .byline { font-size: var(--fs-small); }
+  nav { display:flex; flex-wrap:wrap; gap:.7rem 1.5rem; margin:1.5rem 0; }
+  details { padding: 1.1rem 0; border-top: 1px solid var(--border); }
+  summary { cursor: pointer; font-weight: 600; line-height: 1.6; }
+  details p { margin-bottom: .2rem; }
+  .note { padding: 1rem 1.3rem; border-left: 3px solid var(--data); background: var(--surface-2); }
+</style>
