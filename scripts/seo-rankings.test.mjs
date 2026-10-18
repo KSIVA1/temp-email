@@ -51,3 +51,15 @@ test('snapshot label escaping preserves actual result text without accepting cha
   raw=JSON.stringify(f.source);f.r.evidence.sha256=hash(raw);writeFileSync(join(f.root,f.r.evidence.path),raw);
   assert.ok(validateRankingSnapshot(config,f.s,now,f.verify).length);
 });
+
+
+test('snapshot double-quote escaping preserves labels but rejects different quoted words',t=>{
+  const f=fixture(t,{counts:[1],found:false}),page=f.source.observations[0].pages[0];
+  page.results[0].title='A "disposable" inbox';f.source.observations[0].results=page.results;
+  const dom='synthetic query\nSign in\nFrisco, TX - From your IP address\nheading "A '+String.fromCharCode(92,92)+'"disposable'+String.fromCharCode(92,92)+'" inbox"';
+  page.domSha256=hash(dom);writeFileSync(join(f.root,page.domEvidence),dom);
+  let raw=JSON.stringify(f.source);f.r.evidence.sha256=hash(raw);writeFileSync(join(f.root,f.r.evidence.path),raw);
+  assert.deepEqual(validateRankingSnapshot(config,f.s,now,f.verify),[]);
+  page.results[0].title='A "permanent" inbox';raw=JSON.stringify(f.source);f.r.evidence.sha256=hash(raw);writeFileSync(join(f.root,f.r.evidence.path),raw);
+  assert.ok(validateRankingSnapshot(config,f.s,now,f.verify).length);
+});

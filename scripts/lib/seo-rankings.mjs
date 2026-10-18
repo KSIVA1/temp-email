@@ -11,8 +11,8 @@ export function searchUrlValid(value, query) {
   try { const u=new URL(value);return u.protocol==='https:'&&u.hostname==='www.google.com'&&u.pathname==='/search'&&u.searchParams.get('q')===query&&u.searchParams.get('gl')==='us'&&u.searchParams.get('hl')==='en'&&u.searchParams.get('pws')==='0'; } catch {return false;}
 }
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
-// DOM snapshots escape apostrophes in quoted labels and may fold whitespace.
-const renderedText = value => value.replace(/''/g, "'").replace(/\s+/g, ' ');
+// DOM snapshots escape quotes in labels and may fold whitespace.
+export const renderedText = value => value.replace(/''/g, "'").replace(/\\+"/g, '"').replace(/\s+/g, ' ');
 export function evidenceVerifier(root) {
   const cache=realpathSync(resolve(root,'.seo-cache/daily'));
   const read=artifact=>{

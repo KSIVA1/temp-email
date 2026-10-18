@@ -1,0 +1,37 @@
+<section class="amazon-guide" aria-labelledby="amazon-email">
+  <p class="byline">By <a href="/about/">InboxForNow</a> · Sources reviewed <time datetime="2026-10-18">October 18, 2026</time></p>
+  <h2 id="amazon-email">Can you use temporary email for Amazon?</h2>
+  <p>Choose a lasting address for shopping, orders and account recovery. We have not tested Amazon signup or delivery to our domains. Receiving one verification message would not prove that an expiring address is suitable for purchases or future account access.</p>
+  <nav aria-label="Amazon email help"><a href="#amazon-address">Review the account address</a><a href="#amazon-prompt">Identify the code prompt</a><a href="#amazon-orders">Find existing orders</a></nav>
+  <h2 id="amazon-address">Already have an account?</h2>
+  <details>
+    <summary>I can still sign in and want to update my email</summary>
+    <p>Amazon’s <a href="https://digprjsurvey.amazon.com/csad/help/node/GSD587LKW72HKU2V">US account and support guide</a> directs email, mobile-number and password updates to <strong>Your Account → Login &amp; security</strong>. Choose an address you can keep accessing and follow Amazon’s verification prompts. Creating a new inbox here does not update your Amazon profile.</p>
+  </details>
+  <details>
+    <summary>The temporary inbox on my account has expired</summary>
+    <p>InboxForNow cannot reopen it or recover its messages. Use an existing sign-in method if available, then follow Amazon’s account help. Generating another address will not receive mail sent to the expired one or reconnect an old purchase history. Do not publish account credentials or verification links in a support request or test report.</p>
+  </details>
+  <h2 id="amazon-prompt">An email code is not every verification method</h2>
+  <details>
+    <summary>Amazon asks for a phone or authenticator code</summary>
+    <p>Amazon’s <a href="https://digprjsurvey.amazon.com/csad/help/node/G3PWZPU52FKN7PW4">two-step verification guide</a> describes text-message and authenticator-app codes alongside the account password. A receive-only email inbox cannot supply either of those codes.</p>
+  </details>
+  <details>
+    <summary>Two-step verification is blocking sign-in</summary>
+    <p>Amazon’s <a href="https://digprjsurvey.amazon.com/csad/help/node/GU3SL3GTHLHPDQ2H">account-recovery instructions</a> suggest trying a registered backup method or trusted device first. If those do not work, follow the recovery option shown by Amazon at the code prompt. Amazon requires identity verification; a different temporary email does not replace it. We cannot change your account or promise recovery.</p>
+  </details>
+  <h2 id="amazon-orders">Need a receipt, return or delivery update?</h2>
+  <p>Use <strong>Your Orders</strong> in the account that placed the order. Amazon’s US support guide identifies order tracking, returns and invoices there. Keeping a reachable account address is more useful for those ongoing tasks than discarding it after the first message.</p>
+  <p>If an expected email to an active InboxForNow session is missing, our <a href="/guides/email-not-arriving/">receiving checklist</a> separates address, expiry and connection problems. It cannot determine Amazon’s sender decisions. For testing an application you control, use our <a href="/guides/testing-signup-emails/">original synthetic signup/reset examples</a>; those results do not establish Amazon compatibility or trial eligibility.</p>
+</section>
+<style>
+  .amazon-guide { max-width: 78ch; margin: 2rem 0 3rem; }
+  h2 { font-size: clamp(1.45rem, 3vw, 1.9rem); margin: 2rem 0 1rem; scroll-margin-top: 100px; }
+  p { color: var(--text-2); line-height: 1.75; }
+  .byline { font-size: var(--fs-small); }
+  nav { display:flex; flex-wrap:wrap; gap:.7rem 1.5rem; margin:1.5rem 0; }
+  details { padding: 1.1rem 0; border-top: 1px solid var(--border); }
+  summary { cursor: pointer; font-weight: 600; line-height: 1.6; }
+  details p { margin-bottom: .2rem; }
+</style>
